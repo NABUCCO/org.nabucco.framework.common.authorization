@@ -35,7 +35,8 @@ Objectives
 * Fast development, paired with qualitatively high value results
 
 
-
+Contact
+-------
 *Find more Information on our [website](http://nabuccosource.org/).*
 
 *The complete documentation may be found on our [Confluence](http://www.nabucco-source.org/confluence/). Sign up for free to add comments and help us to improve NABUCCO.*
