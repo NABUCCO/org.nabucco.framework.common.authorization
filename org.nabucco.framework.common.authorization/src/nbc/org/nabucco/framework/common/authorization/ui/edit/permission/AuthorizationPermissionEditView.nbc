@@ -1,0 +1,71 @@
+/*
+* Copyright 2010 PRODYNA AG
+*
+* Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.opensource.org/licenses/eclipse-1.0.php or
+* http://www.nabucco-source.org/nabucco-license.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+package org.nabucco.framework.common.authorization.ui.edit.permission;
+
+import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationPermission;
+import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroup;
+import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUser;
+import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationRole;
+
+@Author			Frank Ratschinski
+@Company		PRODYNA AG
+@Date			2010-01-18
+@Version		1.0
+@Description 	Edit view for datatype AuthorizationPermission
+@Id				org.nabucco.framework.common.authorization.ui.edit.permission.AuthorizationPermissionEditView
+public EditView AuthorizationPermissionEditView {
+	@Leading
+	private Datatype AuthorizationPermission[1] permission;
+	private Datatype AuthorizationGroup[0..*] groupSet;
+	private Datatype AuthorizationUser[0..*] userSet;
+	private Datatype AuthorizationRole[0..*] roleSet;
+	
+	@MappedField 		permission.permissionname
+	@FieldLabelId		authorization.permissionname 
+	@FieldLabelDefault 	"Permission Name"
+	private LabeledInputField authorizationPermissionPermissionname;
+	
+	@MappedField 		permission.description
+	@FieldLabelId		authorization.permission.description
+	@FieldLabelDefault 	"Description"
+	private LabeledInputField authorizationPermissionDescription;
+	
+	@MappedField 		permission.owner
+	@FieldLabelId		authorization.permission.description
+	@FieldLabelDefault 	"Owner"
+	private LabeledInputField authorizationPermissionOwner;
+	
+	@MappedField 		permission.permissionType
+	@FieldLabelId		authorization.permission.permissionType
+	@FieldLabelDefault 	"Permission Type"
+	private LabeledInputField authorizationPermissionType;
+	
+	@MappedField 		groupSet.groupType
+	@FieldLabelId		authorization.group 
+	@FieldLabelDefault 	"Referencing Groups"
+	private LabeledListPicker authorizationPermissionGroupPicker;
+	
+	@MappedField 		userSet.userType
+	@FieldLabelId		authorization.user
+	@FieldLabelDefault 	"Referencing Users"
+	private LabeledListPicker authorizationPermissionUserPicker;
+	
+	@MappedField 		roleSet.roleType
+	@FieldLabelId		authorization.role 
+	@FieldLabelDefault 	"Referencing Roles"
+	private LabeledListPicker authorizationPermissionRolePicker;
+}

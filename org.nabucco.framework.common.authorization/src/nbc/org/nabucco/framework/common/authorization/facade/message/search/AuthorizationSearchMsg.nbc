@@ -1,0 +1,46 @@
+/*
+* Copyright 2010 PRODYNA AG
+*
+* Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.opensource.org/licenses/eclipse-1.0.php or
+* http://www.nabucco-source.org/nabucco-license.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+package org.nabucco.framework.common.authorization.facade.message.search;
+
+import org.nabucco.framework.base.facade.datatype.Name;
+import org.nabucco.framework.base.facade.datatype.Description;
+import org.nabucco.framework.base.facade.datatype.Owner;
+import org.nabucco.framework.base.facade.datatype.code.CodeType;
+import org.nabucco.framework.common.authorization.facade.datatype.search.AuthorizationSearchParameter;
+
+@Author			Nicolas Moser
+@Company		PRODYNA AG
+@Date			2010-05-25
+@Description	Generic search message for all authorization search requests
+@Version		1.0
+public Message AuthorizationSearchMsg {
+
+	@Description	Name of the datatype to search
+	private Basetype Name[0..1] name;
+	
+	@Description	Description of the datatype to search
+	private Basetype Description[0..1] description;
+	
+	@Description	Owner of the datatype to search
+	private Basetype Owner[0..1] owner;
+	
+	@Description	CodeType of the datatype to search
+	private Basetype CodeType[0..1] codeType;
+
+	@Description	The search parameter list for referencing datatypes
+	private Datatype AuthorizationSearchParameter[0..*] parameterList;
+}

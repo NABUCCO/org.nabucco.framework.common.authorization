@@ -1,0 +1,85 @@
+/*
+* Copyright 2010 PRODYNA AG
+*
+* Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.opensource.org/licenses/eclipse-1.0.php or
+* http://www.nabucco-source.org/nabucco-license.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+package org.nabucco.framework.common.authorization.facade.service.resolve;
+
+import org.nabucco.framework.base.facade.exception.service.ResolveException;
+import org.nabucco.framework.common.authorization.facade.message.AuthorizationGroupMsg;
+import org.nabucco.framework.common.authorization.facade.message.AuthorizationGroupListMsg;
+import org.nabucco.framework.common.authorization.facade.message.AuthorizationRoleMsg;
+import org.nabucco.framework.common.authorization.facade.message.AuthorizationRoleListMsg;
+import org.nabucco.framework.common.authorization.facade.message.AuthorizationPermissionMsg;
+import org.nabucco.framework.common.authorization.facade.message.AuthorizationPermissionListMsg;
+import org.nabucco.framework.common.authorization.facade.message.AuthorizationUserMsg;
+import org.nabucco.framework.common.authorization.facade.message.AuthorizationUserListMsg;
+import org.nabucco.framework.common.authorization.facade.message.maintain.AuthorizationGroupMaintainMsg;
+import org.nabucco.framework.common.authorization.facade.message.maintain.AuthorizationUserMaintainMsg;
+import org.nabucco.framework.common.authorization.facade.message.maintain.AuthorizationRoleMaintainMsg;
+import org.nabucco.framework.common.authorization.facade.message.maintain.AuthorizationPermissionMaintainMsg;
+
+
+@Author				Jens Wurm
+@Company			PRODYNA AG
+@Date				2010-05-06
+@Version			1.0
+@Description		Authorization resolution service
+public Service ResolveAuthorization  {
+	
+	@Inject
+	private EntityManager[1] em;
+
+	
+	@ManualImplementation
+	public AuthorizationGroupMaintainMsg resolveAuthorizationGroup(AuthorizationGroupMsg rqMsg)
+			throws ResolveException;
+		
+		
+	@ManualImplementation
+    public AuthorizationGroupListMsg resolveAuthorizationGroupList(AuthorizationGroupListMsg rqMsg)
+            throws ResolveException;
+            
+	
+	@ManualImplementation
+	public AuthorizationPermissionMaintainMsg resolveAuthorizationPermission(AuthorizationPermissionMsg rqMsg)
+			throws ResolveException;
+	
+	
+	@ManualImplementation
+    public AuthorizationPermissionListMsg resolveAuthorizationPermissionList(AuthorizationPermissionListMsg rqMsg)
+            throws ResolveException;
+			
+		
+	@ManualImplementation
+	public AuthorizationRoleMaintainMsg resolveAuthorizationRole(AuthorizationRoleMsg rqMsg)
+			throws ResolveException;
+	
+	
+	@ManualImplementation
+    public AuthorizationRoleListMsg resolveAuthorizationRoleList(AuthorizationRoleListMsg rqMsg)
+            throws ResolveException;
+			
+	
+	@ManualImplementation
+	public AuthorizationUserMaintainMsg resolveAuthorizationUser(AuthorizationUserMsg rqMsg)
+			throws ResolveException;
+			
+	
+	@ManualImplementation
+    public AuthorizationUserListMsg resolveAuthorizationUserList(AuthorizationUserListMsg rqMsg)
+            throws ResolveException;
+			
+	
+}
