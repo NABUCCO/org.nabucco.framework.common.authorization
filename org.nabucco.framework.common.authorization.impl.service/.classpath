@@ -11,10 +11,11 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/org.nabucco.framework.common.authorization.facade.service"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.nabucco.framework.common.authorization.facade.component"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/impl/ejb3-persistence.jar"/>
 	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/impl/jboss-javaee.jar"/>
-	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/impl/log4j.jar"/>
-	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/impl/org.nabucco.framework.base.facade.jar"/>
+	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/impl/org.nabucco.framework.base.facade.jar" sourcepath="/org.nabucco.framework.common.authorization/lib/source/org.nabucco.framework.base.facade.sources.zip"/>
 	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/impl/org.nabucco.framework.base.impl.jar"/>
-	<classpathentry kind="output" path="out"/>
+	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/impl/ejb3-persistence.jar"/>
+	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/impl/org.nabucco.common.cache.jar"/>
+	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/impl/org.nabucco.common.extension.jar"/>
+	<classpathentry kind="output" path="out/ide"/>
 </classpath>

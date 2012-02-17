@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,11 +21,9 @@ import java.util.List;
 import org.nabucco.framework.base.facade.datatype.DatatypeState;
 import org.nabucco.framework.base.facade.datatype.NabuccoDatatype;
 import org.nabucco.framework.base.facade.datatype.collection.NabuccoCollectionAccessor;
-import org.nabucco.framework.base.facade.datatype.collection.NabuccoCollectionState;
-import org.nabucco.framework.base.facade.datatype.collection.NabuccoList;
-import org.nabucco.framework.base.facade.datatype.security.credential.Password;
 import org.nabucco.framework.base.facade.exception.persistence.PersistenceException;
-import org.nabucco.framework.base.impl.service.maintain.PersistenceHelper;
+import org.nabucco.framework.base.impl.service.maintain.NabuccoQuery;
+import org.nabucco.framework.base.impl.service.maintain.PersistenceManager;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroup;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroupPermissionRelation;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroupRoleRelation;
@@ -34,6 +32,7 @@ import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationP
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationRole;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationRolePermissionRelation;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUser;
+import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUserPassword;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUserPermissionRelation;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUserRoleRelation;
 import org.nabucco.framework.common.authorization.impl.service.util.EncryptionUtility;
@@ -45,19 +44,19 @@ import org.nabucco.framework.common.authorization.impl.service.util.EncryptionUt
  */
 public class AuthorizationMaintainSupport {
 
-    private PersistenceHelper helper;
+    private PersistenceManager manager;
 
     /**
      * Creates a new {@link AuthorizationMaintainSupport} instance.
      * 
-     * @param helper
-     *            the persistence helper
+     * @param manager
+     *            the persistence manager
      */
-    public AuthorizationMaintainSupport(PersistenceHelper helper) {
-        if (helper == null) {
+    public AuthorizationMaintainSupport(PersistenceManager manager) {
+        if (manager == null) {
             throw new IllegalArgumentException("Persistence Helper must be defined.");
         }
-        this.helper = helper;
+        this.manager = manager;
     }
 
     /**
@@ -70,8 +69,7 @@ public class AuthorizationMaintainSupport {
      * 
      * @throws PersistenceException
      */
-    public AuthorizationGroup maintainAuthorizationGroup(AuthorizationGroup group)
-            throws PersistenceException {
+    public AuthorizationGroup maintainAuthorizationGroup(AuthorizationGroup group) throws PersistenceException {
 
         if (group == null) {
             throw new PersistenceException("Cannot maintain authorization group [null].");
@@ -79,7 +77,7 @@ public class AuthorizationMaintainSupport {
 
         if (group.getDatatypeState() == DatatypeState.DELETED) {
 
-            AuthorizationGroup currentGroup = this.helper.find(AuthorizationGroup.class, group);
+            AuthorizationGroup currentGroup = this.manager.find(group);
 
             for (AuthorizationGroupUserRelation relation : currentGroup.getUserList()) {
                 relation.setDatatypeState(DatatypeState.DELETED);
@@ -97,9 +95,9 @@ public class AuthorizationMaintainSupport {
         } else {
 
             // Users
-            if (isTraversable(group.getUserList())) {
-                List<AuthorizationGroupUserRelation> unassignedUsers = NabuccoCollectionAccessor
-                        .getInstance().getUnassignedList(group.getUserList());
+            if (group.getUserList().isTraversable()) {
+                List<AuthorizationGroupUserRelation> unassignedUsers = NabuccoCollectionAccessor.getInstance()
+                        .getUnassignedList(group.getUserList());
 
                 for (AuthorizationGroupUserRelation relation : group.getUserList()) {
                     this.maintainAuthorizationUser(relation.getUser());
@@ -112,9 +110,9 @@ public class AuthorizationMaintainSupport {
             }
 
             // Roles
-            if (isTraversable(group.getRoleList())) {
-                List<AuthorizationGroupRoleRelation> unassignedRoles = NabuccoCollectionAccessor
-                        .getInstance().getUnassignedList(group.getRoleList());
+            if (group.getRoleList().isTraversable()) {
+                List<AuthorizationGroupRoleRelation> unassignedRoles = NabuccoCollectionAccessor.getInstance()
+                        .getUnassignedList(group.getRoleList());
 
                 for (AuthorizationGroupRoleRelation relation : group.getRoleList()) {
                     this.maintainAuthorizationRole(relation.getRole());
@@ -127,7 +125,7 @@ public class AuthorizationMaintainSupport {
             }
 
             // Permissions
-            if (isTraversable(group.getPermissionList())) {
+            if (group.getPermissionList().isTraversable()) {
                 List<AuthorizationGroupPermissionRelation> unassignedPermissions = NabuccoCollectionAccessor
                         .getInstance().getUnassignedList(group.getPermissionList());
 
@@ -142,7 +140,19 @@ public class AuthorizationMaintainSupport {
             }
         }
 
-        group = this.helper.persist(group);
+        group = this.manager.persist(group);
+        if (group.getChildGroupList().isTraversable()) {
+            group.getChildGroupList().size();
+        }
+        if (group.getUserList().isTraversable()) {
+            group.getUserList().size();
+        }
+        if (group.getRoleList().isTraversable()) {
+            group.getRoleList().size();
+        }
+        if (group.getPermissionList().isTraversable()) {
+            group.getPermissionList().size();
+        }
 
         return group;
     }
@@ -157,8 +167,7 @@ public class AuthorizationMaintainSupport {
      * 
      * @throws PersistenceException
      */
-    public AuthorizationUser maintainAuthorizationUser(AuthorizationUser user)
-            throws PersistenceException {
+    public AuthorizationUser maintainAuthorizationUser(AuthorizationUser user) throws PersistenceException {
 
         if (user == null) {
             throw new PersistenceException("Cannot maintain authorization user [null].");
@@ -166,7 +175,7 @@ public class AuthorizationMaintainSupport {
 
         if (user.getDatatypeState() == DatatypeState.DELETED) {
 
-            AuthorizationUser currentUser = this.helper.find(AuthorizationUser.class, user);
+            AuthorizationUser currentUser = this.manager.find(user);
 
             for (AuthorizationUserRoleRelation relation : currentUser.getRoleList()) {
                 relation.setDatatypeState(DatatypeState.DELETED);
@@ -177,12 +186,19 @@ public class AuthorizationMaintainSupport {
                 this.maintainRelation(relation);
             }
 
+            this.removeUserRelations(currentUser.getId());
+
+            if (user.getPassword() != null) {
+                user.getPassword().setDatatypeState(DatatypeState.DELETED);
+                this.manager.persist(user.getPassword());
+            }
+
         } else {
 
             // Roles
-            if (isTraversable(user.getRoleList())) {
-                List<AuthorizationUserRoleRelation> unassignedRoles = NabuccoCollectionAccessor
-                        .getInstance().getUnassignedList(user.getRoleList());
+            if (user.getRoleList().isTraversable()) {
+                List<AuthorizationUserRoleRelation> unassignedRoles = NabuccoCollectionAccessor.getInstance()
+                        .getUnassignedList(user.getRoleList());
 
                 for (AuthorizationUserRoleRelation relation : user.getRoleList()) {
                     this.maintainAuthorizationRole(relation.getRole());
@@ -195,7 +211,7 @@ public class AuthorizationMaintainSupport {
             }
 
             // Permissions
-            if (isTraversable(user.getPermissionList())) {
+            if (user.getPermissionList().isTraversable()) {
                 List<AuthorizationUserPermissionRelation> unassignedPermissions = NabuccoCollectionAccessor
                         .getInstance().getUnassignedList(user.getPermissionList());
 
@@ -209,18 +225,52 @@ public class AuthorizationMaintainSupport {
                 }
             }
 
-            Password pwd = user.getPassword();
-            if (pwd == null || pwd.getValue() == null) {
-                pwd = new Password("");
+            AuthorizationUserPassword password = user.getPassword();
+            if (password == null || password.getPassword() == null || password.getPassword().getValue() == null) {
+                password = new AuthorizationUserPassword();
+                password.setDatatypeState(DatatypeState.INITIALIZED);
+                password.setPassword("");
+
+                user.setPassword(password);
             }
 
-            String encrypted = EncryptionUtility.encrypt(pwd.getValue());
-            user.setPassword(encrypted);
+            if (password.getDatatypeState() != DatatypeState.PERSISTENT) {
+                String encrypted = EncryptionUtility.encrypt(password.getPassword().getValue());
+                user.getPassword().getPassword().setValue(encrypted);
+
+                password = this.manager.persist(password);
+                user.setPassword(password);
+            }
         }
 
-        user = this.helper.persist(user);
+        user = this.manager.persist(user);
+        if (user.getRoleList().isTraversable()) {
+            user.getRoleList().size();
+        }
+        if (user.getPermissionList().isTraversable()) {
+            user.getPermissionList().size();
+        }
 
         return user;
+    }
+
+    /**
+     * Load and remove the loading relations pointing on an authorization user.
+     * 
+     * @throws PersistenceException
+     *             when the relations cannot be removed
+     */
+    private void removeUserRelations(Long id) throws PersistenceException {
+        NabuccoQuery<AuthorizationGroupUserRelation> query = this.manager
+                .createQuery("select r from AuthorizationGroupUserRelation r where r.user.id = :id");
+
+        query.setParameter(AuthorizationUser.ID, id);
+
+        List<AuthorizationGroupUserRelation> relations = query.getResultList();
+        for (AuthorizationGroupUserRelation relation : relations) {
+            relation.setDatatypeState(DatatypeState.DELETED);
+            this.manager.persist(relation);
+        }
     }
 
     /**
@@ -233,8 +283,7 @@ public class AuthorizationMaintainSupport {
      * 
      * @throws PersistenceException
      */
-    public AuthorizationRole maintainAuthorizationRole(AuthorizationRole role)
-            throws PersistenceException {
+    public AuthorizationRole maintainAuthorizationRole(AuthorizationRole role) throws PersistenceException {
 
         if (role == null) {
             throw new PersistenceException("Cannot maintain authorization role [null].");
@@ -242,17 +291,19 @@ public class AuthorizationMaintainSupport {
 
         if (role.getDatatypeState() == DatatypeState.DELETED) {
 
-            AuthorizationRole currentRole = this.helper.find(AuthorizationRole.class, role);
+            AuthorizationRole currentRole = this.manager.find(role);
 
             for (AuthorizationRolePermissionRelation relation : currentRole.getPermissionList()) {
                 relation.setDatatypeState(DatatypeState.DELETED);
                 this.maintainRelation(relation);
             }
 
+            this.removeRoleRelations(currentRole.getId());
+
         } else {
 
             // Permissions
-            if (isTraversable(role.getPermissionList())) {
+            if (role.getPermissionList().isTraversable()) {
                 List<AuthorizationRolePermissionRelation> unassignedPermissions = NabuccoCollectionAccessor
                         .getInstance().getUnassignedList(role.getPermissionList());
 
@@ -267,9 +318,49 @@ public class AuthorizationMaintainSupport {
             }
         }
 
-        role = this.helper.persist(role);
+        role = this.manager.persist(role);
+        if (role.getPermissionList().isTraversable()) {
+            role.getPermissionList().size();
+        }
 
         return role;
+    }
+
+    /**
+     * Load and remove the loading relations pointing on an authorization role.
+     * 
+     * @throws PersistenceException
+     *             when the relations cannot be removed
+     */
+    private void removeRoleRelations(Long id) throws PersistenceException {
+
+        // Groups
+        {
+            NabuccoQuery<AuthorizationGroupRoleRelation> query = this.manager
+                    .createQuery("select r from AuthorizationGroupRoleRelation r where r.role.id = :id");
+
+            query.setParameter(AuthorizationUser.ID, id);
+
+            List<AuthorizationGroupRoleRelation> relations = query.getResultList();
+            for (AuthorizationGroupRoleRelation relation : relations) {
+                relation.setDatatypeState(DatatypeState.DELETED);
+                this.manager.persist(relation);
+            }
+        }
+
+        // Users
+        {
+            NabuccoQuery<AuthorizationUserRoleRelation> query = this.manager
+                    .createQuery("select r from AuthorizationUserRoleRelation r where r.role.id = :id");
+
+            query.setParameter(AuthorizationUser.ID, id);
+
+            List<AuthorizationUserRoleRelation> relations = query.getResultList();
+            for (AuthorizationUserRoleRelation relation : relations) {
+                relation.setDatatypeState(DatatypeState.DELETED);
+                this.manager.persist(relation);
+            }
+        }
     }
 
     /**
@@ -282,8 +373,8 @@ public class AuthorizationMaintainSupport {
      * 
      * @throws PersistenceException
      */
-    public List<AuthorizationPermission> maintainAuthorizationPermission(
-            List<AuthorizationPermission> permissionList) throws PersistenceException {
+    public List<AuthorizationPermission> maintainAuthorizationPermission(List<AuthorizationPermission> permissionList)
+            throws PersistenceException {
         for (AuthorizationPermission permission : permissionList) {
             this.maintainAuthorizationPermission(permission);
         }
@@ -300,16 +391,71 @@ public class AuthorizationMaintainSupport {
      * 
      * @throws PersistenceException
      */
-    public AuthorizationPermission maintainAuthorizationPermission(
-            AuthorizationPermission permission) throws PersistenceException {
+    public AuthorizationPermission maintainAuthorizationPermission(AuthorizationPermission permission)
+            throws PersistenceException {
 
         if (permission == null) {
             throw new PersistenceException("Cannot maintain authorization permission [null].");
         }
 
-        permission = this.helper.persist(permission);
+        if (permission.getDatatypeState() == DatatypeState.DELETED) {
+            this.removePermissionRelations(permission.getId());
+        }
+
+        permission = this.manager.persist(permission);
 
         return permission;
+    }
+
+    /**
+     * Load and remove the loading relations pointing on an authorization permission.
+     * 
+     * @throws PersistenceException
+     *             when the relations cannot be removed
+     */
+    private void removePermissionRelations(Long id) throws PersistenceException {
+
+        // Groups
+        {
+            NabuccoQuery<AuthorizationGroupPermissionRelation> query = this.manager
+                    .createQuery("select r from AuthorizationGroupPermissionRelation r where r.permission.id = :id");
+
+            query.setParameter(AuthorizationPermission.ID, id);
+
+            List<AuthorizationGroupPermissionRelation> relations = query.getResultList();
+            for (AuthorizationGroupPermissionRelation relation : relations) {
+                relation.setDatatypeState(DatatypeState.DELETED);
+                this.manager.persist(relation);
+            }
+        }
+
+        // Users
+        {
+            NabuccoQuery<AuthorizationUserPermissionRelation> query = this.manager
+                    .createQuery("select r from AuthorizationUserPermissionRelation r where r.permission.id = :id");
+
+            query.setParameter(AuthorizationPermission.ID, id);
+
+            List<AuthorizationUserPermissionRelation> relations = query.getResultList();
+            for (AuthorizationUserPermissionRelation relation : relations) {
+                relation.setDatatypeState(DatatypeState.DELETED);
+                this.manager.persist(relation);
+            }
+        }
+
+        // Roles
+        {
+            NabuccoQuery<AuthorizationRolePermissionRelation> query = this.manager
+                    .createQuery("select r from AuthorizationRolePermissionRelation r where r.permission.id = :id");
+
+            query.setParameter(AuthorizationPermission.ID, id);
+
+            List<AuthorizationRolePermissionRelation> relations = query.getResultList();
+            for (AuthorizationRolePermissionRelation relation : relations) {
+                relation.setDatatypeState(DatatypeState.DELETED);
+                this.manager.persist(relation);
+            }
+        }
     }
 
     /**
@@ -330,33 +476,9 @@ public class AuthorizationMaintainSupport {
             throw new PersistenceException("Cannot maintain authorization relation [null].");
         }
 
-        this.helper.persist(relation);
+        this.manager.persist(relation);
 
         return relation;
-    }
-
-    /**
-     * Checks whether a list is traversable or not. Only {@link NabuccoList} that are not in state
-     * LAZY are considered.
-     * 
-     * @param list
-     *            the list to check
-     * 
-     * @return <b>true</b> if the list is traversable, <b>false</b> otherwise
-     */
-    private <T extends NabuccoDatatype> boolean isTraversable(List<T> list) {
-        if (list == null) {
-            return false;
-        }
-        if (!(list instanceof NabuccoList<?>)) {
-            return true;
-        }
-
-        NabuccoList<T> nabuccoList = (NabuccoList<T>) list;
-        if (nabuccoList.getState() != NabuccoCollectionState.LAZY) {
-            return true;
-        }
-        return false;
     }
 
 }

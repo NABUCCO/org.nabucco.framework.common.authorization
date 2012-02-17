@@ -1,17 +1,38 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.facade.datatype;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.nabucco.framework.base.facade.datatype.Datatype;
+import org.nabucco.framework.base.facade.datatype.code.Code;
 import org.nabucco.framework.base.facade.datatype.collection.NabuccoCollectionState;
 import org.nabucco.framework.base.facade.datatype.collection.NabuccoList;
-import org.nabucco.framework.base.facade.datatype.property.BasetypeProperty;
-import org.nabucco.framework.base.facade.datatype.property.ListProperty;
+import org.nabucco.framework.base.facade.datatype.collection.NabuccoListImpl;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoProperty;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyContainer;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyDescriptor;
+import org.nabucco.framework.base.facade.datatype.property.PropertyAssociationType;
+import org.nabucco.framework.base.facade.datatype.property.PropertyCache;
+import org.nabucco.framework.base.facade.datatype.property.PropertyDescriptorSupport;
 import org.nabucco.framework.base.facade.datatype.security.User;
-import org.nabucco.framework.base.facade.datatype.security.credential.Password;
+import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUserPassword;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUserPermissionRelation;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUserRoleRelation;
 
@@ -25,18 +46,24 @@ public class AuthorizationUser extends User implements Datatype {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] PROPERTY_NAMES = { "password", "roleList", "permissionList" };
+    private static final String[] PROPERTY_CONSTRAINTS = { "m0,1;", "m0,n;", "m0,n;" };
 
-    private static final String[] PROPERTY_CONSTRAINTS = { "l0,n;m0,1;", "m0,n;", "m0,n;" };
+    public static final String PASSWORD = "password";
+
+    public static final String ROLELIST = "roleList";
+
+    public static final String PERMISSIONLIST = "permissionList";
 
     /** The user password. */
-    private Password password;
+    private AuthorizationUserPassword password;
 
     /** The list of relations to AuthorizationRole. */
-    private List<AuthorizationUserRoleRelation> roleList;
+    private NabuccoList<AuthorizationUserRoleRelation> roleList;
 
     /** The list of relations to AuthorizationPermission. */
-    private List<AuthorizationUserPermissionRelation> permissionList;
+    private NabuccoList<AuthorizationUserPermissionRelation> permissionList;
+
+    private Long userTypeRefId;
 
     /** Constructs a new AuthorizationUser instance. */
     public AuthorizationUser() {
@@ -58,13 +85,11 @@ public class AuthorizationUser extends User implements Datatype {
         if ((this.getPassword() != null)) {
             clone.setPassword(this.getPassword().cloneObject());
         }
-        if ((this.roleList instanceof NabuccoList<?>)) {
-            clone.roleList = ((NabuccoList<AuthorizationUserRoleRelation>) this.roleList)
-                    .cloneCollection();
+        if ((this.roleList != null)) {
+            clone.roleList = this.roleList.cloneCollection();
         }
-        if ((this.permissionList instanceof NabuccoList<?>)) {
-            clone.permissionList = ((NabuccoList<AuthorizationUserPermissionRelation>) this.permissionList)
-                    .cloneCollection();
+        if ((this.permissionList != null)) {
+            clone.permissionList = this.permissionList.cloneCollection();
         }
     }
 
@@ -75,10 +100,9 @@ public class AuthorizationUser extends User implements Datatype {
      */
     List<AuthorizationUserRoleRelation> getRoleListJPA() {
         if ((this.roleList == null)) {
-            this.roleList = new NabuccoList<AuthorizationUserRoleRelation>(
-                    NabuccoCollectionState.LAZY);
+            this.roleList = new NabuccoListImpl<AuthorizationUserRoleRelation>(NabuccoCollectionState.LAZY);
         }
-        return ((NabuccoList<AuthorizationUserRoleRelation>) this.roleList).getDelegate();
+        return ((NabuccoListImpl<AuthorizationUserRoleRelation>) this.roleList).getDelegate();
     }
 
     /**
@@ -88,10 +112,9 @@ public class AuthorizationUser extends User implements Datatype {
      */
     void setRoleListJPA(List<AuthorizationUserRoleRelation> roleList) {
         if ((this.roleList == null)) {
-            this.roleList = new NabuccoList<AuthorizationUserRoleRelation>(
-                    NabuccoCollectionState.LAZY);
+            this.roleList = new NabuccoListImpl<AuthorizationUserRoleRelation>(NabuccoCollectionState.LAZY);
         }
-        ((NabuccoList<AuthorizationUserRoleRelation>) this.roleList).setDelegate(roleList);
+        ((NabuccoListImpl<AuthorizationUserRoleRelation>) this.roleList).setDelegate(roleList);
     }
 
     /**
@@ -101,11 +124,9 @@ public class AuthorizationUser extends User implements Datatype {
      */
     List<AuthorizationUserPermissionRelation> getPermissionListJPA() {
         if ((this.permissionList == null)) {
-            this.permissionList = new NabuccoList<AuthorizationUserPermissionRelation>(
-                    NabuccoCollectionState.LAZY);
+            this.permissionList = new NabuccoListImpl<AuthorizationUserPermissionRelation>(NabuccoCollectionState.LAZY);
         }
-        return ((NabuccoList<AuthorizationUserPermissionRelation>) this.permissionList)
-                .getDelegate();
+        return ((NabuccoListImpl<AuthorizationUserPermissionRelation>) this.permissionList).getDelegate();
     }
 
     /**
@@ -115,11 +136,28 @@ public class AuthorizationUser extends User implements Datatype {
      */
     void setPermissionListJPA(List<AuthorizationUserPermissionRelation> permissionList) {
         if ((this.permissionList == null)) {
-            this.permissionList = new NabuccoList<AuthorizationUserPermissionRelation>(
-                    NabuccoCollectionState.LAZY);
+            this.permissionList = new NabuccoListImpl<AuthorizationUserPermissionRelation>(NabuccoCollectionState.LAZY);
         }
-        ((NabuccoList<AuthorizationUserPermissionRelation>) this.permissionList)
-                .setDelegate(permissionList);
+        ((NabuccoListImpl<AuthorizationUserPermissionRelation>) this.permissionList).setDelegate(permissionList);
+    }
+
+    /**
+     * CreatePropertyContainer.
+     *
+     * @return the NabuccoPropertyContainer.
+     */
+    protected static NabuccoPropertyContainer createPropertyContainer() {
+        Map<String, NabuccoPropertyDescriptor> propertyMap = new HashMap<String, NabuccoPropertyDescriptor>();
+        propertyMap.putAll(PropertyCache.getInstance().retrieve(User.class).getPropertyMap());
+        propertyMap.put(PASSWORD, PropertyDescriptorSupport.createDatatype(PASSWORD, AuthorizationUserPassword.class,
+                8, PROPERTY_CONSTRAINTS[0], false, PropertyAssociationType.COMPOSITION));
+        propertyMap.put(ROLELIST, PropertyDescriptorSupport.createCollection(ROLELIST,
+                AuthorizationUserRoleRelation.class, 9, PROPERTY_CONSTRAINTS[1], false,
+                PropertyAssociationType.COMPOSITION));
+        propertyMap.put(PERMISSIONLIST, PropertyDescriptorSupport.createCollection(PERMISSIONLIST,
+                AuthorizationUserPermissionRelation.class, 10, PROPERTY_CONSTRAINTS[2], false,
+                PropertyAssociationType.COMPOSITION));
+        return new NabuccoPropertyContainer(propertyMap);
     }
 
     @Override
@@ -128,16 +166,35 @@ public class AuthorizationUser extends User implements Datatype {
     }
 
     @Override
-    public List<NabuccoProperty<?>> getProperties() {
-        List<NabuccoProperty<?>> properties = super.getProperties();
-        properties.add(new BasetypeProperty<Password>(PROPERTY_NAMES[0], Password.class,
-                PROPERTY_CONSTRAINTS[0], this.password));
-        properties.add(new ListProperty<AuthorizationUserRoleRelation>(PROPERTY_NAMES[1],
-                AuthorizationUserRoleRelation.class, PROPERTY_CONSTRAINTS[1], this.roleList));
-        properties.add(new ListProperty<AuthorizationUserPermissionRelation>(PROPERTY_NAMES[2],
-                AuthorizationUserPermissionRelation.class, PROPERTY_CONSTRAINTS[2],
-                this.permissionList));
+    public Set<NabuccoProperty> getProperties() {
+        Set<NabuccoProperty> properties = super.getProperties();
+        properties
+                .add(super.createProperty(AuthorizationUser.getPropertyDescriptor(PASSWORD), this.getPassword(), null));
+        properties.add(super.createProperty(AuthorizationUser.getPropertyDescriptor(ROLELIST), this.roleList, null));
+        properties.add(super.createProperty(AuthorizationUser.getPropertyDescriptor(PERMISSIONLIST),
+                this.permissionList, null));
+        properties.add(super.createProperty(AuthorizationUser.getPropertyDescriptor(USERTYPE), this.getUserType(),
+                this.userTypeRefId));
         return properties;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean setProperty(NabuccoProperty property) {
+        if (super.setProperty(property)) {
+            return true;
+        }
+        if ((property.getName().equals(PASSWORD) && (property.getType() == AuthorizationUserPassword.class))) {
+            this.setPassword(((AuthorizationUserPassword) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(ROLELIST) && (property.getType() == AuthorizationUserRoleRelation.class))) {
+            this.roleList = ((NabuccoList<AuthorizationUserRoleRelation>) property.getInstance());
+            return true;
+        } else if ((property.getName().equals(PERMISSIONLIST) && (property.getType() == AuthorizationUserPermissionRelation.class))) {
+            this.permissionList = ((NabuccoList<AuthorizationUserPermissionRelation>) property.getInstance());
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -160,6 +217,11 @@ public class AuthorizationUser extends User implements Datatype {
                 return false;
         } else if ((!this.password.equals(other.password)))
             return false;
+        if ((this.userTypeRefId == null)) {
+            if ((other.userTypeRefId != null))
+                return false;
+        } else if ((!this.userTypeRefId.equals(other.userTypeRefId)))
+            return false;
         return true;
     }
 
@@ -168,17 +230,8 @@ public class AuthorizationUser extends User implements Datatype {
         final int PRIME = 31;
         int result = super.hashCode();
         result = ((PRIME * result) + ((this.password == null) ? 0 : this.password.hashCode()));
+        result = ((PRIME * result) + ((this.userTypeRefId == null) ? 0 : this.userTypeRefId.hashCode()));
         return result;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder appendable = new StringBuilder();
-        appendable.append("<AuthorizationUser>\n");
-        appendable.append(super.toString());
-        appendable.append((("<password>" + this.password) + "</password>\n"));
-        appendable.append("</AuthorizationUser>\n");
-        return appendable.toString();
     }
 
     @Override
@@ -191,42 +244,29 @@ public class AuthorizationUser extends User implements Datatype {
     /**
      * The user password.
      *
-     * @return the Password.
+     * @param password the AuthorizationUserPassword.
      */
-    public Password getPassword() {
-        return this.password;
-    }
-
-    /**
-     * The user password.
-     *
-     * @param password the Password.
-     */
-    public void setPassword(Password password) {
+    public void setPassword(AuthorizationUserPassword password) {
         this.password = password;
     }
 
     /**
      * The user password.
      *
-     * @param password the String.
+     * @return the AuthorizationUserPassword.
      */
-    public void setPassword(String password) {
-        if ((this.password == null)) {
-            this.password = new Password();
-        }
-        this.password.setValue(password);
+    public AuthorizationUserPassword getPassword() {
+        return this.password;
     }
 
     /**
      * The list of relations to AuthorizationRole.
      *
-     * @return the List<AuthorizationUserRoleRelation>.
+     * @return the NabuccoList<AuthorizationUserRoleRelation>.
      */
-    public List<AuthorizationUserRoleRelation> getRoleList() {
+    public NabuccoList<AuthorizationUserRoleRelation> getRoleList() {
         if ((this.roleList == null)) {
-            this.roleList = new NabuccoList<AuthorizationUserRoleRelation>(
-                    NabuccoCollectionState.INITIALIZED);
+            this.roleList = new NabuccoListImpl<AuthorizationUserRoleRelation>(NabuccoCollectionState.INITIALIZED);
         }
         return this.roleList;
     }
@@ -234,13 +274,64 @@ public class AuthorizationUser extends User implements Datatype {
     /**
      * The list of relations to AuthorizationPermission.
      *
-     * @return the List<AuthorizationUserPermissionRelation>.
+     * @return the NabuccoList<AuthorizationUserPermissionRelation>.
      */
-    public List<AuthorizationUserPermissionRelation> getPermissionList() {
+    public NabuccoList<AuthorizationUserPermissionRelation> getPermissionList() {
         if ((this.permissionList == null)) {
-            this.permissionList = new NabuccoList<AuthorizationUserPermissionRelation>(
+            this.permissionList = new NabuccoListImpl<AuthorizationUserPermissionRelation>(
                     NabuccoCollectionState.INITIALIZED);
         }
         return this.permissionList;
+    }
+
+    /**
+     * Getter for the UserTypeRefId.
+     *
+     * @return the Long.
+     */
+    public Long getUserTypeRefId() {
+        return this.userTypeRefId;
+    }
+
+    /**
+     * Setter for the UserTypeRefId.
+     *
+     * @param userTypeRefId the Long.
+     */
+    public void setUserTypeRefId(Long userTypeRefId) {
+        this.userTypeRefId = userTypeRefId;
+    }
+
+    /**
+     * Setter for the UserType.
+     *
+     * @param userType the Code.
+     */
+    public void setUserType(Code userType) {
+        super.setUserType(userType);
+        if ((userType != null)) {
+            this.setUserTypeRefId(userType.getId());
+        } else {
+            this.setUserTypeRefId(null);
+        }
+    }
+
+    /**
+     * Getter for the PropertyDescriptor.
+     *
+     * @param propertyName the String.
+     * @return the NabuccoPropertyDescriptor.
+     */
+    public static NabuccoPropertyDescriptor getPropertyDescriptor(String propertyName) {
+        return PropertyCache.getInstance().retrieve(AuthorizationUser.class).getProperty(propertyName);
+    }
+
+    /**
+     * Getter for the PropertyDescriptorList.
+     *
+     * @return the List<NabuccoPropertyDescriptor>.
+     */
+    public static List<NabuccoPropertyDescriptor> getPropertyDescriptorList() {
+        return PropertyCache.getInstance().retrieve(AuthorizationUser.class).getAllProperties();
     }
 }

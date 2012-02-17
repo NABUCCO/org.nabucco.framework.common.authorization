@@ -5,8 +5,6 @@
 	<classpathentry kind="src" path="src/test/gen"/>
 	<classpathentry kind="src" path="src/test/man"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/portal/ejb3-persistence.jar"/>
-	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/portal/jsf-api.jar"/>
 	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/portal/jsp-api.jar"/>
 	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/portal/log4j.jar"/>
 	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/portal/org.nabucco.framework.base.facade.jar"/>

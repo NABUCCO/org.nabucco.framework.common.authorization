@@ -1,5 +1,18 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.ui.rcp.search.user.model;
 
@@ -7,18 +20,19 @@ import org.nabucco.framework.base.facade.datatype.DatatypeState;
 import org.nabucco.framework.base.facade.datatype.Description;
 import org.nabucco.framework.base.facade.datatype.Name;
 import org.nabucco.framework.base.facade.datatype.Owner;
-import org.nabucco.framework.base.facade.datatype.code.CodeType;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUser;
 import org.nabucco.framework.plugin.base.component.search.model.NabuccoComponentSearchParameter;
 import org.nabucco.framework.plugin.base.component.search.model.NabuccoComponentSearchViewModel;
 
 /**
- * AuthorizationUserSearchViewModel<p/>@TODO<p/>
- *
+ * AuthorizationUserSearchViewModel
+ * <p/>
+ * @TODO
+ * <p/>
+ * 
  * @author Silas Schwarz, PRODYNA AG, 2010-02-26
  */
-public class AuthorizationUserSearchViewModel extends
-        NabuccoComponentSearchViewModel<AuthorizationUser> implements
+public class AuthorizationUserSearchViewModel extends NabuccoComponentSearchViewModel<AuthorizationUser> implements
         NabuccoComponentSearchParameter {
 
     public static final String ID = "org.nabucco.framework.common.authorization.ui.search.user.AuthorizationUserSearchViewModel";
@@ -26,8 +40,6 @@ public class AuthorizationUserSearchViewModel extends
     private AuthorizationUser user;
 
     public static final String PROPERTY_USER_USERNAME = "userUsername";
-
-    public static final String PROPERTY_USER_USERTYPE = "userUserType";
 
     public static final String PROPERTY_USER_OWNER = "userOwner";
 
@@ -37,8 +49,9 @@ public class AuthorizationUserSearchViewModel extends
 
     /**
      * Constructs a new AuthorizationUserSearchViewModel instance.
-     *
-     * @param viewId the String.
+     * 
+     * @param viewId
+     *            the String.
      */
     public AuthorizationUserSearchViewModel(String viewId) {
         super();
@@ -58,7 +71,7 @@ public class AuthorizationUserSearchViewModel extends
 
     /**
      * Getter for the User.
-     *
+     * 
      * @return the AuthorizationUser.
      */
     public AuthorizationUser getUser() {
@@ -67,8 +80,9 @@ public class AuthorizationUserSearchViewModel extends
 
     /**
      * Setter for the UserUsername.
-     *
-     * @param newUsername the String.
+     * 
+     * @param newUsername
+     *            the String.
      */
     public void setUserUsername(String newUsername) {
         if (((user != null) && (user.getUsername() == null))) {
@@ -78,15 +92,14 @@ public class AuthorizationUserSearchViewModel extends
         String oldVal = user.getUsername().getValue();
         user.getUsername().setValue(newUsername);
         this.updateProperty(PROPERTY_USER_USERNAME, oldVal, newUsername);
-        if (((!oldVal.equals(newUsername)) && user.getDatatypeState().equals(
-                DatatypeState.PERSISTENT))) {
+        if (((!oldVal.equals(newUsername)) && user.getDatatypeState().equals(DatatypeState.PERSISTENT))) {
             user.setDatatypeState(DatatypeState.MODIFIED);
         }
     }
 
     /**
      * Getter for the UserUsername.
-     *
+     * 
      * @return the String.
      */
     public String getUserUsername() {
@@ -97,40 +110,10 @@ public class AuthorizationUserSearchViewModel extends
     }
 
     /**
-     * Setter for the UserUserType.
-     *
-     * @param newUserType the String.
-     */
-    public void setUserUserType(String newUserType) {
-        if (((user != null) && (user.getUserType() == null))) {
-            CodeType userType = new CodeType();
-            user.setUserType(userType);
-        }
-        String oldVal = user.getUserType().getValue();
-        user.getUserType().setValue(newUserType);
-        this.updateProperty(PROPERTY_USER_USERTYPE, oldVal, newUserType);
-        if (((!oldVal.equals(newUserType)) && user.getDatatypeState().equals(
-                DatatypeState.PERSISTENT))) {
-            user.setDatatypeState(DatatypeState.MODIFIED);
-        }
-    }
-
-    /**
-     * Getter for the UserUserType.
-     *
-     * @return the String.
-     */
-    public String getUserUserType() {
-        if ((((user == null) || (user.getUserType() == null)) || (user.getUserType().getValue() == null))) {
-            return "";
-        }
-        return user.getUserType().getValue();
-    }
-
-    /**
      * Setter for the UserOwner.
-     *
-     * @param newOwner the String.
+     * 
+     * @param newOwner
+     *            the String.
      */
     public void setUserOwner(String newOwner) {
         if (((user != null) && (user.getOwner() == null))) {
@@ -147,7 +130,7 @@ public class AuthorizationUserSearchViewModel extends
 
     /**
      * Getter for the UserOwner.
-     *
+     * 
      * @return the String.
      */
     public String getUserOwner() {
@@ -159,8 +142,9 @@ public class AuthorizationUserSearchViewModel extends
 
     /**
      * Setter for the UserDescription.
-     *
-     * @param newDescription the String.
+     * 
+     * @param newDescription
+     *            the String.
      */
     public void setUserDescription(String newDescription) {
         if (((user != null) && (user.getDescription() == null))) {
@@ -170,20 +154,18 @@ public class AuthorizationUserSearchViewModel extends
         String oldVal = user.getDescription().getValue();
         user.getDescription().setValue(newDescription);
         this.updateProperty(PROPERTY_USER_DESCRIPTION, oldVal, newDescription);
-        if (((!oldVal.equals(newDescription)) && user.getDatatypeState().equals(
-                DatatypeState.PERSISTENT))) {
+        if (((!oldVal.equals(newDescription)) && user.getDatatypeState().equals(DatatypeState.PERSISTENT))) {
             user.setDatatypeState(DatatypeState.MODIFIED);
         }
     }
 
     /**
      * Getter for the UserDescription.
-     *
+     * 
      * @return the String.
      */
     public String getUserDescription() {
-        if ((((user == null) || (user.getDescription() == null)) || (user.getDescription()
-                .getValue() == null))) {
+        if ((((user == null) || (user.getDescription() == null)) || (user.getDescription().getValue() == null))) {
             return "";
         }
         return user.getDescription().getValue();

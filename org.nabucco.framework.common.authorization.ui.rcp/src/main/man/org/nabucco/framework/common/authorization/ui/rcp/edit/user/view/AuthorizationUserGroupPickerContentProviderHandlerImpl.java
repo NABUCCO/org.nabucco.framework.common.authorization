@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -42,35 +42,33 @@ public class AuthorizationUserGroupPickerContentProviderHandlerImpl implements
     private AuthorizationUser currentUser;
 
     @Override
-    public Map<String, AuthorizationGroup[]> loadAllAuthorizationGroup(
-            AuthorizationUserEditViewModel viewModel) {
+    public Map<String, AuthorizationGroup[]> loadAllAuthorizationGroup(AuthorizationUserEditViewModel viewModel) {
         if (needsRefresh(viewModel)) {
             authorizationGroups = loadAllAuthorizationGroups(viewModel);
         }
         return authorizationGroups;
     }
 
-    public Map<String, AuthorizationGroup[]> loadAllAuthorizationGroups(
-            AuthorizationUserEditViewModel viewModel) {
-        final Map<String, AuthorizationGroup[]> result = new HashMap<String, AuthorizationGroup[]>();
+    private Map<String, AuthorizationGroup[]> loadAllAuthorizationGroups(AuthorizationUserEditViewModel viewModel) {
+        Map<String, AuthorizationGroup[]> result = new HashMap<String, AuthorizationGroup[]>();
 
         try {
-            final SearchAuthorizationDelegate searchDelegate = AuthorizationComponentServiceDelegateFactory
-                    .getInstance().getSearchAuthorization();
+            SearchAuthorizationDelegate searchDelegate = AuthorizationComponentServiceDelegateFactory.getInstance()
+                    .getSearchAuthorization();
 
-            final AuthorizationSearchMsg msg = new AuthorizationSearchMsg();
-            final AuthorizationGroupListMsg rs = searchDelegate.searchAuthorizationGroup(msg);
+            AuthorizationSearchMsg rq = new AuthorizationSearchMsg();
+            AuthorizationGroupListMsg rs = searchDelegate.searchAuthorizationGroup(rq);
 
             result.put(" ", rs.getAuthorizationGroupList().toArray(new AuthorizationGroup[0]));
 
-        } catch (final ClientException e) {
+        } catch (ClientException e) {
             Activator.getDefault().logError(e);
         }
 
         return result;
     }
 
-    private boolean needsRefresh(final AuthorizationUserEditViewModel viewModel) {
+    private boolean needsRefresh(AuthorizationUserEditViewModel viewModel) {
         boolean result = false;
         if (viewModel != null) {
             result = currentUser != viewModel.getUser();

@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright 2011 PRODYNA AG
+
+	Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.opensource.org/licenses/eclipse-1.0.php or
+	http://nabuccosource.org/License.html
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<xsd:schema
+	targetNamespace="org.nabucco.ui.list"
+	elementFormDefault="qualified"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="org.nabucco.ui.list"
+	xmlns:bts="org.nabucco.bootstrap"
+	xmlns:base="org.nabucco">
+	<xsd:import
+		schemaLocation="../org.nabucco.xsd"
+		namespace="org.nabucco"></xsd:import>
+	<xsd:element
+		name="extension"
+		type="ListExtensionType">
+	</xsd:element>
+	<xsd:complexType name="ListType">
+		<xsd:complexContent>
+			<xsd:extension base="base:UiElement">
+				<xsd:sequence
+					minOccurs="1"
+					maxOccurs="1">
+					<xsd:element
+						name="permission"
+						type="PermissionType"
+						maxOccurs="unbounded"
+						minOccurs="0">
+					</xsd:element>
+					<xsd:element
+						name="browser"
+						type="NbcBrowserType"
+						maxOccurs="unbounded"
+						minOccurs="1">
+					</xsd:element>
+					<xsd:element
+						name="workItemActions"
+						type="WorkItemActionsType"
+						maxOccurs="1"
+						minOccurs="0">
+					</xsd:element>
+					<xsd:element
+						name="filter"
+						type="FilterReferenceType"
+						maxOccurs="unbounded"
+						minOccurs="0">
+					</xsd:element>
+					<xsd:element
+						name="button"
+						type="ButtonType"
+						maxOccurs="unbounded"
+						minOccurs="0">
+					</xsd:element>
+					<xsd:element
+						name="column"
+						type="ColumnType"
+						maxOccurs="unbounded"
+						minOccurs="0">
+					</xsd:element>
+				</xsd:sequence>
+				<xsd:attribute
+					name="label"
+					type="xsd:string"
+					use="required">
+				</xsd:attribute>
+				<xsd:attribute
+					name="tooltip"
+					type="xsd:string"
+					use="required">
+				</xsd:attribute>
+				<xsd:attribute
+					name="icon"
+					type="xsd:string"
+					use="required">
+				</xsd:attribute>
+				<xsd:attribute
+					name="doubleclickAction"
+					type="base:ActionIdType"
+					use="optional">
+				</xsd:attribute>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="PermissionType">
+		<xsd:complexContent>
+			<xsd:extension base="base:UiPermissionType"></xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="WorkItemActionsType">
+		<xsd:sequence>
+			<xsd:element
+				name="action"
+				maxOccurs="unbounded"
+				minOccurs="1">
+				<xsd:complexType>
+					<xsd:attribute
+						name="type"
+						use="required">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:enumeration value="OPEN"></xsd:enumeration>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:attribute>
+					<xsd:attribute
+						name="actionId"
+						use="required"
+						type="base:ActionIdType">
+					</xsd:attribute>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="NbcBrowserType">
+		<xsd:sequence>
+			<xsd:element
+				name="entry"
+				maxOccurs="unbounded"
+				minOccurs="0">
+				<xsd:complexType>
+					<xsd:attribute
+						name="id"
+						type="xsd:string"
+						use="required">
+					</xsd:attribute>
+					<xsd:attributeGroup ref="DefaultUIAttributeGroup">
+					</xsd:attributeGroup>
+					<xsd:attribute
+						name="propertyLabel"
+						type="xsd:string"
+						use="required">
+					</xsd:attribute>
+					<xsd:attribute
+						name="propertyTooltip"
+						type="xsd:string"
+						use="required">
+					</xsd:attribute>
+					<xsd:attribute
+						name="grouping"
+						use="optional">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:pattern value="\d+"></xsd:pattern>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:attribute>
+					<xsd:attribute
+						name="actionId"
+						type="xsd:string"
+						use="optional">
+					</xsd:attribute>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute
+			name="refId"
+			type="xsd:string"></xsd:attribute>
+		<xsd:attribute
+			name="label"
+			type="xsd:string"
+			use="optional"></xsd:attribute>
+		<xsd:attribute
+			name="icon"
+			type="xsd:string"
+			use="optional"></xsd:attribute>
+		<xsd:attribute
+			name="tooltip"
+			type="xsd:string"
+			use="optional"></xsd:attribute>
+	</xsd:complexType>
+	<xsd:attributeGroup name="DefaultUIAttributeGroup">
+		<xsd:attribute
+			name="label"
+			type="xsd:string"
+			use="optional"></xsd:attribute>
+		<xsd:attribute
+			name="icon"
+			type="xsd:string"
+			use="required"></xsd:attribute>
+		<xsd:attribute
+			name="tooltip"
+			type="xsd:string"
+			use="optional">
+		</xsd:attribute>
+	</xsd:attributeGroup>
+	<xsd:complexType name="ButtonType">
+		<xsd:attribute
+			name="id"
+			type="xsd:string"
+			use="required"></xsd:attribute>
+		<xsd:attribute
+			name="actionId"
+			type="base:ActionIdType"
+			use="optional">
+		</xsd:attribute>
+		<xsd:attributeGroup ref="DefaultUIAttributeGroup"></xsd:attributeGroup>
+	</xsd:complexType>
+	<xsd:complexType name="ListExtensionType">
+		<xsd:complexContent>
+			<xsd:extension base="base:ExtensionType">
+				<xsd:sequence>
+					<xsd:element
+						name="list"
+						type="ListType"
+						maxOccurs="1"
+						minOccurs="1"></xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="FilterReferenceType">
+		<xsd:attribute
+			name="refId"
+			type="xsd:string"
+			use="required">
+		</xsd:attribute>
+		<xsd:attribute
+			name="label"
+			type="xsd:string"
+			use="optional">
+		</xsd:attribute>
+		<xsd:attribute
+			name="tooltip"
+			type="xsd:string"
+			use="optional">
+		</xsd:attribute>
+		<xsd:attribute
+			name="loadAction"
+			type="base:ActionIdType"
+			use="optional">
+		</xsd:attribute>
+		<xsd:attribute
+			name="default"
+			type="xsd:boolean"
+			use="optional">
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="ColumnType">
+		<xsd:attribute
+			name="id"
+			type="xsd:string"
+			use="required">
+		</xsd:attribute>
+		<xsd:attribute
+			name="label"
+			type="xsd:string"
+			use="required">
+		</xsd:attribute>
+		<xsd:attribute
+			name="property"
+			type="xsd:string"
+			use="required">
+		</xsd:attribute>
+		<xsd:attribute
+			name="tooltip"
+			type="xsd:string"
+			use="required">
+		</xsd:attribute>
+		<xsd:attribute
+			name="sortable"
+			type="xsd:boolean"
+			use="optional"
+			default="true">
+		</xsd:attribute>
+		<xsd:attribute
+			name="visible"
+			type="xsd:boolean"
+			use="optional"
+			default="true">
+		</xsd:attribute>
+		<xsd:attribute
+			name="width"
+			type="xsd:int">
+		</xsd:attribute>
+		<xsd:attribute name="layout">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="PERCENT"></xsd:enumeration>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
+</xsd:schema>

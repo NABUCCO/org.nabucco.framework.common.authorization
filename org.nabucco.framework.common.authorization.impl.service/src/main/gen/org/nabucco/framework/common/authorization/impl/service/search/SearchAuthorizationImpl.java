@@ -1,8 +1,24 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.impl.service.search;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import javax.persistence.EntityManager;
 import org.nabucco.framework.base.facade.exception.service.SearchException;
 import org.nabucco.framework.base.facade.message.ServiceRequest;
@@ -10,6 +26,8 @@ import org.nabucco.framework.base.facade.message.ServiceResponse;
 import org.nabucco.framework.base.facade.service.injection.InjectionException;
 import org.nabucco.framework.base.facade.service.injection.InjectionProvider;
 import org.nabucco.framework.base.impl.service.ServiceSupport;
+import org.nabucco.framework.base.impl.service.maintain.PersistenceManager;
+import org.nabucco.framework.base.impl.service.maintain.PersistenceManagerFactory;
 import org.nabucco.framework.common.authorization.facade.message.AuthorizationGroupListMsg;
 import org.nabucco.framework.common.authorization.facade.message.AuthorizationPermissionListMsg;
 import org.nabucco.framework.common.authorization.facade.message.AuthorizationRoleListMsg;
@@ -29,7 +47,7 @@ public class SearchAuthorizationImpl extends ServiceSupport implements SearchAut
 
     private static final String ID = "SearchAuthorization";
 
-    private EntityManager em;
+    private static Map<String, String[]> ASPECTS;
 
     private SearchAuthorizationGroupServiceHandler searchAuthorizationGroupServiceHandler;
 
@@ -39,52 +57,69 @@ public class SearchAuthorizationImpl extends ServiceSupport implements SearchAut
 
     private SearchAuthorizationPermissionServiceHandler searchAuthorizationPermissionServiceHandler;
 
+    private EntityManager entityManager;
+
     /** Constructs a new SearchAuthorizationImpl instance. */
     public SearchAuthorizationImpl() {
         super();
     }
 
-    /** PostConstruct. */
+    @Override
     public void postConstruct() {
+        super.postConstruct();
         InjectionProvider injector = InjectionProvider.getInstance(ID);
-        this.searchAuthorizationGroupServiceHandler = injector
-                .inject(SearchAuthorizationGroupServiceHandler.getId());
+        PersistenceManager persistenceManager = PersistenceManagerFactory.getInstance().createPersistenceManager(
+                this.entityManager, super.getLogger());
+        this.searchAuthorizationGroupServiceHandler = injector.inject(SearchAuthorizationGroupServiceHandler.getId());
         if ((this.searchAuthorizationGroupServiceHandler != null)) {
-            this.searchAuthorizationGroupServiceHandler.setEntityManager(this.em);
+            this.searchAuthorizationGroupServiceHandler.setPersistenceManager(persistenceManager);
             this.searchAuthorizationGroupServiceHandler.setLogger(super.getLogger());
         }
-        this.searchAuthorizationUserServiceHandler = injector
-                .inject(SearchAuthorizationUserServiceHandler.getId());
+        this.searchAuthorizationUserServiceHandler = injector.inject(SearchAuthorizationUserServiceHandler.getId());
         if ((this.searchAuthorizationUserServiceHandler != null)) {
-            this.searchAuthorizationUserServiceHandler.setEntityManager(this.em);
+            this.searchAuthorizationUserServiceHandler.setPersistenceManager(persistenceManager);
             this.searchAuthorizationUserServiceHandler.setLogger(super.getLogger());
         }
-        this.searchAuthorizationRoleServiceHandler = injector
-                .inject(SearchAuthorizationRoleServiceHandler.getId());
+        this.searchAuthorizationRoleServiceHandler = injector.inject(SearchAuthorizationRoleServiceHandler.getId());
         if ((this.searchAuthorizationRoleServiceHandler != null)) {
-            this.searchAuthorizationRoleServiceHandler.setEntityManager(this.em);
+            this.searchAuthorizationRoleServiceHandler.setPersistenceManager(persistenceManager);
             this.searchAuthorizationRoleServiceHandler.setLogger(super.getLogger());
         }
-        this.searchAuthorizationPermissionServiceHandler = injector
-                .inject(SearchAuthorizationPermissionServiceHandler.getId());
+        this.searchAuthorizationPermissionServiceHandler = injector.inject(SearchAuthorizationPermissionServiceHandler
+                .getId());
         if ((this.searchAuthorizationPermissionServiceHandler != null)) {
-            this.searchAuthorizationPermissionServiceHandler.setEntityManager(this.em);
+            this.searchAuthorizationPermissionServiceHandler.setPersistenceManager(persistenceManager);
             this.searchAuthorizationPermissionServiceHandler.setLogger(super.getLogger());
         }
     }
 
-    /** PreDestroy. */
+    @Override
     public void preDestroy() {
+        super.preDestroy();
     }
 
     @Override
-    public ServiceResponse<AuthorizationGroupListMsg> searchAuthorizationGroup(
-            ServiceRequest<AuthorizationSearchMsg> rq) throws SearchException {
+    public String[] getAspects(String operationName) {
+        if ((ASPECTS == null)) {
+            ASPECTS = new HashMap<String, String[]>();
+            ASPECTS.put("searchAuthorizationGroup", new String[] { "org.nabucco.aspect.resolving" });
+            ASPECTS.put("searchAuthorizationUser", new String[] { "org.nabucco.aspect.resolving" });
+            ASPECTS.put("searchAuthorizationRole", new String[] { "org.nabucco.aspect.resolving" });
+            ASPECTS.put("searchAuthorizationPermission", new String[] { "org.nabucco.aspect.resolving" });
+        }
+        String[] aspects = ASPECTS.get(operationName);
+        if ((aspects == null)) {
+            return ServiceSupport.NO_ASPECTS;
+        }
+        return Arrays.copyOf(aspects, aspects.length);
+    }
+
+    @Override
+    public ServiceResponse<AuthorizationGroupListMsg> searchAuthorizationGroup(ServiceRequest<AuthorizationSearchMsg> rq)
+            throws SearchException {
         if ((this.searchAuthorizationGroupServiceHandler == null)) {
-            super.getLogger().error(
-                    "No service implementation configured for searchAuthorizationGroup().");
-            throw new InjectionException(
-                    "No service implementation configured for searchAuthorizationGroup().");
+            super.getLogger().error("No service implementation configured for searchAuthorizationGroup().");
+            throw new InjectionException("No service implementation configured for searchAuthorizationGroup().");
         }
         ServiceResponse<AuthorizationGroupListMsg> rs;
         this.searchAuthorizationGroupServiceHandler.init();
@@ -94,13 +129,11 @@ public class SearchAuthorizationImpl extends ServiceSupport implements SearchAut
     }
 
     @Override
-    public ServiceResponse<AuthorizationUserListMsg> searchAuthorizationUser(
-            ServiceRequest<AuthorizationSearchMsg> rq) throws SearchException {
+    public ServiceResponse<AuthorizationUserListMsg> searchAuthorizationUser(ServiceRequest<AuthorizationSearchMsg> rq)
+            throws SearchException {
         if ((this.searchAuthorizationUserServiceHandler == null)) {
-            super.getLogger().error(
-                    "No service implementation configured for searchAuthorizationUser().");
-            throw new InjectionException(
-                    "No service implementation configured for searchAuthorizationUser().");
+            super.getLogger().error("No service implementation configured for searchAuthorizationUser().");
+            throw new InjectionException("No service implementation configured for searchAuthorizationUser().");
         }
         ServiceResponse<AuthorizationUserListMsg> rs;
         this.searchAuthorizationUserServiceHandler.init();
@@ -110,13 +143,11 @@ public class SearchAuthorizationImpl extends ServiceSupport implements SearchAut
     }
 
     @Override
-    public ServiceResponse<AuthorizationRoleListMsg> searchAuthorizationRole(
-            ServiceRequest<AuthorizationSearchMsg> rq) throws SearchException {
+    public ServiceResponse<AuthorizationRoleListMsg> searchAuthorizationRole(ServiceRequest<AuthorizationSearchMsg> rq)
+            throws SearchException {
         if ((this.searchAuthorizationRoleServiceHandler == null)) {
-            super.getLogger().error(
-                    "No service implementation configured for searchAuthorizationRole().");
-            throw new InjectionException(
-                    "No service implementation configured for searchAuthorizationRole().");
+            super.getLogger().error("No service implementation configured for searchAuthorizationRole().");
+            throw new InjectionException("No service implementation configured for searchAuthorizationRole().");
         }
         ServiceResponse<AuthorizationRoleListMsg> rs;
         this.searchAuthorizationRoleServiceHandler.init();
@@ -129,10 +160,8 @@ public class SearchAuthorizationImpl extends ServiceSupport implements SearchAut
     public ServiceResponse<AuthorizationPermissionListMsg> searchAuthorizationPermission(
             ServiceRequest<AuthorizationSearchMsg> rq) throws SearchException {
         if ((this.searchAuthorizationPermissionServiceHandler == null)) {
-            super.getLogger().error(
-                    "No service implementation configured for searchAuthorizationPermission().");
-            throw new InjectionException(
-                    "No service implementation configured for searchAuthorizationPermission().");
+            super.getLogger().error("No service implementation configured for searchAuthorizationPermission().");
+            throw new InjectionException("No service implementation configured for searchAuthorizationPermission().");
         }
         ServiceResponse<AuthorizationPermissionListMsg> rs;
         this.searchAuthorizationPermissionServiceHandler.init();

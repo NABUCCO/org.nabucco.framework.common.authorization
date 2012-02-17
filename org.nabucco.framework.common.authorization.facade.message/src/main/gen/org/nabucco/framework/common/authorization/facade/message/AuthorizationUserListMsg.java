@@ -1,12 +1,34 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.facade.message;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import org.nabucco.framework.base.facade.datatype.property.ListProperty;
+import java.util.Map;
+import java.util.Set;
+import org.nabucco.framework.base.facade.datatype.collection.NabuccoCollectionState;
+import org.nabucco.framework.base.facade.datatype.collection.NabuccoList;
+import org.nabucco.framework.base.facade.datatype.collection.NabuccoListImpl;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoProperty;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyContainer;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyDescriptor;
+import org.nabucco.framework.base.facade.datatype.property.PropertyAssociationType;
+import org.nabucco.framework.base.facade.datatype.property.PropertyCache;
+import org.nabucco.framework.base.facade.datatype.property.PropertyDescriptorSupport;
 import org.nabucco.framework.base.facade.message.ServiceMessage;
 import org.nabucco.framework.base.facade.message.ServiceMessageSupport;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUser;
@@ -21,23 +43,59 @@ public class AuthorizationUserListMsg extends ServiceMessageSupport implements S
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] PROPERTY_NAMES = { "authorizationUserList" };
-
     private static final String[] PROPERTY_CONSTRAINTS = { "m0,n;" };
 
-    private List<AuthorizationUser> authorizationUserList;
+    public static final String AUTHORIZATIONUSERLIST = "authorizationUserList";
+
+    /** The list of authorization users. */
+    private NabuccoList<AuthorizationUser> authorizationUserList;
 
     /** Constructs a new AuthorizationUserListMsg instance. */
     public AuthorizationUserListMsg() {
         super();
+        this.initDefaults();
+    }
+
+    /** InitDefaults. */
+    private void initDefaults() {
+    }
+
+    /**
+     * CreatePropertyContainer.
+     *
+     * @return the NabuccoPropertyContainer.
+     */
+    protected static NabuccoPropertyContainer createPropertyContainer() {
+        Map<String, NabuccoPropertyDescriptor> propertyMap = new HashMap<String, NabuccoPropertyDescriptor>();
+        propertyMap.put(AUTHORIZATIONUSERLIST, PropertyDescriptorSupport.createCollection(AUTHORIZATIONUSERLIST,
+                AuthorizationUser.class, 0, PROPERTY_CONSTRAINTS[0], false, PropertyAssociationType.COMPOSITION));
+        return new NabuccoPropertyContainer(propertyMap);
+    }
+
+    /** Init. */
+    public void init() {
+        this.initDefaults();
     }
 
     @Override
-    public List<NabuccoProperty<?>> getProperties() {
-        List<NabuccoProperty<?>> properties = super.getProperties();
-        properties.add(new ListProperty<AuthorizationUser>(PROPERTY_NAMES[0],
-                AuthorizationUser.class, PROPERTY_CONSTRAINTS[0], this.authorizationUserList));
+    public Set<NabuccoProperty> getProperties() {
+        Set<NabuccoProperty> properties = super.getProperties();
+        properties.add(super.createProperty(AuthorizationUserListMsg.getPropertyDescriptor(AUTHORIZATIONUSERLIST),
+                this.authorizationUserList));
         return properties;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean setProperty(NabuccoProperty property) {
+        if (super.setProperty(property)) {
+            return true;
+        }
+        if ((property.getName().equals(AUTHORIZATIONUSERLIST) && (property.getType() == AuthorizationUser.class))) {
+            this.authorizationUserList = ((NabuccoList<AuthorizationUser>) property.getInstance());
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -67,20 +125,8 @@ public class AuthorizationUserListMsg extends ServiceMessageSupport implements S
     public int hashCode() {
         final int PRIME = 31;
         int result = super.hashCode();
-        result = ((PRIME * result) + ((this.authorizationUserList == null) ? 0
-                : this.authorizationUserList.hashCode()));
+        result = ((PRIME * result) + ((this.authorizationUserList == null) ? 0 : this.authorizationUserList.hashCode()));
         return result;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder appendable = new StringBuilder();
-        appendable.append("<AuthorizationUserListMsg>\n");
-        appendable.append(super.toString());
-        appendable
-                .append((("<authorizationUserList>" + this.authorizationUserList) + "</authorizationUserList>\n"));
-        appendable.append("</AuthorizationUserListMsg>\n");
-        return appendable.toString();
     }
 
     @Override
@@ -89,14 +135,33 @@ public class AuthorizationUserListMsg extends ServiceMessageSupport implements S
     }
 
     /**
-     * Missing description at method getAuthorizationUserList.
+     * The list of authorization users.
      *
-     * @return the List<AuthorizationUser>.
+     * @return the NabuccoList<AuthorizationUser>.
      */
-    public List<AuthorizationUser> getAuthorizationUserList() {
+    public NabuccoList<AuthorizationUser> getAuthorizationUserList() {
         if ((this.authorizationUserList == null)) {
-            this.authorizationUserList = new ArrayList<AuthorizationUser>();
+            this.authorizationUserList = new NabuccoListImpl<AuthorizationUser>(NabuccoCollectionState.INITIALIZED);
         }
         return this.authorizationUserList;
+    }
+
+    /**
+     * Getter for the PropertyDescriptor.
+     *
+     * @param propertyName the String.
+     * @return the NabuccoPropertyDescriptor.
+     */
+    public static NabuccoPropertyDescriptor getPropertyDescriptor(String propertyName) {
+        return PropertyCache.getInstance().retrieve(AuthorizationUserListMsg.class).getProperty(propertyName);
+    }
+
+    /**
+     * Getter for the PropertyDescriptorList.
+     *
+     * @return the List<NabuccoPropertyDescriptor>.
+     */
+    public static List<NabuccoPropertyDescriptor> getPropertyDescriptorList() {
+        return PropertyCache.getInstance().retrieve(AuthorizationUserListMsg.class).getAllProperties();
     }
 }

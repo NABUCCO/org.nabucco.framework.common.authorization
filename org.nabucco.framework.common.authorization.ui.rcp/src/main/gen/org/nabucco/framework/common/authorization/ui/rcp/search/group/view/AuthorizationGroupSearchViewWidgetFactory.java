@@ -1,5 +1,18 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.ui.rcp.search.group.view;
 
@@ -16,8 +29,11 @@ import org.nabucco.framework.plugin.base.layout.WidgetFactory;
 import org.nabucco.framework.plugin.base.view.NabuccoFormToolkit;
 
 /**
- * AuthorizationGroupSearchViewWidgetFactory<p/>@TODO<p/>
- *
+ * AuthorizationGroupSearchViewWidgetFactory
+ * <p/>
+ * @TODO
+ * <p/>
+ * 
  * @author Silas Schwarz, PRODYNA AG, 2010-02-26
  */
 public class AuthorizationGroupSearchViewWidgetFactory extends WidgetFactory {
@@ -27,10 +43,6 @@ public class AuthorizationGroupSearchViewWidgetFactory extends WidgetFactory {
     public static final String LABEL_NAMETEXT = "group.groupname";
 
     public static final String OBSERVE_VALUE_NAMETEXT = AuthorizationGroupSearchViewModel.PROPERTY_GROUP_GROUPNAME;
-
-    public static final String LABEL_TYPETEXT = "group.groupType";
-
-    public static final String OBSERVE_VALUE_TYPETEXT = AuthorizationGroupSearchViewModel.PROPERTY_GROUP_GROUPTYPE;
 
     public static final String LABEL_OWNERTEXT = "group.owner";
 
@@ -42,9 +54,11 @@ public class AuthorizationGroupSearchViewWidgetFactory extends WidgetFactory {
 
     /**
      * Constructs a new AuthorizationGroupSearchViewWidgetFactory instance.
-     *
-     * @param aModel the AuthorizationGroupSearchViewModel.
-     * @param nabuccoFormToolKit the NabuccoFormToolkit.
+     * 
+     * @param aModel
+     *            the AuthorizationGroupSearchViewModel.
+     * @param nabuccoFormToolKit
+     *            the NabuccoFormToolkit.
      */
     public AuthorizationGroupSearchViewWidgetFactory(final NabuccoFormToolkit nabuccoFormToolKit,
             final AuthorizationGroupSearchViewModel aModel) {
@@ -54,8 +68,9 @@ public class AuthorizationGroupSearchViewWidgetFactory extends WidgetFactory {
 
     /**
      * CreateLabelNameText.
-     *
-     * @param parent the Composite.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Label.
      */
     public Label createLabelNameText(Composite parent) {
@@ -64,50 +79,25 @@ public class AuthorizationGroupSearchViewWidgetFactory extends WidgetFactory {
 
     /**
      * CreateInputFieldNameText.
-     *
-     * @param parent the Composite.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Text.
      */
     public Text createInputFieldNameText(Composite parent) {
         Text result = nabuccoFormToolKit.createTextInput(parent);
         DataBindingContext bindingContext = new DataBindingContext();
         IObservableValue uiElement = SWTObservables.observeText(result, SWT.Modify);
-        IObservableValue modelElement = BeansObservables
-                .observeValue(model, OBSERVE_VALUE_NAMETEXT);
-        bindingContext.bindValue(uiElement, modelElement, null, null);
-        return result;
-    }
-
-    /**
-     * CreateLabelTypeText.
-     *
-     * @param parent the Composite.
-     * @return the Label.
-     */
-    public Label createLabelTypeText(Composite parent) {
-        return nabuccoFormToolKit.createRealLabel(parent, LABEL_TYPETEXT);
-    }
-
-    /**
-     * CreateInputFieldTypeText.
-     *
-     * @param parent the Composite.
-     * @return the Text.
-     */
-    public Text createInputFieldTypeText(Composite parent) {
-        Text result = nabuccoFormToolKit.createTextInput(parent);
-        DataBindingContext bindingContext = new DataBindingContext();
-        IObservableValue uiElement = SWTObservables.observeText(result, SWT.Modify);
-        IObservableValue modelElement = BeansObservables
-                .observeValue(model, OBSERVE_VALUE_TYPETEXT);
+        IObservableValue modelElement = BeansObservables.observeValue(model, OBSERVE_VALUE_NAMETEXT);
         bindingContext.bindValue(uiElement, modelElement, null, null);
         return result;
     }
 
     /**
      * CreateLabelOwnerText.
-     *
-     * @param parent the Composite.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Label.
      */
     public Label createLabelOwnerText(Composite parent) {
@@ -116,24 +106,25 @@ public class AuthorizationGroupSearchViewWidgetFactory extends WidgetFactory {
 
     /**
      * CreateInputFieldOwnerText.
-     *
-     * @param parent the Composite.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Text.
      */
     public Text createInputFieldOwnerText(Composite parent) {
         Text result = nabuccoFormToolKit.createTextInput(parent);
         DataBindingContext bindingContext = new DataBindingContext();
         IObservableValue uiElement = SWTObservables.observeText(result, SWT.Modify);
-        IObservableValue modelElement = BeansObservables.observeValue(model,
-                OBSERVE_VALUE_OWNERTEXT);
+        IObservableValue modelElement = BeansObservables.observeValue(model, OBSERVE_VALUE_OWNERTEXT);
         bindingContext.bindValue(uiElement, modelElement, null, null);
         return result;
     }
 
     /**
      * CreateLabelDescriptionText.
-     *
-     * @param parent the Composite.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Label.
      */
     public Label createLabelDescriptionText(Composite parent) {
@@ -142,16 +133,16 @@ public class AuthorizationGroupSearchViewWidgetFactory extends WidgetFactory {
 
     /**
      * CreateInputFieldDescriptionText.
-     *
-     * @param parent the Composite.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Text.
      */
     public Text createInputFieldDescriptionText(Composite parent) {
         Text result = nabuccoFormToolKit.createTextInput(parent);
         DataBindingContext bindingContext = new DataBindingContext();
         IObservableValue uiElement = SWTObservables.observeText(result, SWT.Modify);
-        IObservableValue modelElement = BeansObservables.observeValue(model,
-                OBSERVE_VALUE_DESCRIPTIONTEXT);
+        IObservableValue modelElement = BeansObservables.observeValue(model, OBSERVE_VALUE_DESCRIPTIONTEXT);
         bindingContext.bindValue(uiElement, modelElement, null, null);
         return result;
     }

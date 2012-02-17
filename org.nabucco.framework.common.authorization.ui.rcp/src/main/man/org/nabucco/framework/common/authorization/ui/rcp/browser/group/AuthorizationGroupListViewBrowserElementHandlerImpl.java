@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -43,8 +43,7 @@ public class AuthorizationGroupListViewBrowserElementHandlerImpl
         fullLoadChildren(viewModel);
 
         for (AuthorizationGroup authorizationGroup : viewModel.getElements()) {
-            element.addBrowserElement(new AuthorizationGroupEditViewBrowserElement(
-                    authorizationGroup));
+            element.addBrowserElement(new AuthorizationGroupEditViewBrowserElement(authorizationGroup));
         }
 
     }
@@ -53,14 +52,11 @@ public class AuthorizationGroupListViewBrowserElementHandlerImpl
         try {
             ResolveAuthorizationDelegate resolveAuthorization = AuthorizationComponentServiceDelegateFactory
                     .getInstance().getResolveAuthorization();
-            AuthorizationGroupListMsg msg = this
-                    .createAuthorizationGroupListResolutionMsg(viewModel);
+            AuthorizationGroupListMsg msg = this.createAuthorizationGroupListResolutionMsg(viewModel);
 
-            AuthorizationGroupListMsg response = resolveAuthorization
-                    .resolveAuthorizationGroupList(msg);
+            AuthorizationGroupListMsg response = resolveAuthorization.resolveAuthorizationGroupList(msg);
 
-            viewModel.setElements(response.getAuthorizationGroupList().toArray(
-                    new AuthorizationGroup[0]));
+            viewModel.setElements(response.getAuthorizationGroupList().toArray(new AuthorizationGroup[0]));
         } catch (Exception e) {
             Activator.getDefault().logError(e);
         }
@@ -92,8 +88,7 @@ public class AuthorizationGroupListViewBrowserElementHandlerImpl
     }
 
     @Override
-    public void updateViewModel(List<AuthorizationGroup> elements,
-            AuthorizationGroupListViewModel viewModel) {
+    public void updateViewModel(List<AuthorizationGroup> elements, AuthorizationGroupListViewModel viewModel) {
         viewModel.setElements(elements.toArray(new AuthorizationGroup[0]));
     }
 

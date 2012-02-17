@@ -7,8 +7,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.nabucco.framework.common.authorization.facade.service"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/facade/ejb3-persistence.jar"/>
-	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/facade/log4j.jar"/>
-	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/facade/org.nabucco.framework.base.facade.jar"/>
-	<classpathentry kind="output" path="out"/>
+	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/facade/org.nabucco.framework.base.facade.jar" sourcepath="/org.nabucco.framework.common.authorization/lib/source/org.nabucco.framework.base.facade.sources.zip"/>
+	<classpathentry kind="output" path="out/ide"/>
 </classpath>

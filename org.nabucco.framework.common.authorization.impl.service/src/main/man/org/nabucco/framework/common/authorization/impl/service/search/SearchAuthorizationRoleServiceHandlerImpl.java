@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,24 +22,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.Query;
-
 import org.nabucco.framework.base.facade.datatype.DatatypeState;
+import org.nabucco.framework.base.facade.exception.persistence.PersistenceException;
 import org.nabucco.framework.base.facade.exception.service.SearchException;
+import org.nabucco.framework.base.impl.service.maintain.NabuccoQuery;
 import org.nabucco.framework.base.impl.service.search.QuerySupport;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationRole;
 import org.nabucco.framework.common.authorization.facade.datatype.search.AuthorizationSearchParameter;
-
 import org.nabucco.framework.common.authorization.facade.message.AuthorizationRoleListMsg;
 import org.nabucco.framework.common.authorization.facade.message.search.AuthorizationSearchMsg;
 
 /**
  * SearchAuthorizationRoleServiceHandlerImpl
  * 
- * @author Stefanie Feld, PRODYNA AG
+ * @author Nicolas Moser, PRODYNA AG
  */
-public class SearchAuthorizationRoleServiceHandlerImpl extends
-        SearchAuthorizationRoleServiceHandler {
+public class SearchAuthorizationRoleServiceHandlerImpl extends SearchAuthorizationRoleServiceHandler {
 
     private static final long serialVersionUID = 1L;
 
@@ -50,8 +48,7 @@ public class SearchAuthorizationRoleServiceHandlerImpl extends
     private Set<AuthorizationRole> resultSet;
 
     @Override
-    public AuthorizationRoleListMsg searchAuthorizationRole(AuthorizationSearchMsg msg)
-            throws SearchException {
+    public AuthorizationRoleListMsg searchAuthorizationRole(AuthorizationSearchMsg msg) throws SearchException {
 
         this.request = msg;
         this.resultSet = new HashSet<AuthorizationRole>();
@@ -79,8 +76,10 @@ public class SearchAuthorizationRoleServiceHandlerImpl extends
      * 
      * @throws SearchException
      *             when the search did not finish normally
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private void search() throws SearchException {
+    private void search() throws SearchException, PersistenceException {
 
         this.parameterMap = new HashMap<String, Object>();
 
@@ -115,11 +114,14 @@ public class SearchAuthorizationRoleServiceHandlerImpl extends
 
     /**
      * Search Role by Group.
+     * 
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private void searchByGroup() {
+    private void searchByGroup() throws PersistenceException {
 
         // Role for Group
-        
+
         StringBuilder query = new StringBuilder();
         query.append("select r from AuthorizationGroup g");
         query.append(" inner join g.roleListJPA gr");
@@ -133,8 +135,11 @@ public class SearchAuthorizationRoleServiceHandlerImpl extends
 
     /**
      * Search Role by User.
+     * 
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private void searchByUser() {
+    private void searchByUser() throws PersistenceException {
 
         // Role for User
 
@@ -164,8 +169,11 @@ public class SearchAuthorizationRoleServiceHandlerImpl extends
 
     /**
      * Search Role by Permission.
+     * 
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private void searchByPermission() {
+    private void searchByPermission() throws PersistenceException {
 
         // Role for Permission
 
@@ -182,8 +190,11 @@ public class SearchAuthorizationRoleServiceHandlerImpl extends
 
     /**
      * Execute a basic search.
+     * 
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private void searchBasic() {
+    private void searchBasic() throws PersistenceException {
         StringBuilder query = new StringBuilder();
         query.append("select r from AuthorizationRole r");
 
@@ -205,14 +216,11 @@ public class SearchAuthorizationRoleServiceHandlerImpl extends
         }
         query.append(" (r.rolename = :name or :name is null)");
         query.append(" and (r.owner = :owner or :owner is null)");
-        query.append(" and (r.roleType = :type or :type is null)");
         query.append(" and (r.description like :description or :description is null)");
 
         this.parameterMap.put("name", this.request.getName());
         this.parameterMap.put("owner", this.request.getOwner());
-        this.parameterMap.put("type", this.request.getCodeType());
-        this.parameterMap.put("description",
-                QuerySupport.searchParameter(this.request.getDescription()));
+        this.parameterMap.put("description", QuerySupport.searchParameter(this.request.getDescription()));
     }
 
     /**
@@ -236,15 +244,17 @@ public class SearchAuthorizationRoleServiceHandlerImpl extends
      * 
      * @param queryString
      *            the string holding the query
+     * 
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private void executeQuery(String queryString) {
-        Query query = super.getEntityManager().createQuery(queryString);
+    private void executeQuery(String queryString) throws PersistenceException {
+        NabuccoQuery<AuthorizationRole> query = super.getPersistenceManager().createQuery(queryString);
 
         for (String key : parameterMap.keySet()) {
             query.setParameter(key, parameterMap.get(key));
         }
 
-        @SuppressWarnings("unchecked")
         List<AuthorizationRole> resultList = query.getResultList();
         this.resultSet.addAll(resultList);
     }

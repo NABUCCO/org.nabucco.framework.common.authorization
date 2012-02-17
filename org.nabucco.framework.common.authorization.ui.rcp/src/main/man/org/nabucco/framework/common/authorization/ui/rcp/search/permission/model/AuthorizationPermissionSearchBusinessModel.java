@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,7 +21,7 @@ import java.util.List;
 import org.nabucco.framework.base.facade.datatype.Description;
 import org.nabucco.framework.base.facade.datatype.Name;
 import org.nabucco.framework.base.facade.datatype.Owner;
-import org.nabucco.framework.base.facade.datatype.code.CodeType;
+import org.nabucco.framework.base.facade.datatype.collection.NabuccoList;
 import org.nabucco.framework.base.facade.exception.client.ClientException;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroup;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationPermission;
@@ -38,58 +38,72 @@ import org.nabucco.framework.plugin.base.component.search.model.NabuccoComponent
 
 /**
  * AuthorizationPermissionSearchBusinessModel
- * <p/>
- * This does the search.
  * 
- * @author Nicolas Moser, PRODYNA AG
+ * @author Michael Krau�e, PRODYNA AG
  */
 public class AuthorizationPermissionSearchBusinessModel implements NabuccoComponentSearchModel {
 
-    public static final String ID = "org.nabucco.framework.common.authorization.ui.rcp.search.role.model.AuthorizationPermissionSearchBusinessModel";
-
-    public List<AuthorizationPermission> findAuthorizationPermissionByGroup(
-            final AuthorizationGroup authorizationGroup) {
-        return search(createSearchMsg(authorizationGroup));
-    }
+    public static String ID = "org.nabucco.framework.common.authorization.ui.rcp.search.role.model.AuthorizationPermissionSearchBusinessModel";
 
     /**
-     * {@inheritDoc}
+     * Find permissions attached to groups.
+     * 
+     * @param authorizationGroup
+     *            the authorization group
+     * 
+     * @return the list of permissions
      */
-    @Override
-    public AuthorizationPermissionListViewBrowserElement search(
-            NabuccoComponentSearchParameter searchViewModel) {
-
-        AuthorizationPermissionListViewBrowserElement result = null;
-
-        if (searchViewModel instanceof AuthorizationPermissionSearchViewModel) {
-            final AuthorizationPermissionSearchViewModel AuthorizationPermissionSearchViewModel = (AuthorizationPermissionSearchViewModel) searchViewModel;
-            final AuthorizationSearchMsg rq = createSearchMsg(AuthorizationPermissionSearchViewModel);
-            final List<AuthorizationPermission> response = search(rq);
-            if (response.size() > 0) {
-                result = new AuthorizationPermissionListViewBrowserElement(search(rq).toArray(
-                        new AuthorizationPermission[0]));
-            }
-
-        }
-        return result;
+    public List<AuthorizationPermission> findAuthorizationPermissionByGroup(AuthorizationGroup authorizationGroup) {
+        AuthorizationSearchMsg rq = this.createSearchMsg(authorizationGroup);
+        AuthorizationPermissionListMsg rs = this.search(rq);
+        return rs.getAuthorizationPermissionList();
     }
 
-    private List<AuthorizationPermission> search(final AuthorizationSearchMsg rq) {
-        try {
-            final SearchAuthorizationDelegate searchDelegate = AuthorizationComponentServiceDelegateFactory
-                    .getInstance().getSearchAuthorization();
-            final AuthorizationPermissionListMsg response = searchDelegate
-                    .searchAuthorizationPermission(rq);
-            return response.getAuthorizationPermissionList();
-        } catch (final ClientException e) {
-            Activator.getDefault().logError(e);
+    @Override
+    public AuthorizationPermissionListViewBrowserElement search(NabuccoComponentSearchParameter parameter) {
+
+        if (parameter instanceof AuthorizationPermissionSearchViewModel) {
+            AuthorizationPermissionSearchViewModel viewModel = (AuthorizationPermissionSearchViewModel) parameter;
+            AuthorizationSearchMsg rq = this.createSearchMsg(viewModel);
+
+            AuthorizationPermissionListMsg rs = this.search(rq);
+
+            NabuccoList<AuthorizationPermission> permissionList = rs.getAuthorizationPermissionList();
+
+            if (!permissionList.isEmpty()) {
+                return new AuthorizationPermissionListViewBrowserElement(
+                        permissionList.toArray(new AuthorizationPermission[permissionList.size()]));
+            }
+
         }
         return null;
     }
 
+    /**
+     * Execute the search service.
+     * 
+     * @param rq
+     *            the request parameter
+     * 
+     * @return the response paramter
+     */
+    private AuthorizationPermissionListMsg search(AuthorizationSearchMsg rq) {
+
+        try {
+            SearchAuthorizationDelegate searchService = AuthorizationComponentServiceDelegateFactory.getInstance()
+                    .getSearchAuthorization();
+            return searchService.searchAuthorizationPermission(rq);
+
+        } catch (ClientException e) {
+            Activator.getDefault().logError(e);
+        }
+
+        return null;
+    }
+
     private AuthorizationSearchMsg createSearchMsg(AuthorizationGroup group) {
-        final AuthorizationSearchMsg result = new AuthorizationSearchMsg();
-        final AuthorizationSearchParameter param = new AuthorizationSearchParameter();
+        AuthorizationSearchMsg result = new AuthorizationSearchMsg();
+        AuthorizationSearchParameter param = new AuthorizationSearchParameter();
         param.setType(AuthorizationType.GROUP);
         param.setId(group.getId());
         result.getParameterList().add(param);
@@ -97,41 +111,31 @@ public class AuthorizationPermissionSearchBusinessModel implements NabuccoCompon
     }
 
     private AuthorizationSearchMsg createSearchMsg(AuthorizationPermissionSearchViewModel model) {
-        final AuthorizationSearchMsg msg = new AuthorizationSearchMsg();
-        msg.setName(getNameFromModel(model));
-        msg.setCodeType(getCodeTypeFromModel(model));
-        msg.setOwner(getOwnerFromModel(model));
-        msg.setDescription(getDescriptionFromModel(model));
+        AuthorizationSearchMsg msg = new AuthorizationSearchMsg();
+        msg.setName(getName(model));
+        msg.setOwner(getOwner(model));
+        msg.setDescription(getDescription(model));
         return msg;
     }
 
-    private Name getNameFromModel(AuthorizationPermissionSearchViewModel searchViewModel) {
-        final String name = searchViewModel.getPermissionPermissionname();
+    private Name getName(AuthorizationPermissionSearchViewModel searchViewModel) {
+        String name = searchViewModel.getPermissionPermissionname();
         if (name == null || name.isEmpty()) {
             return null;
         }
         return new Name(name);
     }
 
-    private CodeType getCodeTypeFromModel(AuthorizationPermissionSearchViewModel searchViewModel) {
-        final String codeType = searchViewModel.getPermissionPermissionType();
-        if (codeType == null || codeType.isEmpty()) {
-            return null;
-        }
-        return new CodeType(codeType);
-    }
-
-    private Owner getOwnerFromModel(AuthorizationPermissionSearchViewModel searchViewModel) {
-        final String owner = searchViewModel.getPermissionOwner();
+    private Owner getOwner(AuthorizationPermissionSearchViewModel searchViewModel) {
+        String owner = searchViewModel.getOwner();
         if (owner == null || owner.isEmpty()) {
             return null;
         }
         return new Owner(owner);
     }
 
-    private Description getDescriptionFromModel(
-            AuthorizationPermissionSearchViewModel searchViewModel) {
-        final String description = searchViewModel.getPermissionDescription();
+    private Description getDescription(AuthorizationPermissionSearchViewModel searchViewModel) {
+        String description = searchViewModel.getPermissionDescription();
         if (description == null || description.isEmpty()) {
             return null;
         }

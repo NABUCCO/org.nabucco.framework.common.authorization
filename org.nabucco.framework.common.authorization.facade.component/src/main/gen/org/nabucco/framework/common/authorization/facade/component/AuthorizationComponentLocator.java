@@ -1,8 +1,22 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.facade.component;
 
+import org.nabucco.framework.base.facade.component.connection.ConnectionException;
 import org.nabucco.framework.base.facade.component.locator.ComponentLocator;
 import org.nabucco.framework.base.facade.component.locator.ComponentLocatorSupport;
 
@@ -11,10 +25,8 @@ import org.nabucco.framework.base.facade.component.locator.ComponentLocatorSuppo
  *
  * @author NABUCCO Generator, PRODYNA AG
  */
-public class AuthorizationComponentLocator extends ComponentLocatorSupport<AuthorizationComponent>
-        implements ComponentLocator<AuthorizationComponent> {
-
-    private static final String JNDI_NAME = ((((ComponentLocator.COMPONENTS + "/") + AuthorizationComponent.COMPONENT_NAME) + "/") + "org.nabucco.framework.common.authorization.facade.component.AuthorizationComponent");
+public class AuthorizationComponentLocator extends ComponentLocatorSupport<AuthorizationComponent> implements
+        ComponentLocator<AuthorizationComponent> {
 
     private static AuthorizationComponentLocator instance;
 
@@ -28,6 +40,15 @@ public class AuthorizationComponentLocator extends ComponentLocatorSupport<Autho
         super(jndiName, component);
     }
 
+    @Override
+    public AuthorizationComponent getComponent() throws ConnectionException {
+        AuthorizationComponent component = super.getComponent();
+        if ((component instanceof AuthorizationComponentLocal)) {
+            return new AuthorizationComponentLocalProxy(((AuthorizationComponentLocal) component));
+        }
+        return component;
+    }
+
     /**
      * Getter for the Instance.
      *
@@ -35,7 +56,7 @@ public class AuthorizationComponentLocator extends ComponentLocatorSupport<Autho
      */
     public static AuthorizationComponentLocator getInstance() {
         if ((instance == null)) {
-            instance = new AuthorizationComponentLocator(JNDI_NAME, AuthorizationComponent.class);
+            instance = new AuthorizationComponentLocator(AuthorizationComponent.JNDI_NAME, AuthorizationComponent.class);
         }
         return instance;
     }

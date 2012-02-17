@@ -1,5 +1,18 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.ui.rcp.edit.permission.view;
 
@@ -12,17 +25,20 @@ import org.nabucco.framework.common.authorization.ui.rcp.edit.permission.model.A
 import org.nabucco.framework.plugin.base.component.picker.dialog.ElementPickerContentProvider;
 
 /**
- * AuthorizationPermissionGroupPickerContentProvider<p/>Edit view for datatype AuthorizationPermission<p/>
- *
+ * AuthorizationPermissionGroupPickerContentProvider
+ * <p/>
+ * Edit view for datatype AuthorizationPermission
+ * <p/>
+ * 
  * @version 1.0
  * @author Frank Ratschinski, PRODYNA AG, 2010-01-18
  */
-public class AuthorizationPermissionGroupPickerContentProvider implements
-        ElementPickerContentProvider, NabuccoInjectionReciever {
+public class AuthorizationPermissionGroupPickerContentProvider implements ElementPickerContentProvider,
+        NabuccoInjectionReciever {
 
-    private AuthorizationPermissionGroupPickerContentProviderHandler handler = NabuccoInjector
-            .getInstance(AuthorizationPermissionGroupPickerContentProvider.class).inject(
-                    AuthorizationPermissionGroupPickerContentProviderHandler.class);
+    private AuthorizationPermissionGroupPickerContentProviderHandler handler = NabuccoInjector.getInstance(
+            AuthorizationPermissionGroupPickerContentProvider.class).inject(
+            AuthorizationPermissionGroupPickerContentProviderHandler.class);
 
     private Map<String, AuthorizationGroup[]> values;
 
@@ -30,11 +46,11 @@ public class AuthorizationPermissionGroupPickerContentProvider implements
 
     /**
      * Constructs a new AuthorizationPermissionGroupPickerContentProvider instance.
-     *
-     * @param viewModel the AuthorizationPermissionEditViewModel.
+     * 
+     * @param viewModel
+     *            the AuthorizationPermissionEditViewModel.
      */
-    public AuthorizationPermissionGroupPickerContentProvider(
-            AuthorizationPermissionEditViewModel viewModel) {
+    public AuthorizationPermissionGroupPickerContentProvider(AuthorizationPermissionEditViewModel viewModel) {
         super();
         this.viewModel = viewModel;
     }

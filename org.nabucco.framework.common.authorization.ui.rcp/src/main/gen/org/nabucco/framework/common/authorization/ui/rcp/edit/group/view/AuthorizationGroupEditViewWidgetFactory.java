@@ -1,5 +1,18 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.ui.rcp.edit.group.view;
 
@@ -13,7 +26,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.Section;
+import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroup;
 import org.nabucco.framework.common.authorization.ui.rcp.edit.group.model.AuthorizationGroupEditViewModel;
+import org.nabucco.framework.plugin.base.component.picker.combo.CodeComboViewer;
 import org.nabucco.framework.plugin.base.component.picker.dialog.ElementPickerComposite;
 import org.nabucco.framework.plugin.base.component.picker.dialog.ElementPickerParameter;
 import org.nabucco.framework.plugin.base.component.picker.dialog.LabelForDialog;
@@ -21,8 +36,11 @@ import org.nabucco.framework.plugin.base.layout.WidgetFactory;
 import org.nabucco.framework.plugin.base.view.NabuccoFormToolkit;
 
 /**
- * AuthorizationGroupEditViewWidgetFactory<p/>Edit view for datatype AuthorizationGroup<p/>
- *
+ * AuthorizationGroupEditViewWidgetFactory
+ * <p/>
+ * Edit view for datatype AuthorizationGroup
+ * <p/>
+ * 
  * @version 1.0
  * @author Frank Ratschinski, PRODYNA AG, 2010-01-18
  */
@@ -66,9 +84,11 @@ public class AuthorizationGroupEditViewWidgetFactory extends WidgetFactory {
 
     /**
      * Constructs a new AuthorizationGroupEditViewWidgetFactory instance.
-     *
-     * @param model the AuthorizationGroupEditViewModel.
-     * @param nabuccoFormToolKit the NabuccoFormToolkit.
+     * 
+     * @param model
+     *            the AuthorizationGroupEditViewModel.
+     * @param nabuccoFormToolKit
+     *            the NabuccoFormToolkit.
      */
     public AuthorizationGroupEditViewWidgetFactory(NabuccoFormToolkit nabuccoFormToolKit,
             AuthorizationGroupEditViewModel model) {
@@ -78,8 +98,9 @@ public class AuthorizationGroupEditViewWidgetFactory extends WidgetFactory {
 
     /**
      * CreateSectionHeading.
-     *
-     * @param parent the Composite.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Section.
      */
     public Section createSectionHeading(Composite parent) {
@@ -88,8 +109,9 @@ public class AuthorizationGroupEditViewWidgetFactory extends WidgetFactory {
 
     /**
      * CreateLabelName.
-     *
-     * @param parent the Composite.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Label.
      */
     public Label createLabelName(Composite parent) {
@@ -98,8 +120,9 @@ public class AuthorizationGroupEditViewWidgetFactory extends WidgetFactory {
 
     /**
      * CreateInputFieldName.
-     *
-     * @param parent the Composite.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Text.
      */
     public Text createInputFieldName(Composite parent) {
@@ -113,8 +136,9 @@ public class AuthorizationGroupEditViewWidgetFactory extends WidgetFactory {
 
     /**
      * CreateLabelDescription.
-     *
-     * @param parent the Composite.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Label.
      */
     public Label createLabelDescription(Composite parent) {
@@ -123,24 +147,25 @@ public class AuthorizationGroupEditViewWidgetFactory extends WidgetFactory {
 
     /**
      * CreateInputFieldDescription.
-     *
-     * @param parent the Composite.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Text.
      */
     public Text createInputFieldDescription(Composite parent) {
         Text result = nabuccoFormToolKit.createTextInput(parent);
         DataBindingContext bindingContext = new DataBindingContext();
         IObservableValue uiElement = SWTObservables.observeText(result, SWT.Modify);
-        IObservableValue modelElement = BeansObservables.observeValue(model,
-                OBSERVE_VALUE_DESCRIPTION);
+        IObservableValue modelElement = BeansObservables.observeValue(model, OBSERVE_VALUE_DESCRIPTION);
         bindingContext.bindValue(uiElement, modelElement, null, null);
         return result;
     }
 
     /**
      * CreateLabelOwner.
-     *
-     * @param parent the Composite.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Label.
      */
     public Label createLabelOwner(Composite parent) {
@@ -149,8 +174,9 @@ public class AuthorizationGroupEditViewWidgetFactory extends WidgetFactory {
 
     /**
      * CreateInputFieldOwner.
-     *
-     * @param parent the Composite.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Text.
      */
     public Text createInputFieldOwner(Composite parent) {
@@ -163,35 +189,27 @@ public class AuthorizationGroupEditViewWidgetFactory extends WidgetFactory {
     }
 
     /**
-     * CreateLabelGroupType.
-     *
-     * @param parent the Composite.
+     * createLabelUserType.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Label.
      */
-    public Label createLabelGroupType(Composite parent) {
+    public Label createLabelUserType(Composite parent) {
         return nabuccoFormToolKit.createRealLabel(parent, LABEL_GROUPTYPE);
     }
 
-    /**
-     * CreateInputFieldGroupType.
-     *
-     * @param parent the Composite.
-     * @return the Text.
-     */
-    public Text createInputFieldGroupType(Composite parent) {
-        Text result = nabuccoFormToolKit.createTextInput(parent);
-        DataBindingContext bindingContext = new DataBindingContext();
-        IObservableValue uiElement = SWTObservables.observeText(result, SWT.Modify);
-        IObservableValue modelElement = BeansObservables.observeValue(model,
+    public CodeComboViewer createUserTypeCombo(Composite parent) {
+        CodeComboViewer codeComboViewer = new CodeComboViewer(parent, AuthorizationGroup.getGroupTypeCodePath(), model,
                 OBSERVE_VALUE_GROUPTYPE);
-        bindingContext.bindValue(uiElement, modelElement, null, null);
-        return result;
+        return codeComboViewer;
     }
 
     /**
      * CreateLabelAuthorizationGroupGroupPicker.
-     *
-     * @param parent the Composite.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Label.
      */
     public Label createLabelAuthorizationGroupGroupPicker(Composite parent) {
@@ -200,25 +218,23 @@ public class AuthorizationGroupEditViewWidgetFactory extends WidgetFactory {
 
     /**
      * CreateElementPickerAuthorizationGroupGroupPicker.
-     *
-     * @param params the ElementPickerParameter.
-     * @param parent the Composite.
+     * 
+     * @param params
+     *            the ElementPickerParameter.
+     * @param parent
+     *            the Composite.
      */
-    public void createElementPickerAuthorizationGroupGroupPicker(Composite parent,
-            ElementPickerParameter params) {
+    public void createElementPickerAuthorizationGroupGroupPicker(Composite parent, ElementPickerParameter params) {
         ElementPickerComposite picker = new ElementPickerComposite(parent, SWT.NONE, params,
-                params.getInputFieldLabelProvider(), new LabelForDialog(
-                        TITLE_AUTHORIZATIONGROUPGROUPPICKER, MESSAGE_AUTHORIZATIONGROUPGROUPPICKER,
-                        SHELL_TITLE_AUTHORIZATIONGROUPGROUPPICKER,
-                        MESSAGE_TABLE_AUTHORIZATIONGROUPGROUPPICKER,
-                        MESSAGE_COMBO_AUTHORIZATIONGROUPGROUPPICKER,
+                params.getInputFieldLabelProvider(), new LabelForDialog(TITLE_AUTHORIZATIONGROUPGROUPPICKER,
+                        MESSAGE_AUTHORIZATIONGROUPGROUPPICKER, SHELL_TITLE_AUTHORIZATIONGROUPGROUPPICKER,
+                        MESSAGE_TABLE_AUTHORIZATIONGROUPGROUPPICKER, MESSAGE_COMBO_AUTHORIZATIONGROUPGROUPPICKER,
                         PATH_LABEL_AUTHORIZATIONGROUPGROUPPICKER));
         DataBindingContext bindingContext = new DataBindingContext();
         IObservableValue uiElement;
         IObservableValue modelElement;
         uiElement = SWTObservables.observeText(picker.getInputText(), SWT.Modify);
-        modelElement = BeansObservables.observeValue(model,
-                OBSERVE_VALUE_AUTHORIZATIONGROUPGROUPPICKER);
+        modelElement = BeansObservables.observeValue(model, OBSERVE_VALUE_AUTHORIZATIONGROUPGROUPPICKER);
         bindingContext.bindValue(uiElement, modelElement, null, null);
         picker.addElementSelected(new AuthorizationGroupGroupPickerHandler(model));
     }

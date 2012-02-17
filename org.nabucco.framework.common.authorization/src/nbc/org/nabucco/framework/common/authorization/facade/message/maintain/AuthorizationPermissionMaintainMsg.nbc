@@ -6,7 +6,7 @@
 * You may obtain a copy of the License at
 *
 * http://www.opensource.org/licenses/eclipse-1.0.php or
-* http://www.nabucco-source.org/nabucco-license.html
+* http://nabuccosource.org/License.html
 *
 * Unless required by applicable law or agreed to in writing, software
 * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,12 +28,16 @@ import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationG
 @Description	Message for persisting an AuthorizationPermission with its AuthorizationGroup, AuthorizationUser and AuthorizationRole
 public Message AuthorizationPermissionMaintainMsg {
 
+	@Description		The authorization permission to maintain.
 	private Datatype AuthorizationPermission[1] authorizationPermission;
-
-	private Datatype AuthorizationRole[0..*] authorizationRoleList;
 	
-	private Datatype AuthorizationUser[0..*] authorizationUserList;
-	
+	@Description		The parent authorization groups to maintain.
 	private Datatype AuthorizationGroup[0..*] authorizationGroupList;
+	
+	@Description		The parent authorization users to maintain.
+	private Datatype AuthorizationUser[0..*] authorizationUserList;
+
+	@Description		The parent authorization roles to maintain.
+	private Datatype AuthorizationRole[0..*] authorizationRoleList;
 	
 }

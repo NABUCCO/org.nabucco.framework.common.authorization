@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -42,8 +42,7 @@ public class AuthorizationPermissionRolePickerContentProviderHandlerImpl impleme
     private AuthorizationPermission currentPermission;
 
     @Override
-    public Map<String, AuthorizationRole[]> loadAllAuthorizationRole(
-            AuthorizationPermissionEditViewModel viewModel) {
+    public Map<String, AuthorizationRole[]> loadAllAuthorizationRole(AuthorizationPermissionEditViewModel viewModel) {
         if (needsRefresh(viewModel)) {
             authorizationRoles = loadAllAuthorizationRoles(viewModel);
         }
@@ -59,14 +58,12 @@ public class AuthorizationPermissionRolePickerContentProviderHandlerImpl impleme
         return result;
     }
 
-    private Map<String, AuthorizationRole[]> loadAllAuthorizationRoles(
-            AuthorizationPermissionEditViewModel viewModel) {
+    private Map<String, AuthorizationRole[]> loadAllAuthorizationRoles(AuthorizationPermissionEditViewModel viewModel) {
         HashMap<String, AuthorizationRole[]> values = new HashMap<String, AuthorizationRole[]>();
         try {
-            SearchAuthorizationDelegate searchComponent = AuthorizationComponentServiceDelegateFactory
-                    .getInstance().getSearchAuthorization();
-            AuthorizationRoleListMsg result = searchComponent
-                    .searchAuthorizationRole((new AuthorizationSearchMsg()));
+            SearchAuthorizationDelegate searchComponent = AuthorizationComponentServiceDelegateFactory.getInstance()
+                    .getSearchAuthorization();
+            AuthorizationRoleListMsg result = searchComponent.searchAuthorizationRole((new AuthorizationSearchMsg()));
             values.put(" ", result.getAuthorizationRoleList().toArray(new AuthorizationRole[0]));
         } catch (NabuccoException e) {
             Activator.getDefault().logError(e);

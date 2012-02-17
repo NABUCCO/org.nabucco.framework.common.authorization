@@ -6,7 +6,7 @@
 * You may obtain a copy of the License at
 *
 * http://www.opensource.org/licenses/eclipse-1.0.php or
-* http://www.nabucco-source.org/nabucco-license.html
+* http://nabuccosource.org/License.html
 *
 * Unless required by applicable law or agreed to in writing, software
 * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,30 +16,32 @@
 */
 package org.nabucco.framework.common.authorization.facade.service;
 
+import org.nabucco.framework.base.facade.message.authorization.UserRq;
 import org.nabucco.framework.common.authorization.facade.exception.AuthorizationException;
-
-import org.nabucco.framework.common.authorization.facade.message.AuthorizationRs;
+import org.nabucco.framework.common.authorization.facade.message.AuthorizationInformationRs;
 import org.nabucco.framework.common.authorization.facade.message.AuthorizationNameMsg;
 import org.nabucco.framework.common.authorization.facade.message.AuthorizationPermissionMsg;
+import org.nabucco.framework.common.authorization.facade.message.AuthorizationRs;
 
 @Author				Nicolas Moser
 @Company			PRODYNA AG
 @Date				2010-07-18
 @Version			1.0
 @Description		Authorization service operation facade for accessing authorization services
+@ServiceType		PERSISTENCE
 public Service AuthorizationService {
-	
-	@Inject
-	private EntityManager[1] em;
 
+	@ManualImplementation
+	public AuthorizationRs hasPermission(AuthorizationPermissionMsg permissionMsg) throws AuthorizationException;
 	
 	@ManualImplementation
-	public AuthorizationRs hasPermission(AuthorizationPermissionMsg permissionMsg)
-		throws AuthorizationException;
-
+	public AuthorizationRs hasPermissionByName(AuthorizationNameMsg permissionNameMsg) throws AuthorizationException;
 	
+	@JoinPoint			org.nabucco.aspect.caching
 	@ManualImplementation
-	public AuthorizationRs hasPermissionByName(AuthorizationNameMsg permissionNameMsg)
-		throws AuthorizationException;
-	
+	public AuthorizationInformationRs getInformation(UserRq userRq) throws AuthorizationException;
 }
+
+
+
+

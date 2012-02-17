@@ -6,7 +6,7 @@
 * You may obtain a copy of the License at
 *
 * http://www.opensource.org/licenses/eclipse-1.0.php or
-* http://www.nabucco-source.org/nabucco-license.html
+* http://nabuccosource.org/License.html
 *
 * Unless required by applicable law or agreed to in writing, software
 * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,39 +17,60 @@
 package org.nabucco.framework.common.authorization.facade.service.maintain;
 
 import org.nabucco.framework.base.facade.exception.service.MaintainException;
-import org.nabucco.framework.common.authorization.facade.message.maintain.AuthorizationRoleMaintainMsg;
-import org.nabucco.framework.common.authorization.facade.message.maintain.AuthorizationUserMaintainMsg;
+import org.nabucco.framework.common.authorization.facade.message.AuthorizationGroupListMsg;
 import org.nabucco.framework.common.authorization.facade.message.maintain.AuthorizationGroupMaintainMsg;
 import org.nabucco.framework.common.authorization.facade.message.maintain.AuthorizationPermissionMaintainMsg;
+import org.nabucco.framework.common.authorization.facade.message.maintain.AuthorizationRoleMaintainMsg;
+import org.nabucco.framework.common.authorization.facade.message.maintain.AuthorizationUserMaintainMsg;
 
-@Author				Frank Ratschinski, Nicolas Moser
+@Author				Nicolas Moser
 @Company			PRODYNA AG
 @Date				2010-01-18
 @Version			1.0
 @Description		Authorization maintenance service
 public Service MaintainAuthorization  {
-	
-	@Inject
-	private EntityManager[1] em;
-	
-	
+
 	@ManualImplementation
+	@JoinPoint		org.nabucco.aspect.permissioning
+	@JoinPoint		org.nabucco.aspect.validating
+	@JoinPoint		org.nabucco.aspect.resolving
+	@Description	Maintain a single authorization group to the database.
 	public AuthorizationGroupMaintainMsg maintainAuthorizationGroup(AuthorizationGroupMaintainMsg groupMsg)
 		throws MaintainException;
-	
-	
+
 	@ManualImplementation
-	public AuthorizationUserMaintainMsg maintainAuthorizationUser(AuthorizationUserMaintainMsg userMsg)
+	@JoinPoint		org.nabucco.aspect.permissioning
+	@JoinPoint		org.nabucco.aspect.validating
+	@JoinPoint		org.nabucco.aspect.resolving
+	@Description	Maintain a list of authorization group to the database.
+	public AuthorizationGroupListMsg maintainAuthorizationGroupList(AuthorizationGroupListMsg groupListMsg)
 		throws MaintainException;
 	
+	@ManualImplementation
+	@JoinPoint		org.nabucco.aspect.permissioning
+	@JoinPoint		org.nabucco.aspect.validating
+	@JoinPoint		org.nabucco.aspect.resolving
+	@Description	Maintain a single authorization user to the database.
+	public AuthorizationUserMaintainMsg maintainAuthorizationUser(AuthorizationUserMaintainMsg userMsg)
+		throws MaintainException;
+		
 	
 	@ManualImplementation
+	@JoinPoint		org.nabucco.aspect.permissioning
+	@JoinPoint		org.nabucco.aspect.validating
+	@JoinPoint		org.nabucco.aspect.resolving
+	@Description	Maintain a single authorization role to the database.
 	public AuthorizationRoleMaintainMsg maintainAuthorizationRole(AuthorizationRoleMaintainMsg roleMsg)
 		throws MaintainException;
 		
 		
 	@ManualImplementation
+	@JoinPoint		org.nabucco.aspect.permissioning
+	@JoinPoint		org.nabucco.aspect.validating
+	@JoinPoint		org.nabucco.aspect.resolving
+	@Description	Maintain a single authorization permission to the database.
 	public AuthorizationPermissionMaintainMsg maintainAuthorizationPermission(AuthorizationPermissionMaintainMsg permissionMsg)
 		throws MaintainException;
 
 }
+

@@ -10,12 +10,9 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/org.nabucco.framework.common.authorization.facade.exception"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.nabucco.framework.common.authorization.facade.message"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.nabucco.framework.common.authorization.facade.service"/>
-	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/web/ejb3-persistence.jar"/>
-	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/web/jsf-api.jar"/>
 	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/web/jsp-api.jar"/>
-	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/web/log4j.jar"/>
 	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/web/org.nabucco.framework.base.facade.jar"/>
-	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/web/org.nabucco.framework.base.ui.web.jar"/>
+	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/web/org.nabucco.framework.base.ui.web.jar" sourcepath="/org.nabucco.framework.common.authorization/lib/source/org.nabucco.framework.base.ui.web.sources.zip"/>
 	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/web/servlet-api.jar"/>
-	<classpathentry kind="output" path="out"/>
+	<classpathentry kind="output" path="out/ide"/>
 </classpath>

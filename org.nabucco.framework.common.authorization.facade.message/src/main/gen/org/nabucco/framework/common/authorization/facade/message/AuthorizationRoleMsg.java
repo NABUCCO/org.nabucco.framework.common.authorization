@@ -1,11 +1,31 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.facade.message;
 
+import java.util.HashMap;
 import java.util.List;
-import org.nabucco.framework.base.facade.datatype.property.DatatypeProperty;
+import java.util.Map;
+import java.util.Set;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoProperty;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyContainer;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyDescriptor;
+import org.nabucco.framework.base.facade.datatype.property.PropertyAssociationType;
+import org.nabucco.framework.base.facade.datatype.property.PropertyCache;
+import org.nabucco.framework.base.facade.datatype.property.PropertyDescriptorSupport;
 import org.nabucco.framework.base.facade.message.ServiceMessage;
 import org.nabucco.framework.base.facade.message.ServiceMessageSupport;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationRole;
@@ -20,23 +40,58 @@ public class AuthorizationRoleMsg extends ServiceMessageSupport implements Servi
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] PROPERTY_NAMES = { "authorizationRole" };
-
     private static final String[] PROPERTY_CONSTRAINTS = { "m1,1;" };
 
+    public static final String AUTHORIZATIONROLE = "authorizationRole";
+
+    /** The list of authorization role. */
     private AuthorizationRole authorizationRole;
 
     /** Constructs a new AuthorizationRoleMsg instance. */
     public AuthorizationRoleMsg() {
         super();
+        this.initDefaults();
+    }
+
+    /** InitDefaults. */
+    private void initDefaults() {
+    }
+
+    /**
+     * CreatePropertyContainer.
+     *
+     * @return the NabuccoPropertyContainer.
+     */
+    protected static NabuccoPropertyContainer createPropertyContainer() {
+        Map<String, NabuccoPropertyDescriptor> propertyMap = new HashMap<String, NabuccoPropertyDescriptor>();
+        propertyMap.put(AUTHORIZATIONROLE, PropertyDescriptorSupport.createDatatype(AUTHORIZATIONROLE,
+                AuthorizationRole.class, 0, PROPERTY_CONSTRAINTS[0], false, PropertyAssociationType.COMPOSITION));
+        return new NabuccoPropertyContainer(propertyMap);
+    }
+
+    /** Init. */
+    public void init() {
+        this.initDefaults();
     }
 
     @Override
-    public List<NabuccoProperty<?>> getProperties() {
-        List<NabuccoProperty<?>> properties = super.getProperties();
-        properties.add(new DatatypeProperty<AuthorizationRole>(PROPERTY_NAMES[0],
-                AuthorizationRole.class, PROPERTY_CONSTRAINTS[0], this.authorizationRole));
+    public Set<NabuccoProperty> getProperties() {
+        Set<NabuccoProperty> properties = super.getProperties();
+        properties.add(super.createProperty(AuthorizationRoleMsg.getPropertyDescriptor(AUTHORIZATIONROLE),
+                this.getAuthorizationRole()));
         return properties;
+    }
+
+    @Override
+    public boolean setProperty(NabuccoProperty property) {
+        if (super.setProperty(property)) {
+            return true;
+        }
+        if ((property.getName().equals(AUTHORIZATIONROLE) && (property.getType() == AuthorizationRole.class))) {
+            this.setAuthorizationRole(((AuthorizationRole) property.getInstance()));
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -66,20 +121,8 @@ public class AuthorizationRoleMsg extends ServiceMessageSupport implements Servi
     public int hashCode() {
         final int PRIME = 31;
         int result = super.hashCode();
-        result = ((PRIME * result) + ((this.authorizationRole == null) ? 0 : this.authorizationRole
-                .hashCode()));
+        result = ((PRIME * result) + ((this.authorizationRole == null) ? 0 : this.authorizationRole.hashCode()));
         return result;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder appendable = new StringBuilder();
-        appendable.append("<AuthorizationRoleMsg>\n");
-        appendable.append(super.toString());
-        appendable
-                .append((("<authorizationRole>" + this.authorizationRole) + "</authorizationRole>\n"));
-        appendable.append("</AuthorizationRoleMsg>\n");
-        return appendable.toString();
     }
 
     @Override
@@ -88,7 +131,7 @@ public class AuthorizationRoleMsg extends ServiceMessageSupport implements Servi
     }
 
     /**
-     * Missing description at method getAuthorizationRole.
+     * The list of authorization role.
      *
      * @return the AuthorizationRole.
      */
@@ -97,11 +140,30 @@ public class AuthorizationRoleMsg extends ServiceMessageSupport implements Servi
     }
 
     /**
-     * Missing description at method setAuthorizationRole.
+     * The list of authorization role.
      *
      * @param authorizationRole the AuthorizationRole.
      */
     public void setAuthorizationRole(AuthorizationRole authorizationRole) {
         this.authorizationRole = authorizationRole;
+    }
+
+    /**
+     * Getter for the PropertyDescriptor.
+     *
+     * @param propertyName the String.
+     * @return the NabuccoPropertyDescriptor.
+     */
+    public static NabuccoPropertyDescriptor getPropertyDescriptor(String propertyName) {
+        return PropertyCache.getInstance().retrieve(AuthorizationRoleMsg.class).getProperty(propertyName);
+    }
+
+    /**
+     * Getter for the PropertyDescriptorList.
+     *
+     * @return the List<NabuccoPropertyDescriptor>.
+     */
+    public static List<NabuccoPropertyDescriptor> getPropertyDescriptorList() {
+        return PropertyCache.getInstance().retrieve(AuthorizationRoleMsg.class).getAllProperties();
     }
 }

@@ -6,7 +6,7 @@
 * You may obtain a copy of the License at
 *
 * http://www.opensource.org/licenses/eclipse-1.0.php or
-* http://www.nabucco-source.org/nabucco-license.html
+* http://nabuccosource.org/License.html
 *
 * Unless required by applicable law or agreed to in writing, software
 * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,26 +30,27 @@ import org.nabucco.framework.common.authorization.facade.message.search.Authoriz
 @Description		Authorization search service
 public Service SearchAuthorization  {
 	
-	@Inject
-	private EntityManager[1] em;
-
-	
 	@ManualImplementation
+	@JoinPoint				org.nabucco.aspect.resolving
+	@Description			Search for a list of authorization group in the database.
 	public AuthorizationGroupListMsg searchAuthorizationGroup(AuthorizationSearchMsg groupMsg)
 			throws SearchException;
 	
-	
 	@ManualImplementation
+	@JoinPoint				org.nabucco.aspect.resolving
+	@Description			Search for a list of authorization users in the database.
 	public AuthorizationUserListMsg searchAuthorizationUser(AuthorizationSearchMsg userMsg)
 			throws SearchException;
-	
 			
 	@ManualImplementation
+	@JoinPoint				org.nabucco.aspect.resolving
+	@Description			Search for a list of authorization roles in the database.
 	public AuthorizationRoleListMsg searchAuthorizationRole(AuthorizationSearchMsg userMsg)
 			throws SearchException;
-			
 	
 	@ManualImplementation
+	@JoinPoint				org.nabucco.aspect.resolving
+	@Description			Search for a list of authorization permissions in the database.
 	public AuthorizationPermissionListMsg searchAuthorizationPermission(AuthorizationSearchMsg msg)
 			throws SearchException;
 	

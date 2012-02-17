@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.nabucco.framework.base.facade.exception.persistence.PersistenceException;
 import org.nabucco.framework.base.facade.exception.service.ResolveException;
-import org.nabucco.framework.base.impl.service.maintain.PersistenceHelper;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationPermission;
 import org.nabucco.framework.common.authorization.facade.message.AuthorizationPermissionListMsg;
 
@@ -35,10 +34,8 @@ public class ResolveAuthorizationPermissionListServiceHandlerImpl extends
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected AuthorizationPermissionListMsg resolveAuthorizationPermissionList(
-            AuthorizationPermissionListMsg msg) throws ResolveException {
-
-        PersistenceHelper helper = new PersistenceHelper(super.getEntityManager());
+    protected AuthorizationPermissionListMsg resolveAuthorizationPermissionList(AuthorizationPermissionListMsg msg)
+            throws ResolveException {
 
         AuthorizationPermissionListMsg response = new AuthorizationPermissionListMsg();
         List<AuthorizationPermission> permissionList = msg.getAuthorizationPermissionList();
@@ -46,16 +43,13 @@ public class ResolveAuthorizationPermissionListServiceHandlerImpl extends
         for (AuthorizationPermission permission : permissionList) {
 
             try {
-                AuthorizationPermission resolvedPermission = helper.find(
-                        AuthorizationPermission.class, permission);
+                AuthorizationPermission resolvedPermission = super.getPersistenceManager().find(permission);
                 response.getAuthorizationPermissionList().add(resolvedPermission);
 
             } catch (PersistenceException e) {
-                throw new ResolveException("Cannot resolve AuthorizationPermission with id "
-                        + permission.getId(), e);
+                throw new ResolveException("Cannot resolve AuthorizationPermission with id " + permission.getId(), e);
             } catch (Exception e) {
-                throw new ResolveException("Cannot resolve AuthorizationPermission with id "
-                        + permission.getId(), e);
+                throw new ResolveException("Cannot resolve AuthorizationPermission with id " + permission.getId(), e);
             }
         }
 

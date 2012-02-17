@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -50,11 +50,9 @@ public class AuthorizationPermissionSearchViewLayouter extends
 
     @Override
     public Composite layoutComposite(Composite parent, NabuccoMessageManager messageManager,
-            AuthorizationPermissionSearchViewModel model,
-            Layoutable<AuthorizationPermissionSearchViewModel> view) {
+            AuthorizationPermissionSearchViewModel model, Layoutable<AuthorizationPermissionSearchViewModel> view) {
 
-        this.widgetFactory = new AuthorizationPermissionSearchViewWidgetFactory(nabuccoFormToolKit,
-                model);
+        this.widgetFactory = new AuthorizationPermissionSearchViewWidgetFactory(nabuccoFormToolKit, model);
 
         Section section = layoutSection(parent);
 
@@ -67,7 +65,7 @@ public class AuthorizationPermissionSearchViewLayouter extends
 
         layoutLabelAndInputFieldName(sectionBody);
         layoutLabelAndInputFieldCode(sectionBody);
-        layoutLabelAndInputFieldOwner(sectionBody);
+        // layoutLabelAndInputFieldOwner(sectionBody);
         layoutLabelAndInputFieldDescription(sectionBody);
 
         return section;
@@ -82,8 +80,7 @@ public class AuthorizationPermissionSearchViewLayouter extends
      * @return the layouted section
      */
     private Section layoutSection(Composite parent) {
-        Section result = nabuccoFormToolKit.createSection(parent, SECTION_TITLE, new GridLayout(1,
-                true));
+        Section result = nabuccoFormToolKit.createSection(parent, SECTION_TITLE, new GridLayout(1, true));
         return result;
     }
 
@@ -108,11 +105,11 @@ public class AuthorizationPermissionSearchViewLayouter extends
      *            the parent composite
      */
     private void layoutLabelAndInputFieldCode(Composite parent) {
-        Label label = widgetFactory.createLabelTypeText(parent);
-        AuthorizationLayouterUtility.layoutDefault(label);
-
-        Text text = widgetFactory.createInputFieldTypeText(parent);
-        AuthorizationLayouterUtility.layoutDefault(text);
+        // Label label = widgetFactory.createLabelTypeText(parent);
+        // AuthorizationLayouterUtility.layoutDefault(label);
+        //
+        // Text text = widgetFactory.createInputFieldTypeText(parent);
+        // AuthorizationLayouterUtility.layoutDefault(text);
     }
 
     /**
@@ -121,6 +118,7 @@ public class AuthorizationPermissionSearchViewLayouter extends
      * @param parent
      *            the parent composite
      */
+    @SuppressWarnings("unused")
     private void layoutLabelAndInputFieldOwner(Composite parent) {
         Label label = widgetFactory.createLabelOwnerText(parent);
         AuthorizationLayouterUtility.layoutDefault(label);

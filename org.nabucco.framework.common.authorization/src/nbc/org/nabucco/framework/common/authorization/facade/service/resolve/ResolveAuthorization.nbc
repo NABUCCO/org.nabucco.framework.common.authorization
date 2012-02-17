@@ -6,7 +6,7 @@
 * You may obtain a copy of the License at
 *
 * http://www.opensource.org/licenses/eclipse-1.0.php or
-* http://www.nabucco-source.org/nabucco-license.html
+* http://nabuccosource.org/License.html
 *
 * Unless required by applicable law or agreed to in writing, software
 * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,54 +31,65 @@ import org.nabucco.framework.common.authorization.facade.message.maintain.Author
 import org.nabucco.framework.common.authorization.facade.message.maintain.AuthorizationPermissionMaintainMsg;
 
 
-@Author				Jens Wurm
+@Author				Nicolas Moser
 @Company			PRODYNA AG
 @Date				2010-05-06
 @Version			1.0
 @Description		Authorization resolution service
 public Service ResolveAuthorization  {
-	
-	@Inject
-	private EntityManager[1] em;
 
-	
 	@ManualImplementation
+	@JoinPoint				org.nabucco.aspect.resolving
+	@Description			Resolve an authorization group from the database.
 	public AuthorizationGroupMaintainMsg resolveAuthorizationGroup(AuthorizationGroupMsg rqMsg)
 			throws ResolveException;
-		
-		
-	@ManualImplementation
-    public AuthorizationGroupListMsg resolveAuthorizationGroupList(AuthorizationGroupListMsg rqMsg)
-            throws ResolveException;
-            
+	
 	
 	@ManualImplementation
-	public AuthorizationPermissionMaintainMsg resolveAuthorizationPermission(AuthorizationPermissionMsg rqMsg)
+	@JoinPoint				org.nabucco.aspect.resolving
+	@Description			Resolve a list of authorization groups from the database.
+    public AuthorizationGroupListMsg resolveAuthorizationGroupList(AuthorizationGroupListMsg rqMsg)
+            throws ResolveException;
+	
+	
+	@ManualImplementation
+	@JoinPoint				org.nabucco.aspect.resolving
+	@Description			Resolve an authorization user from the database.
+	public AuthorizationUserMaintainMsg resolveAuthorizationUser(AuthorizationUserMsg rqMsg)
 			throws ResolveException;
 	
 	
 	@ManualImplementation
-    public AuthorizationPermissionListMsg resolveAuthorizationPermissionList(AuthorizationPermissionListMsg rqMsg)
+	@JoinPoint				org.nabucco.aspect.resolving
+	@Description			Resolve a list of authorization users from the database.
+    public AuthorizationUserListMsg resolveAuthorizationUserList(AuthorizationUserListMsg rqMsg)
             throws ResolveException;
-			
-		
+    
+	
 	@ManualImplementation
+	@JoinPoint				org.nabucco.aspect.resolving
+	@Description			Resolve an authorization role from the database.
 	public AuthorizationRoleMaintainMsg resolveAuthorizationRole(AuthorizationRoleMsg rqMsg)
 			throws ResolveException;
 	
 	
 	@ManualImplementation
+	@JoinPoint				org.nabucco.aspect.resolving
+	@Description			Resolve a list of authorization roles from the database.
     public AuthorizationRoleListMsg resolveAuthorizationRoleList(AuthorizationRoleListMsg rqMsg)
             throws ResolveException;
-			
 	
 	@ManualImplementation
-	public AuthorizationUserMaintainMsg resolveAuthorizationUser(AuthorizationUserMsg rqMsg)
+	@JoinPoint				org.nabucco.aspect.resolving
+	@Description			Resolve an authorization permission from the database.
+	public AuthorizationPermissionMaintainMsg resolveAuthorizationPermission(AuthorizationPermissionMsg rqMsg)
 			throws ResolveException;
-			
+	
 	
 	@ManualImplementation
-    public AuthorizationUserListMsg resolveAuthorizationUserList(AuthorizationUserListMsg rqMsg)
+	@JoinPoint				org.nabucco.aspect.resolving
+	@Description			Resolve a list of authorization permissions from the database.
+    public AuthorizationPermissionListMsg resolveAuthorizationPermissionList(AuthorizationPermissionListMsg rqMsg)
             throws ResolveException;
 			
 	

@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,12 +19,10 @@ package org.nabucco.framework.common.authorization.impl.service.maintain;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Query;
-
 import org.nabucco.framework.base.facade.datatype.DatatypeState;
 import org.nabucco.framework.base.facade.exception.persistence.PersistenceException;
 import org.nabucco.framework.base.facade.exception.service.MaintainException;
-import org.nabucco.framework.base.impl.service.maintain.PersistenceHelper;
+import org.nabucco.framework.base.impl.service.maintain.NabuccoQuery;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroup;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroupRoleRelation;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationRole;
@@ -38,8 +36,7 @@ import org.nabucco.framework.common.authorization.impl.service.maintain.support.
  * 
  * @author Nicolas Moser, PRODYNA AG
  */
-public class MaintainAuthorizationRoleServiceHandlerImpl extends
-        MaintainAuthorizationRoleServiceHandler {
+public class MaintainAuthorizationRoleServiceHandlerImpl extends MaintainAuthorizationRoleServiceHandler {
 
     private static final long serialVersionUID = 1L;
 
@@ -49,8 +46,6 @@ public class MaintainAuthorizationRoleServiceHandlerImpl extends
 
     private List<AuthorizationGroup> groupList;
 
-    private PersistenceHelper helper;
-
     @Override
     public AuthorizationRoleMaintainMsg maintainAuthorizationRole(AuthorizationRoleMaintainMsg msg)
             throws MaintainException {
@@ -58,8 +53,6 @@ public class MaintainAuthorizationRoleServiceHandlerImpl extends
         this.role = msg.getAuthorizationRole();
         this.userList = msg.getAuthorizationUserList();
         this.groupList = msg.getAuthorizationGroupList();
-
-        this.helper = new PersistenceHelper(super.getEntityManager());
 
         this.maintain();
 
@@ -100,7 +93,7 @@ public class MaintainAuthorizationRoleServiceHandlerImpl extends
      *             when the role cannot be maintained
      */
     private void maintainRole() throws PersistenceException {
-        AuthorizationMaintainSupport support = new AuthorizationMaintainSupport(this.helper);
+        AuthorizationMaintainSupport support = new AuthorizationMaintainSupport(super.getPersistenceManager());
         this.role = support.maintainAuthorizationRole(this.role);
     }
 
@@ -129,25 +122,25 @@ public class MaintainAuthorizationRoleServiceHandlerImpl extends
             queryString.append(" and g.id not in (:groupIds)");
         }
 
-        Query query = super.getEntityManager().createQuery(queryString.toString());
+        NabuccoQuery<AuthorizationGroupRoleRelation> query = super.getPersistenceManager().createQuery(
+                queryString.toString());
         query.setParameter("roleId", this.role.getId());
 
         if (!groupIdList.isEmpty()) {
             query.setParameter("groupIds", groupIdList);
         }
 
-        @SuppressWarnings("unchecked")
         List<AuthorizationGroupRoleRelation> removedRelations = query.getResultList();
 
         // Delete old relations!
         for (AuthorizationGroupRoleRelation relation : removedRelations) {
             relation.setDatatypeState(DatatypeState.DELETED);
-            this.helper.<AuthorizationGroupRoleRelation> persist(relation);
+            super.getPersistenceManager().<AuthorizationGroupRoleRelation> persist(relation);
         }
 
         // Create new relations!
         for (AuthorizationGroup group : this.groupList) {
-            group = this.helper.find(AuthorizationGroup.class, group);
+            group = super.getPersistenceManager().find(group);
 
             boolean alreadyExistent = false;
             for (AuthorizationGroupRoleRelation relation : group.getRoleList()) {
@@ -161,7 +154,7 @@ public class MaintainAuthorizationRoleServiceHandlerImpl extends
                 relation.setDatatypeState(DatatypeState.INITIALIZED);
                 relation.setRole(this.role);
 
-                relation = this.helper.persist(relation);
+                relation = super.getPersistenceManager().persist(relation);
                 group.getRoleList().add(relation);
             }
         }
@@ -192,25 +185,25 @@ public class MaintainAuthorizationRoleServiceHandlerImpl extends
             queryString.append(" and g.id not in (:userIds)");
         }
 
-        Query query = super.getEntityManager().createQuery(queryString.toString());
+        NabuccoQuery<AuthorizationUserRoleRelation> query = super.getPersistenceManager().createQuery(
+                queryString.toString());
         query.setParameter("roleId", this.role.getId());
 
         if (!userIdList.isEmpty()) {
             query.setParameter("userIds", userIdList);
         }
 
-        @SuppressWarnings("unchecked")
         List<AuthorizationUserRoleRelation> removedRelations = query.getResultList();
 
         // Delete old relations!
         for (AuthorizationUserRoleRelation relation : removedRelations) {
             relation.setDatatypeState(DatatypeState.DELETED);
-            this.helper.<AuthorizationUserRoleRelation> persist(relation);
+            super.getPersistenceManager().<AuthorizationUserRoleRelation> persist(relation);
         }
 
         // Create new relations!
         for (AuthorizationUser user : this.userList) {
-            user = this.helper.find(AuthorizationUser.class, user);
+            user = super.getPersistenceManager().find(user);
 
             boolean alreadyExistent = false;
             for (AuthorizationUserRoleRelation relation : user.getRoleList()) {
@@ -224,7 +217,7 @@ public class MaintainAuthorizationRoleServiceHandlerImpl extends
                 relation.setDatatypeState(DatatypeState.INITIALIZED);
                 relation.setRole(this.role);
 
-                relation = this.helper.persist(relation);
+                relation = super.getPersistenceManager().persist(relation);
                 user.getRoleList().add(relation);
             }
         }

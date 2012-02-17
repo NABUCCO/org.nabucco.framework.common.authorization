@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,7 +26,6 @@ import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationU
 import org.nabucco.framework.common.authorization.facade.message.maintain.AuthorizationPermissionMaintainMsg;
 import org.nabucco.framework.common.authorization.ui.rcp.communication.AuthorizationComponentServiceDelegateFactory;
 import org.nabucco.framework.common.authorization.ui.rcp.communication.maintain.MaintainAuthorizationDelegate;
-import org.nabucco.framework.plugin.base.Activator;
 import org.nabucco.framework.plugin.base.logging.Loggable;
 import org.nabucco.framework.plugin.base.model.BusinessModel;
 
@@ -42,7 +41,7 @@ public class AuthorizationPermissionEditBusinessModel implements BusinessModel, 
     /**
      * Save a user and updates user with data from server.
      * 
-     * @param authorizationPermission
+     * @param permission
      *            should be saved
      * @param roleList
      *            the parent roles
@@ -50,38 +49,31 @@ public class AuthorizationPermissionEditBusinessModel implements BusinessModel, 
      *            the parent users
      * @param groupList
      *            the parent groups
+     * 
+     * @throws ClientException
+     *             when the save fails
      */
-    public AuthorizationPermissionMaintainMsg save(AuthorizationPermission authorizationPermission,
-            List<AuthorizationGroup> groupList, List<AuthorizationUser> userList,
-            List<AuthorizationRole> roleList) {
+    public AuthorizationPermissionMaintainMsg save(AuthorizationPermission permission,
+            List<AuthorizationGroup> groupList, List<AuthorizationUser> userList, List<AuthorizationRole> roleList)
+            throws ClientException {
 
-        MaintainAuthorizationDelegate maintainModel;
-        try {
-            maintainModel = AuthorizationComponentServiceDelegateFactory.getInstance()
-                    .getMaintainAuthorization();
-
-            final AuthorizationPermissionMaintainMsg message = this
-                    .createAuthorizationPermissionMaintainMsg(authorizationPermission);
-
-            message.getAuthorizationGroupList().addAll(groupList);
-            message.getAuthorizationUserList().addAll(userList);
-            message.getAuthorizationRoleList().addAll(roleList);
-
-            return maintainModel.maintainAuthorizationPermission(message);
-        } catch (final ClientException e) {
-            Activator.getDefault().logError(e);
-        }
-        return null;
-    }
-
-    private AuthorizationPermissionMaintainMsg createAuthorizationPermissionMaintainMsg(
-            final AuthorizationPermission authorizationPermission) {
+        MaintainAuthorizationDelegate maintainModel = AuthorizationComponentServiceDelegateFactory.getInstance()
+                .getMaintainAuthorization();
 
         final AuthorizationPermissionMaintainMsg message = new AuthorizationPermissionMaintainMsg();
+        message.setAuthorizationPermission(permission);
 
-        message.setAuthorizationPermission(authorizationPermission);
+        if (groupList != null) {
+            message.getAuthorizationGroupList().addAll(groupList);
+        }
+        if (userList != null) {
+            message.getAuthorizationUserList().addAll(userList);
+        }
+        if (roleList != null) {
+            message.getAuthorizationRoleList().addAll(roleList);
+        }
 
-        return message;
+        return maintainModel.maintainAuthorizationPermission(message);
     }
 
     /**

@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,17 +41,13 @@ import org.nabucco.framework.plugin.base.view.NabuccoMessageManager;
  * 
  * @author Michael Krausse, PRODYNA AG
  */
-public class AuthorizationUserListViewLayouter extends
-        NabuccoAbstractListLayouter<AuthorizationUserListViewModel> {
+public class AuthorizationUserListViewLayouter extends NabuccoAbstractListLayouter<AuthorizationUserListViewModel> {
 
-    private static final String COLUMN_NAME_TITLE = AuthorizationUserListView.ID
-            + ".column.name.title";
+    private static final String COLUMN_NAME_TITLE = AuthorizationUserListView.ID + ".column.name.title";
 
-    private static final String COLUMN_NAME_TOOLTIP = AuthorizationUserListView.ID
-            + ".column.name.tooltip";
+    private static final String COLUMN_NAME_TOOLTIP = AuthorizationUserListView.ID + ".column.name.tooltip";
 
-    private static final String COLUMN_DESCRIPTION_TITLE = AuthorizationUserListView.ID
-            + ".column.description.title";
+    private static final String COLUMN_DESCRIPTION_TITLE = AuthorizationUserListView.ID + ".column.description.title";
 
     private static final String COLUMN_DESCRIPTION_TOOLTIP = AuthorizationUserListView.ID
             + ".column.description.tooltip";
@@ -62,13 +58,11 @@ public class AuthorizationUserListViewLayouter extends
 
         NabuccoFormToolkit ntk = new NabuccoFormToolkit(parent);
 
-        AuthorizationUserListViewWidgetFactory widgetFactory = new AuthorizationUserListViewWidgetFactory(
-                ntk);
+        AuthorizationUserListViewWidgetFactory widgetFactory = new AuthorizationUserListViewWidgetFactory(ntk);
 
-        NabuccoTableParameter parameter = new NabuccoTableParameter(
-                new NabuccoDefaultTableSorter<AuthorizationUser>(createComparators()),
-                new AuthorizationUserListViewTableFilter(), new NabuccoDefaultListContentProvider(
-                        model), createTableColumnInfo(), getDoubleClickCommand(view));
+        NabuccoTableParameter parameter = new NabuccoTableParameter(new NabuccoDefaultTableSorter<AuthorizationUser>(
+                createComparators()), new AuthorizationUserListViewTableFilter(),
+                new NabuccoDefaultListContentProvider(model), createTableColumnInfo(), getDoubleClickCommand(view));
 
         return widgetFactory.createTable(parent, parameter, model);
     }
@@ -89,13 +83,11 @@ public class AuthorizationUserListViewLayouter extends
     private NabuccoTableColumnInfo[] createTableColumnInfo() {
         NabuccoTableColumnInfo[] result = {
 
-                new NabuccoTableColumnInfo(COLUMN_NAME_TITLE, COLUMN_NAME_TOOLTIP, 200, SWT.CENTER,
-                        SWT.CENTER,
+                new NabuccoTableColumnInfo(COLUMN_NAME_TITLE, COLUMN_NAME_TOOLTIP, 200, SWT.CENTER, SWT.CENTER,
                         new AuthorizationUserListViewAuthorizationUserNameLabelProvider()),
 
-                new NabuccoTableColumnInfo(COLUMN_DESCRIPTION_TITLE, COLUMN_DESCRIPTION_TOOLTIP,
-                        300, SWT.RIGHT, SWT.RIGHT,
-                        new AuthorizationUserListViewAuthorizationUserDescriptionLabelProvider()) };
+                new NabuccoTableColumnInfo(COLUMN_DESCRIPTION_TITLE, COLUMN_DESCRIPTION_TOOLTIP, 300, SWT.RIGHT,
+                        SWT.RIGHT, new AuthorizationUserListViewAuthorizationUserDescriptionLabelProvider()) };
 
         return result;
     }

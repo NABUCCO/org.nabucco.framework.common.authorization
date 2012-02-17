@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,15 +20,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Query;
-
-import org.nabucco.framework.base.facade.component.connection.ConnectionException;
 import org.nabucco.framework.base.facade.datatype.Flag;
 import org.nabucco.framework.base.facade.datatype.Name;
 import org.nabucco.framework.base.facade.datatype.security.Subject;
 import org.nabucco.framework.base.facade.datatype.security.User;
-import org.nabucco.framework.base.facade.exception.service.ServiceException;
+import org.nabucco.framework.base.facade.exception.persistence.PersistenceException;
 import org.nabucco.framework.base.facade.message.context.ServiceMessageContext;
+import org.nabucco.framework.base.impl.service.maintain.NabuccoQuery;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationPermission;
 import org.nabucco.framework.common.authorization.facade.exception.AuthorizationException;
 import org.nabucco.framework.common.authorization.facade.message.AuthorizationNameMsg;
@@ -44,8 +42,7 @@ public class HasPermissionByNameServiceHandlerImpl extends HasPermissionByNameSe
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected AuthorizationRs hasPermissionByName(AuthorizationNameMsg msg)
-            throws AuthorizationException {
+    protected AuthorizationRs hasPermissionByName(AuthorizationNameMsg msg) throws AuthorizationException {
 
         AuthorizationRs rsMsg = new AuthorizationRs();
 
@@ -55,10 +52,8 @@ public class HasPermissionByNameServiceHandlerImpl extends HasPermissionByNameSe
             Flag valid = new Flag(this.checkPermission(user, msg.getName()));
             rsMsg.setValid(valid);
 
-        } catch (ConnectionException ce) {
-            throw new AuthorizationException("Cannot connect to AuthorizationComponent.", ce);
-        } catch (ServiceException se) {
-            throw new AuthorizationException("Cannot locate Service 'SearchAuthorization'.", se);
+        } catch (PersistenceException se) {
+            throw new AuthorizationException("Cannot load permissions for user '" + user.getUsername() + "'.", se);
         }
 
         return rsMsg;
@@ -88,8 +83,7 @@ public class HasPermissionByNameServiceHandlerImpl extends HasPermissionByNameSe
             throw new AuthorizationException("Cannot authorize User with id [null].");
         }
         if (subject.getToken() == null) {
-            throw new AuthorizationException("User "
-                    + subject.getUser().getUsername() + " is not logged in.");
+            throw new AuthorizationException("User " + subject.getUser().getUsername() + " is not logged in.");
         }
 
         return subject.getUser();
@@ -104,13 +98,10 @@ public class HasPermissionByNameServiceHandlerImpl extends HasPermissionByNameSe
      * @param permissionName
      *            the permission
      * 
-     * @throws ConnectionException
-     *             if no connection can be established
-     * @throws ServiceException
-     *             if the permissions cannot be loaded
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private boolean checkPermission(User user, Name permissionName) throws ConnectionException,
-            ServiceException {
+    private boolean checkPermission(User user, Name permissionName) throws PersistenceException {
 
         Map<String, Object> parameterMap = new HashMap<String, Object>();
         parameterMap.put("userId", user.getId());
@@ -180,16 +171,18 @@ public class HasPermissionByNameServiceHandlerImpl extends HasPermissionByNameSe
      *            the map of parameters
      * 
      * @return <b>true</b> when the permission was found, <b>false</b> if not
+     * 
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private boolean executeQuery(String queryString, Map<String, Object> parameterMap) {
+    private boolean executeQuery(String queryString, Map<String, Object> parameterMap) throws PersistenceException {
 
-        Query query = super.getEntityManager().createQuery(queryString);
+        NabuccoQuery<AuthorizationPermission> query = super.getPersistenceManager().createQuery(queryString);
 
         for (String key : parameterMap.keySet()) {
             query.setParameter(key, parameterMap.get(key));
         }
 
-        @SuppressWarnings("unchecked")
         List<AuthorizationPermission> result = query.getResultList();
 
         if (result != null && !result.isEmpty()) {

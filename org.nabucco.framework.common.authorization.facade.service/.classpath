@@ -8,8 +8,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/org.nabucco.framework.common.authorization.facade.datatype"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.nabucco.framework.common.authorization.facade.exception"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.nabucco.framework.common.authorization.facade.message"/>
-	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/facade/ejb3-persistence.jar"/>
-	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/facade/log4j.jar"/>
 	<classpathentry kind="lib" path="/org.nabucco.framework.common.authorization/lib/facade/org.nabucco.framework.base.facade.jar"/>
-	<classpathentry kind="output" path="out"/>
+	<classpathentry kind="output" path="out/ide"/>
 </classpath>

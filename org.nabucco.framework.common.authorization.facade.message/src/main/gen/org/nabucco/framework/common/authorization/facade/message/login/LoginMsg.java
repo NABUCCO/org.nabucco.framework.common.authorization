@@ -1,17 +1,35 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.facade.message.login;
 
+import java.util.HashMap;
 import java.util.List;
-import org.nabucco.framework.base.facade.datatype.property.BasetypeProperty;
-import org.nabucco.framework.base.facade.datatype.property.EnumProperty;
+import java.util.Map;
+import java.util.Set;
+import org.nabucco.framework.base.facade.datatype.Tenant;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoProperty;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyContainer;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyDescriptor;
+import org.nabucco.framework.base.facade.datatype.property.PropertyCache;
+import org.nabucco.framework.base.facade.datatype.property.PropertyDescriptorSupport;
 import org.nabucco.framework.base.facade.datatype.security.UserId;
 import org.nabucco.framework.base.facade.datatype.security.credential.Password;
 import org.nabucco.framework.base.facade.message.ServiceMessage;
 import org.nabucco.framework.base.facade.message.ServiceMessageSupport;
-import org.nabucco.framework.common.authorization.facade.datatype.login.AuthenticationType;
 
 /**
  * LoginMsg<p/>Login request message<p/>
@@ -23,31 +41,79 @@ public class LoginMsg extends ServiceMessageSupport implements ServiceMessage {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] PROPERTY_NAMES = { "username", "password", "loginType" };
+    private static final String[] PROPERTY_CONSTRAINTS = { "l3,32;u0,n;m1,1;", "l3,128;u0,n;m1,1;", "l3,12;u0,n;m1,1;" };
 
-    private static final String[] PROPERTY_CONSTRAINTS = { "l0,n;m1,1;", "l0,n;m1,1;", "m0,1;" };
+    public static final String USERNAME = "username";
 
+    public static final String PASSWORD = "password";
+
+    public static final String TENANT = "tenant";
+
+    /** The user ID. */
     private UserId username;
 
+    /** The user password. */
     private Password password;
 
-    private AuthenticationType loginType;
+    /** The user tenant. */
+    private Tenant tenant;
 
     /** Constructs a new LoginMsg instance. */
     public LoginMsg() {
         super();
+        this.initDefaults();
+    }
+
+    /** InitDefaults. */
+    private void initDefaults() {
+    }
+
+    /**
+     * CreatePropertyContainer.
+     *
+     * @return the NabuccoPropertyContainer.
+     */
+    protected static NabuccoPropertyContainer createPropertyContainer() {
+        Map<String, NabuccoPropertyDescriptor> propertyMap = new HashMap<String, NabuccoPropertyDescriptor>();
+        propertyMap.put(USERNAME,
+                PropertyDescriptorSupport.createBasetype(USERNAME, UserId.class, 0, PROPERTY_CONSTRAINTS[0], false));
+        propertyMap.put(PASSWORD,
+                PropertyDescriptorSupport.createBasetype(PASSWORD, Password.class, 1, PROPERTY_CONSTRAINTS[1], false));
+        propertyMap.put(TENANT,
+                PropertyDescriptorSupport.createBasetype(TENANT, Tenant.class, 2, PROPERTY_CONSTRAINTS[2], false));
+        return new NabuccoPropertyContainer(propertyMap);
+    }
+
+    /** Init. */
+    public void init() {
+        this.initDefaults();
     }
 
     @Override
-    public List<NabuccoProperty<?>> getProperties() {
-        List<NabuccoProperty<?>> properties = super.getProperties();
-        properties.add(new BasetypeProperty<UserId>(PROPERTY_NAMES[0], UserId.class,
-                PROPERTY_CONSTRAINTS[0], this.username));
-        properties.add(new BasetypeProperty<Password>(PROPERTY_NAMES[1], Password.class,
-                PROPERTY_CONSTRAINTS[1], this.password));
-        properties.add(new EnumProperty<AuthenticationType>(PROPERTY_NAMES[2],
-                AuthenticationType.class, PROPERTY_CONSTRAINTS[2], this.loginType));
+    public Set<NabuccoProperty> getProperties() {
+        Set<NabuccoProperty> properties = super.getProperties();
+        properties.add(super.createProperty(LoginMsg.getPropertyDescriptor(USERNAME), this.username));
+        properties.add(super.createProperty(LoginMsg.getPropertyDescriptor(PASSWORD), this.password));
+        properties.add(super.createProperty(LoginMsg.getPropertyDescriptor(TENANT), this.tenant));
         return properties;
+    }
+
+    @Override
+    public boolean setProperty(NabuccoProperty property) {
+        if (super.setProperty(property)) {
+            return true;
+        }
+        if ((property.getName().equals(USERNAME) && (property.getType() == UserId.class))) {
+            this.setUsername(((UserId) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(PASSWORD) && (property.getType() == Password.class))) {
+            this.setPassword(((Password) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(TENANT) && (property.getType() == Tenant.class))) {
+            this.setTenant(((Tenant) property.getInstance()));
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -75,10 +141,10 @@ public class LoginMsg extends ServiceMessageSupport implements ServiceMessage {
                 return false;
         } else if ((!this.password.equals(other.password)))
             return false;
-        if ((this.loginType == null)) {
-            if ((other.loginType != null))
+        if ((this.tenant == null)) {
+            if ((other.tenant != null))
                 return false;
-        } else if ((!this.loginType.equals(other.loginType)))
+        } else if ((!this.tenant.equals(other.tenant)))
             return false;
         return true;
     }
@@ -89,20 +155,8 @@ public class LoginMsg extends ServiceMessageSupport implements ServiceMessage {
         int result = super.hashCode();
         result = ((PRIME * result) + ((this.username == null) ? 0 : this.username.hashCode()));
         result = ((PRIME * result) + ((this.password == null) ? 0 : this.password.hashCode()));
-        result = ((PRIME * result) + ((this.loginType == null) ? 0 : this.loginType.hashCode()));
+        result = ((PRIME * result) + ((this.tenant == null) ? 0 : this.tenant.hashCode()));
         return result;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder appendable = new StringBuilder();
-        appendable.append("<LoginMsg>\n");
-        appendable.append(super.toString());
-        appendable.append((("<username>" + this.username) + "</username>\n"));
-        appendable.append((("<password>" + this.password) + "</password>\n"));
-        appendable.append((("<loginType>" + this.loginType) + "</loginType>\n"));
-        appendable.append("</LoginMsg>\n");
-        return appendable.toString();
     }
 
     @Override
@@ -111,7 +165,7 @@ public class LoginMsg extends ServiceMessageSupport implements ServiceMessage {
     }
 
     /**
-     * Missing description at method getUsername.
+     * The user ID.
      *
      * @return the UserId.
      */
@@ -120,7 +174,7 @@ public class LoginMsg extends ServiceMessageSupport implements ServiceMessage {
     }
 
     /**
-     * Missing description at method setUsername.
+     * The user ID.
      *
      * @param username the UserId.
      */
@@ -129,7 +183,7 @@ public class LoginMsg extends ServiceMessageSupport implements ServiceMessage {
     }
 
     /**
-     * Missing description at method getPassword.
+     * The user password.
      *
      * @return the Password.
      */
@@ -138,7 +192,7 @@ public class LoginMsg extends ServiceMessageSupport implements ServiceMessage {
     }
 
     /**
-     * Missing description at method setPassword.
+     * The user password.
      *
      * @param password the Password.
      */
@@ -147,20 +201,39 @@ public class LoginMsg extends ServiceMessageSupport implements ServiceMessage {
     }
 
     /**
-     * Missing description at method getLoginType.
+     * The user tenant.
      *
-     * @return the AuthenticationType.
+     * @return the Tenant.
      */
-    public AuthenticationType getLoginType() {
-        return this.loginType;
+    public Tenant getTenant() {
+        return this.tenant;
     }
 
     /**
-     * Missing description at method setLoginType.
+     * The user tenant.
      *
-     * @param loginType the AuthenticationType.
+     * @param tenant the Tenant.
      */
-    public void setLoginType(AuthenticationType loginType) {
-        this.loginType = loginType;
+    public void setTenant(Tenant tenant) {
+        this.tenant = tenant;
+    }
+
+    /**
+     * Getter for the PropertyDescriptor.
+     *
+     * @param propertyName the String.
+     * @return the NabuccoPropertyDescriptor.
+     */
+    public static NabuccoPropertyDescriptor getPropertyDescriptor(String propertyName) {
+        return PropertyCache.getInstance().retrieve(LoginMsg.class).getProperty(propertyName);
+    }
+
+    /**
+     * Getter for the PropertyDescriptorList.
+     *
+     * @return the List<NabuccoPropertyDescriptor>.
+     */
+    public static List<NabuccoPropertyDescriptor> getPropertyDescriptorList() {
+        return PropertyCache.getInstance().retrieve(LoginMsg.class).getAllProperties();
     }
 }

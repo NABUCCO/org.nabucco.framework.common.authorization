@@ -1,5 +1,18 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.ui.rcp.browser.user;
 
@@ -13,11 +26,10 @@ import org.nabucco.framework.plugin.base.model.browser.DatatypeBrowserElement;
 
 /**
  * AuthorizationUserEditViewBrowserElement
- *
+ * 
  * @author Undefined
  */
-public class AuthorizationUserEditViewBrowserElement extends DatatypeBrowserElement implements
-        NabuccoInjectionReciever {
+public class AuthorizationUserEditViewBrowserElement extends DatatypeBrowserElement implements NabuccoInjectionReciever {
 
     private AuthorizationUserEditViewModel viewModel;
 
@@ -25,13 +37,13 @@ public class AuthorizationUserEditViewBrowserElement extends DatatypeBrowserElem
 
     /**
      * Constructs a new AuthorizationUserEditViewBrowserElement instance.
-     *
-     * @param datatype the AuthorizationUser.
+     * 
+     * @param datatype
+     *            the AuthorizationUser.
      */
     public AuthorizationUserEditViewBrowserElement(final AuthorizationUser datatype) {
         super();
-        NabuccoInjector instance = NabuccoInjector
-                .getInstance(AuthorizationUserEditViewBrowserElement.class);
+        NabuccoInjector instance = NabuccoInjector.getInstance(AuthorizationUserEditViewBrowserElement.class);
         browserHandler = instance.inject(AuthorizationUserEditViewBrowserElementHandler.class);
         viewModel = new AuthorizationUserEditViewModel();
         viewModel.setUser(datatype);
@@ -55,7 +67,7 @@ public class AuthorizationUserEditViewBrowserElement extends DatatypeBrowserElem
 
     /**
      * Getter for the ViewModel.
-     *
+     * 
      * @return the AuthorizationUserEditViewModel.
      */
     public AuthorizationUserEditViewModel getViewModel() {
@@ -64,8 +76,9 @@ public class AuthorizationUserEditViewBrowserElement extends DatatypeBrowserElem
 
     /**
      * Setter for the ViewModel.
-     *
-     * @param viewModel the AuthorizationUserEditViewModel.
+     * 
+     * @param viewModel
+     *            the AuthorizationUserEditViewModel.
      */
     public void setViewModel(AuthorizationUserEditViewModel viewModel) {
         this.viewModel = viewModel;

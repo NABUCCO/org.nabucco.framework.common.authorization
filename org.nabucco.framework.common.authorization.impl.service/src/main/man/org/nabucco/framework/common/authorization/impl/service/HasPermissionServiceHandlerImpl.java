@@ -1,19 +1,19 @@
 /*
-* Copyright 2010 PRODYNA AG
-*
-* Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.opensource.org/licenses/eclipse-1.0.php or
-* http://www.nabucco-source.org/nabucco-license.html
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.nabucco.framework.common.authorization.impl.service;
 
 import java.util.ArrayList;
@@ -31,7 +31,6 @@ import org.nabucco.framework.common.authorization.facade.component.Authorization
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationPermission;
 import org.nabucco.framework.common.authorization.facade.datatype.search.AuthorizationSearchParameter;
 import org.nabucco.framework.common.authorization.facade.datatype.search.AuthorizationType;
-
 import org.nabucco.framework.common.authorization.facade.exception.AuthorizationException;
 import org.nabucco.framework.common.authorization.facade.message.AuthorizationPermissionListMsg;
 import org.nabucco.framework.common.authorization.facade.message.AuthorizationPermissionMsg;
@@ -49,8 +48,7 @@ public class HasPermissionServiceHandlerImpl extends HasPermissionServiceHandler
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected AuthorizationRs hasPermission(AuthorizationPermissionMsg msg)
-            throws AuthorizationException {
+    protected AuthorizationRs hasPermission(AuthorizationPermissionMsg msg) throws AuthorizationException {
 
         AuthorizationRs rsMsg = new AuthorizationRs();
 
@@ -65,7 +63,7 @@ public class HasPermissionServiceHandlerImpl extends HasPermissionServiceHandler
                     valid.setValue(Boolean.TRUE);
                 }
             }
-            
+
             rsMsg.setValid(valid);
 
         } catch (ConnectionException ce) {
@@ -96,8 +94,7 @@ public class HasPermissionServiceHandlerImpl extends HasPermissionServiceHandler
             throw new AuthorizationException("Cannot authorize User with username [null].");
         }
         if (subject.getToken() == null) {
-            throw new AuthorizationException("User "
-                    + subject.getUser().getUsername() + " is not logged in.");
+            throw new AuthorizationException("User " + subject.getUser().getUsername() + " is not logged in.");
         }
     }
 
@@ -111,21 +108,18 @@ public class HasPermissionServiceHandlerImpl extends HasPermissionServiceHandler
      * @throws ServiceException
      *             if the permissions cannot be loaded
      */
-    private List<AuthorizationPermission> loadPermissionsForUser() throws ConnectionException,
-            ServiceException {
+    private List<AuthorizationPermission> loadPermissionsForUser() throws ConnectionException, ServiceException {
 
         ServiceMessageContext context = super.getContext();
         Subject subject = context.getSubject();
 
         List<AuthorizationPermission> permissionList = new ArrayList<AuthorizationPermission>();
 
-        AuthorizationComponent authorizationComponent = AuthorizationComponentLocator.getInstance()
-                .getComponent();
+        AuthorizationComponent authorizationComponent = AuthorizationComponentLocator.getInstance().getComponent();
 
         SearchAuthorization searchAuthorization = authorizationComponent.getSearchAuthorization();
 
-        ServiceRequest<AuthorizationSearchMsg> request = new ServiceRequest<AuthorizationSearchMsg>(
-                context);
+        ServiceRequest<AuthorizationSearchMsg> request = new ServiceRequest<AuthorizationSearchMsg>(context);
 
         AuthorizationSearchMsg msg = new AuthorizationSearchMsg();
         request.setRequestMessage(msg);
@@ -141,7 +135,7 @@ public class HasPermissionServiceHandlerImpl extends HasPermissionServiceHandler
         if (response.getResponseMessage() != null) {
             permissionList.addAll(response.getResponseMessage().getAuthorizationPermissionList());
         }
-        
+
         return permissionList;
     }
 

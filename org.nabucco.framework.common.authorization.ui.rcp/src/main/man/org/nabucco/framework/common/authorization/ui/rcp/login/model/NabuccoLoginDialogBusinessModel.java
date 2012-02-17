@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,11 +19,14 @@ package org.nabucco.framework.common.authorization.ui.rcp.login.model;
 import org.nabucco.framework.base.facade.datatype.security.Subject;
 import org.nabucco.framework.base.facade.datatype.security.UserId;
 import org.nabucco.framework.base.facade.datatype.security.credential.Password;
-import org.nabucco.framework.common.authorization.facade.datatype.login.AuthenticationType;
-import org.nabucco.framework.common.authorization.facade.exception.login.LoginException;
+import org.nabucco.framework.base.facade.datatype.session.authorization.SecurityContext;
+import org.nabucco.framework.base.facade.exception.client.ClientException;
+import org.nabucco.framework.base.facade.message.authorization.UserRq;
+import org.nabucco.framework.common.authorization.facade.message.AuthorizationInformationRs;
 import org.nabucco.framework.common.authorization.facade.message.login.LoginMsg;
 import org.nabucco.framework.common.authorization.facade.message.login.LoginRs;
 import org.nabucco.framework.common.authorization.ui.rcp.communication.AuthorizationComponentServiceDelegateFactory;
+import org.nabucco.framework.common.authorization.ui.rcp.communication.AuthorizationServiceDelegate;
 import org.nabucco.framework.common.authorization.ui.rcp.communication.login.LoginDelegate;
 import org.nabucco.framework.plugin.base.Activator;
 import org.nabucco.framework.plugin.base.model.BusinessModel;
@@ -38,49 +41,60 @@ public class NabuccoLoginDialogBusinessModel implements BusinessModel {
     public static String ID = "org.nabucco.framework.plugin.base.dialog.login.model.NabuccoLoginDialogBusinessModel";
 
     /**
-     * Logs a user into the system.
+     * Load the user authorization information (groups, roles, permissions).
      * 
-     * @param userName
-     *            the username
-     * @param password
-     *            the password
+     * @param userId
+     *            the user id
      * 
-     * @return logged in subject OR null if login failed
-     * @throws LoginException
+     * @return the authorization information
      */
-    public Subject login(final String userName, final String password) {
+    public SecurityContext login(String username, String password) {
+
+        SecurityContext context = new SecurityContext();
 
         try {
-            LoginDelegate loginService = AuthorizationComponentServiceDelegateFactory.getInstance()
-                    .getLogin();
+            Subject subject = this.authenticate(username, password);
 
-            LoginMsg request = this.createLoginMsg(userName, password);
-            LoginRs response = loginService.login(request);
+            AuthorizationServiceDelegate authorizationService = AuthorizationComponentServiceDelegateFactory
+                    .getInstance().getAuthorizationService();
 
-            return response.getSubject();
+            UserRq rq = new UserRq();
+            rq.setUserId(new UserId(username));
+
+            AuthorizationInformationRs rs = authorizationService.getInformation(rq);
+
+            context.setSubject(subject);
+            context.getGroupList().addAll(rs.getGroupList());
+            context.getRoleList().addAll(rs.getRoleList());
+            context.getPermissionList().addAll(rs.getPermissionList());
 
         } catch (Exception e) {
             Activator.getDefault().logError(e);
         }
 
-        return null;
+        return context;
     }
 
     /**
-     * Creates the login request message.
+     * Authenticate the user against the database.
      * 
      * @param username
      *            the username
      * @param password
      *            the password
      * 
-     * @return the login request message
+     * @throws ClientException
+     *             when the authentication fails
      */
-    private LoginMsg createLoginMsg(String username, String password) {
-        LoginMsg msg = new LoginMsg();
-        msg.setUsername(new UserId(username));
-        msg.setPassword(new Password(password));
-        msg.setLoginType(AuthenticationType.DATABASE);
-        return msg;
+    private Subject authenticate(String username, String password) throws ClientException {
+        LoginDelegate loginService = AuthorizationComponentServiceDelegateFactory.getInstance().getLogin();
+
+        LoginMsg rq = new LoginMsg();
+        rq.setUsername(new UserId(username));
+        rq.setPassword(new Password(password));
+        LoginRs rs = loginService.login(rq);
+
+        return rs.getSubject();
     }
+
 }

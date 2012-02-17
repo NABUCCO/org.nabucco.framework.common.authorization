@@ -6,7 +6,7 @@
 * You may obtain a copy of the License at
 *
 * http://www.opensource.org/licenses/eclipse-1.0.php or
-* http://www.nabucco-source.org/nabucco-license.html
+* http://nabuccosource.org/License.html
 *
 * Unless required by applicable law or agreed to in writing, software
 * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,22 +16,25 @@
 */
 package org.nabucco.framework.common.authorization.facade.component;
 
-import org.nabucco.framework.common.authorization.facade.service.login.Login;
-import org.nabucco.framework.common.authorization.facade.service.AuthorizationService;
-import org.nabucco.framework.common.authorization.facade.service.maintain.MaintainAuthorization;
-import org.nabucco.framework.common.authorization.facade.service.search.SearchAuthorization;
-import org.nabucco.framework.common.authorization.facade.service.produce.ProduceAuthorization;
-import org.nabucco.framework.common.authorization.facade.service.resolve.ResolveAuthorization;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroup;
+import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroupPermissionRelation;
+import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroupRoleRelation;
+import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroupUserRelation;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationPermission;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationRole;
-import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUser;
-import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroupUserRelation;
-import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroupRoleRelation;
-import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroupPermissionRelation;
-import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUserRoleRelation;
-import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUserPermissionRelation;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationRolePermissionRelation;
+import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUser;
+import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUserPassword;
+import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUserPermissionRelation;
+import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUserRoleRelation;
+import org.nabucco.framework.common.authorization.facade.service.AuthorizationService;
+import org.nabucco.framework.common.authorization.facade.service.export.ExportAuthorization;
+import org.nabucco.framework.common.authorization.facade.service.importing.ImportAuthorization;
+import org.nabucco.framework.common.authorization.facade.service.login.Login;
+import org.nabucco.framework.common.authorization.facade.service.maintain.MaintainAuthorization;
+import org.nabucco.framework.common.authorization.facade.service.produce.ProduceAuthorization;
+import org.nabucco.framework.common.authorization.facade.service.resolve.ResolveAuthorization;
+import org.nabucco.framework.common.authorization.facade.service.search.SearchAuthorization;
 
 @Author			Frank Ratschinski
 @Company		PRODYNA AG
@@ -52,6 +55,8 @@ public Component AuthorizationComponent {
 	@Referenceable
 	public persistent Datatype AuthorizationUser[1] user;
 	
+	public persistent Datatype AuthorizationUserPassword[1] password;   
+	
 	public persistent Datatype AuthorizationGroupUserRelation[1] groupUser;
 	
 	public persistent Datatype AuthorizationGroupRoleRelation[1] groupRole;
@@ -60,9 +65,9 @@ public Component AuthorizationComponent {
 	
 	public persistent Datatype AuthorizationUserRoleRelation[1] userRole;
 	
- 	public persistent Datatype AuthorizationUserPermissionRelation[1] userPermission;
+	public persistent Datatype AuthorizationUserPermissionRelation[1] userPermission;
  	
- 	public persistent Datatype AuthorizationRolePermissionRelation[1] rolePermission;
+	public persistent Datatype AuthorizationRolePermissionRelation[1] rolePermission;
 	
 	public Service Login;
 	
@@ -75,5 +80,9 @@ public Component AuthorizationComponent {
 	public Service ProduceAuthorization;
 	
 	public Service ResolveAuthorization;
+	
+	public Service ExportAuthorization;
+	
+	public Service ImportAuthorization; 
 
 }

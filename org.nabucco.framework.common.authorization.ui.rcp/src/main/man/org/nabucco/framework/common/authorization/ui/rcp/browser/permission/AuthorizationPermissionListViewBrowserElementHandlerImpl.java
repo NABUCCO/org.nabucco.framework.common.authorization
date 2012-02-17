@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -51,14 +51,11 @@ public class AuthorizationPermissionListViewBrowserElementHandlerImpl
         try {
             ResolveAuthorizationDelegate resolveAuthorization = AuthorizationComponentServiceDelegateFactory
                     .getInstance().getResolveAuthorization();
-            AuthorizationPermissionListMsg msg = this
-                    .createAuthorizationPermissionListResolutionMsg(viewModel);
+            AuthorizationPermissionListMsg msg = this.createAuthorizationPermissionListResolutionMsg(viewModel);
 
-            AuthorizationPermissionListMsg response = resolveAuthorization
-                    .resolveAuthorizationPermissionList(msg);
+            AuthorizationPermissionListMsg response = resolveAuthorization.resolveAuthorizationPermissionList(msg);
 
-            viewModel.setElements(response.getAuthorizationPermissionList().toArray(
-                    new AuthorizationPermission[0]));
+            viewModel.setElements(response.getAuthorizationPermissionList().toArray(new AuthorizationPermission[0]));
         } catch (Exception e) {
             Activator.getDefault().logError(e);
         }
@@ -74,8 +71,7 @@ public class AuthorizationPermissionListViewBrowserElementHandlerImpl
     }
 
     @Override
-    public void removeChild(BrowserElement toBeRemoved,
-            AuthorizationPermissionListViewBrowserElement element) {
+    public void removeChild(BrowserElement toBeRemoved, AuthorizationPermissionListViewBrowserElement element) {
         super.removeChildren((AuthorizationPermissionEditViewBrowserElement) toBeRemoved, element);
     }
 
@@ -89,8 +85,7 @@ public class AuthorizationPermissionListViewBrowserElementHandlerImpl
     }
 
     @Override
-    public void updateViewModel(List<AuthorizationPermission> elements,
-            AuthorizationPermissionListViewModel viewModel) {
+    public void updateViewModel(List<AuthorizationPermission> elements, AuthorizationPermissionListViewModel viewModel) {
         viewModel.setElements(elements.toArray(new AuthorizationPermission[0]));
     }
 }

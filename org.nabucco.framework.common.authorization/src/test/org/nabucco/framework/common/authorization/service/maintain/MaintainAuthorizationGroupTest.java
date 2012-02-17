@@ -1,30 +1,28 @@
 /*
-* Copyright 2010 PRODYNA AG
-*
-* Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.opensource.org/licenses/eclipse-1.0.php or
-* http://www.nabucco-source.org/nabucco-license.html
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.nabucco.framework.common.authorization.service.maintain;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.nabucco.framework.base.facade.datatype.DatatypeState;
 import org.nabucco.framework.base.facade.datatype.Description;
 import org.nabucco.framework.base.facade.datatype.Name;
 import org.nabucco.framework.base.facade.datatype.Owner;
-import org.nabucco.framework.base.facade.datatype.code.CodeType;
 import org.nabucco.framework.base.facade.message.ServiceRequest;
 import org.nabucco.framework.base.facade.message.ServiceResponse;
 import org.nabucco.framework.base.test.RuntimeTestSupport;
@@ -70,9 +68,7 @@ public class MaintainAuthorizationGroupTest extends RuntimeTestSupport {
         owner.setValue("PRODYNA");
         group.setOwner(owner);
 
-        CodeType type = new CodeType();
-        type.setValue("ADMIN");
-        group.setGroupType(type);
+        group.setGroupTypeRefId(1l);
 
         msg.setAuthorizationGroup(group);
 
@@ -84,23 +80,22 @@ public class MaintainAuthorizationGroupTest extends RuntimeTestSupport {
 
         group = rs.getResponseMessage().getAuthorizationGroup();
         Assert.assertNotNull(group);
-        
+
         Assert.assertNotNull(group.getId());
         Assert.assertNotNull(group.getVersion());
-        
+
         long id = group.getId();
         long version = group.getVersion();
-        
+
         Assert.assertEquals("Admin Group", group.getGroupname().getValue());
         Assert.assertEquals("AdminGroup Description", group.getDescription().getValue());
         Assert.assertEquals("PRODYNA", group.getOwner().getValue());
-        Assert.assertEquals("ADMIN", group.getGroupType().getValue());
+        Assert.assertEquals(1l, group.getGroupTypeRefId().longValue());
 
         group.setDatatypeState(DatatypeState.MODIFIED);
         group.getGroupname().setValue("Other admin group");
         group.getDescription().setValue("Other adminGroup Description");
         group.getOwner().setValue("NABUCCO");
-        group.getGroupType().setValue("SUPER_ADMIN");
 
         msg.setAuthorizationGroup(group);
 
@@ -114,14 +109,13 @@ public class MaintainAuthorizationGroupTest extends RuntimeTestSupport {
 
         Assert.assertNotNull(group.getId());
         Assert.assertNotNull(group.getVersion());
-        
+
         Assert.assertEquals(id, group.getId().longValue());
         Assert.assertEquals(version + 1, group.getVersion().longValue());
 
         Assert.assertEquals("Other admin group", group.getGroupname().getValue());
         Assert.assertEquals("Other adminGroup Description", group.getDescription().getValue());
         Assert.assertEquals("NABUCCO", group.getOwner().getValue());
-        Assert.assertEquals("SUPER_ADMIN", group.getGroupType().getValue());
 
         group.setDatatypeState(DatatypeState.DELETED);
 

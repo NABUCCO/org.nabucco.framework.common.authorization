@@ -1,5 +1,18 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.ui.rcp.browser.group;
 
@@ -13,18 +26,19 @@ import org.nabucco.framework.plugin.base.model.browser.BrowserListElement;
 
 /**
  * AuthorizationGroupListViewBrowserElement
- *
+ * 
  * @author Undefined
  */
-public class AuthorizationGroupListViewBrowserElement extends
-        BrowserListElement<AuthorizationGroupListViewModel> implements NabuccoInjectionReciever {
+public class AuthorizationGroupListViewBrowserElement extends BrowserListElement<AuthorizationGroupListViewModel>
+        implements NabuccoInjectionReciever {
 
     private AuthorizationGroupListViewBrowserElementHandler listViewBrowserElementHandler;
 
     /**
      * Constructs a new AuthorizationGroupListViewBrowserElement instance.
-     *
-     * @param datatypeList the List<AuthorizationGroup>.
+     * 
+     * @param datatypeList
+     *            the List<AuthorizationGroup>.
      */
     public AuthorizationGroupListViewBrowserElement(final List<AuthorizationGroup> datatypeList) {
         this(datatypeList.toArray(new AuthorizationGroup[datatypeList.size()]));
@@ -32,15 +46,14 @@ public class AuthorizationGroupListViewBrowserElement extends
 
     /**
      * Constructs a new AuthorizationGroupListViewBrowserElement instance.
-     *
-     * @param datatypeArray the AuthorizationGroup[].
+     * 
+     * @param datatypeArray
+     *            the AuthorizationGroup[].
      */
     public AuthorizationGroupListViewBrowserElement(final AuthorizationGroup[] datatypeArray) {
         super();
-        NabuccoInjector instance = NabuccoInjector
-                .getInstance(AuthorizationGroupListViewBrowserElement.class);
-        listViewBrowserElementHandler = instance
-                .inject(AuthorizationGroupListViewBrowserElementHandler.class);
+        NabuccoInjector instance = NabuccoInjector.getInstance(AuthorizationGroupListViewBrowserElement.class);
+        listViewBrowserElementHandler = instance.inject(AuthorizationGroupListViewBrowserElementHandler.class);
         viewModel = new AuthorizationGroupListViewModel();
         viewModel.setElements(datatypeArray);
     }

@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,13 +16,14 @@
  */
 package org.nabucco.framework.common.authorization.impl.service.login;
 
-import javax.persistence.Query;
-
+import org.nabucco.framework.base.facade.component.NabuccoInstance;
+import org.nabucco.framework.base.facade.datatype.NabuccoSystem;
+import org.nabucco.framework.base.facade.datatype.Tenant;
 import org.nabucco.framework.base.facade.datatype.security.Subject;
 import org.nabucco.framework.base.facade.datatype.security.UserId;
 import org.nabucco.framework.base.facade.datatype.security.credential.Password;
+import org.nabucco.framework.base.impl.service.maintain.NabuccoQuery;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUser;
-import org.nabucco.framework.common.authorization.facade.datatype.login.AuthenticationType;
 import org.nabucco.framework.common.authorization.facade.exception.login.LoginException;
 import org.nabucco.framework.common.authorization.facade.message.login.LoginMsg;
 import org.nabucco.framework.common.authorization.facade.message.login.LoginRs;
@@ -85,17 +86,26 @@ public class LoginServiceHandlerImpl extends LoginServiceHandler {
 
         UserId username = this.request.getUsername();
         Password password = this.request.getPassword();
-        AuthenticationType loginType = this.request.getLoginType();
+        Tenant tenant = this.request.getTenant();
 
-        Authentication authentication = AuthenticationFactory.getAuthentication(loginType);
-        authentication.setEntityManager(super.getEntityManager());
-        authentication.authenticate(username, password);
+        Authentication authentication = AuthenticationFactory.getAuthentication(tenant);
+        authentication.setPersistenceManager(super.getPersistenceManager());
+        authentication.authenticate(username, password, tenant);
 
         AuthorizationUser user = this.loadUser();
 
         Subject subject = new Subject();
+        subject.setOwner(NabuccoInstance.getInstance().getOwner());
+
+        if (user.getTenant() != null) {
+            subject.setTenant(user.getTenant());
+        } else {
+            subject.setTenant(new Tenant());
+        }
+
         subject.setUserId(username.getValue());
         subject.setUser(user);
+        subject.setLoginTime(NabuccoSystem.getCurrentTimestamp());
 
         EncryptionUtility.generateSecurityToken(subject);
 
@@ -108,25 +118,28 @@ public class LoginServiceHandlerImpl extends LoginServiceHandler {
      * @return the loaded user
      * 
      * @throws LoginException
+     *             when the user does not exist
      */
     private AuthorizationUser loadUser() throws LoginException {
 
         UserId userId = this.request.getUsername();
+        String tenant = this.request.getTenant().getValue();
 
         try {
             StringBuilder queryString = new StringBuilder();
             queryString.append("select u from AuthorizationUser u");
             queryString.append(" where u.username = :username");
+            queryString.append(" and lower(u.tenant.value) = lower(:tenant)");
 
-            Query query = super.getEntityManager().createQuery(queryString.toString());
-            query.setParameter("username", userId);
-            AuthorizationUser user = (AuthorizationUser) query.getSingleResult();
+            NabuccoQuery<AuthorizationUser> query = super.getPersistenceManager().createQuery(queryString.toString());
+            query.setParameter(AuthorizationUser.USERNAME, userId);
+            query.setParameter(AuthorizationUser.TENANT, tenant);
+            
+            AuthorizationUser user = query.getSingleResult();
             return user;
         } catch (Exception e) {
-            super.getLogger().error(e,
-                    "Error authenticating '" + userId + "' against NABUCCO Authorization.");
-            throw new LoginException("Login failed. Cannot login user with username '"
-                    + userId + "'.");
+            super.getLogger().error(e, "Error authenticating '" + userId + "' against NABUCCO Authorization.");
+            throw new LoginException("Login failed. Cannot login user with username '" + userId + "'.");
         }
     }
 

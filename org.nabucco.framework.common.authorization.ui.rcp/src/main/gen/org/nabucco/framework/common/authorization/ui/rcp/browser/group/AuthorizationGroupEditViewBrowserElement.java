@@ -1,5 +1,18 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.ui.rcp.browser.group;
 
@@ -13,7 +26,7 @@ import org.nabucco.framework.plugin.base.model.browser.DatatypeBrowserElement;
 
 /**
  * AuthorizationGroupEditViewBrowserElement
- *
+ * 
  * @author Undefined
  */
 public class AuthorizationGroupEditViewBrowserElement extends DatatypeBrowserElement implements
@@ -25,13 +38,13 @@ public class AuthorizationGroupEditViewBrowserElement extends DatatypeBrowserEle
 
     /**
      * Constructs a new AuthorizationGroupEditViewBrowserElement instance.
-     *
-     * @param datatype the AuthorizationGroup.
+     * 
+     * @param datatype
+     *            the AuthorizationGroup.
      */
     public AuthorizationGroupEditViewBrowserElement(final AuthorizationGroup datatype) {
         super();
-        NabuccoInjector instance = NabuccoInjector
-                .getInstance(AuthorizationGroupEditViewBrowserElement.class);
+        NabuccoInjector instance = NabuccoInjector.getInstance(AuthorizationGroupEditViewBrowserElement.class);
         browserHandler = instance.inject(AuthorizationGroupEditViewBrowserElementHandler.class);
         viewModel = new AuthorizationGroupEditViewModel();
         viewModel.setGroup(datatype);
@@ -55,7 +68,7 @@ public class AuthorizationGroupEditViewBrowserElement extends DatatypeBrowserEle
 
     /**
      * Getter for the ViewModel.
-     *
+     * 
      * @return the AuthorizationGroupEditViewModel.
      */
     public AuthorizationGroupEditViewModel getViewModel() {
@@ -64,8 +77,9 @@ public class AuthorizationGroupEditViewBrowserElement extends DatatypeBrowserEle
 
     /**
      * Setter for the ViewModel.
-     *
-     * @param viewModel the AuthorizationGroupEditViewModel.
+     * 
+     * @param viewModel
+     *            the AuthorizationGroupEditViewModel.
      */
     public void setViewModel(AuthorizationGroupEditViewModel viewModel) {
         this.viewModel = viewModel;

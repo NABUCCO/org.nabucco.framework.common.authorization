@@ -1,5 +1,18 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.ui.rcp.edit.role.model;
 
@@ -8,11 +21,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
 import org.nabucco.framework.base.facade.datatype.DatatypeState;
 import org.nabucco.framework.base.facade.datatype.Description;
 import org.nabucco.framework.base.facade.datatype.Name;
 import org.nabucco.framework.base.facade.datatype.Owner;
-import org.nabucco.framework.base.facade.datatype.code.CodeType;
+import org.nabucco.framework.base.facade.datatype.code.Code;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroup;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationRole;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUser;
@@ -20,8 +34,11 @@ import org.nabucco.framework.plugin.base.component.edit.model.EditViewModel;
 import org.nabucco.framework.plugin.base.logging.Loggable;
 
 /**
- * AuthorizationRoleEditViewModel<p/>Edit view for datatype AuthorizationRole<p/>
- *
+ * AuthorizationRoleEditViewModel
+ * <p/>
+ * Edit view for datatype AuthorizationRole
+ * <p/>
+ * 
  * @version 1.0
  * @author Frank Ratschinski, PRODYNA AG, 2010-01-18
  */
@@ -37,9 +54,9 @@ public class AuthorizationRoleEditViewModel extends EditViewModel implements Log
 
     public static final String PROPERTY_ROLE_DESCRIPTION = "roleDescription";
 
-    public static final String PROPERTY_ROLE_OWNER = "roleOwner";
+    public static final String PROPERTY_ROLE_TYPE = "roleRoleType";
 
-    public static final String PROPERTY_ROLE_ROLETYPE = "roleRoleType";
+    public static final String PROPERTY_ROLE_OWNER = "roleOwner";
 
     private String groupSetGroupname;
 
@@ -56,51 +73,54 @@ public class AuthorizationRoleEditViewModel extends EditViewModel implements Log
 
     /**
      * Getter for the ID.
-     *
+     * 
      * @return the String.
      */
+    @Override
     public String getID() {
         return "org.nabucco.framework.common.authorization.ui.rcp.edit.role.model.AuthorizationRoleEditViewModel";
     }
 
     /**
      * Getter for the Values.
-     *
+     * 
      * @return the Map<String, Serializable>.
      */
+    @Override
     public Map<String, Serializable> getValues() {
         Map<String, Serializable> result = super.getValues();
         result.put(PROPERTY_ROLE_OWNER, this.getRoleOwner());
         result.put(PROPERTY_GROUPSET_GROUPNAME, this.getGroupSetGroupname());
         result.put(PROPERTY_ROLE_ROLENAME, this.getRoleRolename());
-        result.put(PROPERTY_ROLE_ROLETYPE, this.getRoleRoleType());
         result.put(PROPERTY_ROLE_DESCRIPTION, this.getRoleDescription());
         result.put(PROPERTY_USERSET_USERNAME, this.getUserSetUsername());
+        result.put(PROPERTY_ROLE_TYPE, this.getRoleRoleType());
         return result;
     }
 
     /**
      * Setter for the Role.
-     *
-     * @param newValue the AuthorizationRole.
+     * 
+     * @param newValue
+     *            the AuthorizationRole.
      */
     public void setRole(AuthorizationRole newValue) {
         AuthorizationRole oldValue = this.role;
         this.role = newValue;
-        this.updateProperty(PROPERTY_ROLE_ROLENAME, ((oldValue != null) ? oldValue.getRolename()
-                : ""), ((newValue != null) ? newValue.getRolename() : ""));
-        this.updateProperty(PROPERTY_ROLE_DESCRIPTION,
-                ((oldValue != null) ? oldValue.getDescription() : ""),
+        this.updateProperty(PROPERTY_ROLE_ROLENAME, ((oldValue != null) ? oldValue.getRolename() : ""),
+                ((newValue != null) ? newValue.getRolename() : ""));
+        this.updateProperty(PROPERTY_ROLE_DESCRIPTION, ((oldValue != null) ? oldValue.getDescription() : ""),
                 ((newValue != null) ? newValue.getDescription() : ""));
         this.updateProperty(PROPERTY_ROLE_OWNER, ((oldValue != null) ? oldValue.getOwner() : ""),
                 ((newValue != null) ? newValue.getOwner() : ""));
-        this.updateProperty(PROPERTY_ROLE_ROLETYPE, ((oldValue != null) ? oldValue.getRoleType()
-                : ""), ((newValue != null) ? newValue.getRoleType() : ""));
+        this.updateProperty(PROPERTY_ROLE_TYPE,
+                ((oldValue != null) ? (oldValue.getOwner() != null ? oldValue.getOwner() : null) : null),
+                ((newValue != null) ? (newValue.getOwner() != null ? newValue.getOwner() : null) : null));
     }
 
     /**
      * Getter for the Role.
-     *
+     * 
      * @return the AuthorizationRole.
      */
     public AuthorizationRole getRole() {
@@ -108,8 +128,30 @@ public class AuthorizationRoleEditViewModel extends EditViewModel implements Log
     }
 
     /**
+     * @param roleRoleType
+     *            The roleRoleType to set.
+     */
+    public void setRoleRoleType(Code roleRoleType) {
+        if (this.role != null) {
+            Code oldValue = this.role.getRoleType();
+            this.role.setRoleType(roleRoleType);
+            this.updateProperty(PROPERTY_ROLE_TYPE, oldValue, roleRoleType);
+        }
+    }
+
+    /**
+     * @return Returns the roleRoleType.
+     */
+    public Code getRoleRoleType() {
+        if (this.role == null) {
+            return null;
+        }
+        return this.role.getRoleType();
+    }
+
+    /**
      * Getter for the GroupSet.
-     *
+     * 
      * @return the Set<AuthorizationGroup>.
      */
     public Set<AuthorizationGroup> getGroupSet() {
@@ -121,7 +163,7 @@ public class AuthorizationRoleEditViewModel extends EditViewModel implements Log
 
     /**
      * Getter for the UserSet.
-     *
+     * 
      * @return the Set<AuthorizationUser>.
      */
     public Set<AuthorizationUser> getUserSet() {
@@ -133,8 +175,9 @@ public class AuthorizationRoleEditViewModel extends EditViewModel implements Log
 
     /**
      * Setter for the RoleRolename.
-     *
-     * @param newRolename the String.
+     * 
+     * @param newRolename
+     *            the String.
      */
     public void setRoleRolename(String newRolename) {
         if (((role != null) && (role.getRolename() == null))) {
@@ -144,15 +187,14 @@ public class AuthorizationRoleEditViewModel extends EditViewModel implements Log
         String oldVal = role.getRolename().getValue();
         role.getRolename().setValue(newRolename);
         this.updateProperty(PROPERTY_ROLE_ROLENAME, oldVal, newRolename);
-        if (((!oldVal.equals(newRolename)) && role.getDatatypeState().equals(
-                DatatypeState.PERSISTENT))) {
+        if (((!oldVal.equals(newRolename)) && role.getDatatypeState().equals(DatatypeState.PERSISTENT))) {
             role.setDatatypeState(DatatypeState.MODIFIED);
         }
     }
 
     /**
      * Getter for the RoleRolename.
-     *
+     * 
      * @return the String.
      */
     public String getRoleRolename() {
@@ -164,8 +206,9 @@ public class AuthorizationRoleEditViewModel extends EditViewModel implements Log
 
     /**
      * Setter for the RoleDescription.
-     *
-     * @param newDescription the String.
+     * 
+     * @param newDescription
+     *            the String.
      */
     public void setRoleDescription(String newDescription) {
         if (((role != null) && (role.getDescription() == null))) {
@@ -175,20 +218,18 @@ public class AuthorizationRoleEditViewModel extends EditViewModel implements Log
         String oldVal = role.getDescription().getValue();
         role.getDescription().setValue(newDescription);
         this.updateProperty(PROPERTY_ROLE_DESCRIPTION, oldVal, newDescription);
-        if (((!oldVal.equals(newDescription)) && role.getDatatypeState().equals(
-                DatatypeState.PERSISTENT))) {
+        if (((!oldVal.equals(newDescription)) && role.getDatatypeState().equals(DatatypeState.PERSISTENT))) {
             role.setDatatypeState(DatatypeState.MODIFIED);
         }
     }
 
     /**
      * Getter for the RoleDescription.
-     *
+     * 
      * @return the String.
      */
     public String getRoleDescription() {
-        if ((((role == null) || (role.getDescription() == null)) || (role.getDescription()
-                .getValue() == null))) {
+        if ((((role == null) || (role.getDescription() == null)) || (role.getDescription().getValue() == null))) {
             return "";
         }
         return role.getDescription().getValue();
@@ -196,8 +237,9 @@ public class AuthorizationRoleEditViewModel extends EditViewModel implements Log
 
     /**
      * Setter for the RoleOwner.
-     *
-     * @param newOwner the String.
+     * 
+     * @param newOwner
+     *            the String.
      */
     public void setRoleOwner(String newOwner) {
         if (((role != null) && (role.getOwner() == null))) {
@@ -214,7 +256,7 @@ public class AuthorizationRoleEditViewModel extends EditViewModel implements Log
 
     /**
      * Getter for the RoleOwner.
-     *
+     * 
      * @return the String.
      */
     public String getRoleOwner() {
@@ -225,39 +267,8 @@ public class AuthorizationRoleEditViewModel extends EditViewModel implements Log
     }
 
     /**
-     * Setter for the RoleRoleType.
-     *
-     * @param newRoleType the String.
-     */
-    public void setRoleRoleType(String newRoleType) {
-        if (((role != null) && (role.getRoleType() == null))) {
-            CodeType roleType = new CodeType();
-            role.setRoleType(roleType);
-        }
-        String oldVal = role.getRoleType().getValue();
-        role.getRoleType().setValue(newRoleType);
-        this.updateProperty(PROPERTY_ROLE_ROLETYPE, oldVal, newRoleType);
-        if (((!oldVal.equals(newRoleType)) && role.getDatatypeState().equals(
-                DatatypeState.PERSISTENT))) {
-            role.setDatatypeState(DatatypeState.MODIFIED);
-        }
-    }
-
-    /**
-     * Getter for the RoleRoleType.
-     *
-     * @return the String.
-     */
-    public String getRoleRoleType() {
-        if ((((role == null) || (role.getRoleType() == null)) || (role.getRoleType().getValue() == null))) {
-            return "";
-        }
-        return role.getRoleType().getValue();
-    }
-
-    /**
      * Getter for the GroupSetGroupname.
-     *
+     * 
      * @return the String.
      */
     public String getGroupSetGroupname() {
@@ -266,8 +277,9 @@ public class AuthorizationRoleEditViewModel extends EditViewModel implements Log
 
     /**
      * Setter for the GroupSetGroupname.
-     *
-     * @param groupSetGroupname the String.
+     * 
+     * @param groupSetGroupname
+     *            the String.
      */
     public void setGroupSetGroupname(String groupSetGroupname) {
         super.updateProperty(PROPERTY_GROUPSET_GROUPNAME, this.groupSetGroupname,
@@ -276,8 +288,9 @@ public class AuthorizationRoleEditViewModel extends EditViewModel implements Log
 
     /**
      * Setter for the GroupSet.
-     *
-     * @param set the Set<AuthorizationGroup>.
+     * 
+     * @param set
+     *            the Set<AuthorizationGroup>.
      */
     public void setGroupSet(Set<AuthorizationGroup> set) {
         if ((set == null)) {
@@ -302,7 +315,7 @@ public class AuthorizationRoleEditViewModel extends EditViewModel implements Log
 
     /**
      * Getter for the UserSetUsername.
-     *
+     * 
      * @return the String.
      */
     public String getUserSetUsername() {
@@ -311,18 +324,19 @@ public class AuthorizationRoleEditViewModel extends EditViewModel implements Log
 
     /**
      * Setter for the UserSetUsername.
-     *
-     * @param userSetUsername the String.
+     * 
+     * @param userSetUsername
+     *            the String.
      */
     public void setUserSetUsername(String userSetUsername) {
-        super.updateProperty(PROPERTY_USERSET_USERNAME, this.userSetUsername,
-                (this.userSetUsername = userSetUsername));
+        super.updateProperty(PROPERTY_USERSET_USERNAME, this.userSetUsername, (this.userSetUsername = userSetUsername));
     }
 
     /**
      * Setter for the UserSet.
-     *
-     * @param set the Set<AuthorizationUser>.
+     * 
+     * @param set
+     *            the Set<AuthorizationUser>.
      */
     public void setUserSet(Set<AuthorizationUser> set) {
         if ((set == null)) {

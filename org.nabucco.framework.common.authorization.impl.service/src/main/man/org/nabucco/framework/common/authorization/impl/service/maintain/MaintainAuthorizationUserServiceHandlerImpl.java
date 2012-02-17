@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,13 +19,11 @@ package org.nabucco.framework.common.authorization.impl.service.maintain;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Query;
-
 import org.nabucco.framework.base.facade.datatype.DatatypeState;
 import org.nabucco.framework.base.facade.exception.persistence.PersistenceException;
-import org.nabucco.framework.base.facade.exception.persistence.PersistenceExceptionMapper;
 import org.nabucco.framework.base.facade.exception.service.MaintainException;
-import org.nabucco.framework.base.impl.service.maintain.PersistenceHelper;
+import org.nabucco.framework.base.impl.service.maintain.NabuccoQuery;
+import org.nabucco.framework.base.impl.service.maintain.PersistenceExceptionMapper;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroup;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroupUserRelation;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUser;
@@ -37,8 +35,7 @@ import org.nabucco.framework.common.authorization.impl.service.maintain.support.
  * 
  * @author Nicolas Moser, PRODYNA AG
  */
-public class MaintainAuthorizationUserServiceHandlerImpl extends
-        MaintainAuthorizationUserServiceHandler {
+public class MaintainAuthorizationUserServiceHandlerImpl extends MaintainAuthorizationUserServiceHandler {
 
     private static final long serialVersionUID = 1L;
 
@@ -48,17 +45,12 @@ public class MaintainAuthorizationUserServiceHandlerImpl extends
     /** The list of groups holding the user. */
     private List<AuthorizationGroup> groupList;
 
-    /** A helper for persistence. */
-    private PersistenceHelper helper;
-
     @Override
     public AuthorizationUserMaintainMsg maintainAuthorizationUser(AuthorizationUserMaintainMsg msg)
             throws MaintainException {
 
         this.user = msg.getAuthorizationUser();
         this.groupList = msg.getAuthorizationGroupList();
-
-        this.helper = new PersistenceHelper(super.getEntityManager());
 
         this.maintain();
 
@@ -97,7 +89,7 @@ public class MaintainAuthorizationUserServiceHandlerImpl extends
      *             when the user cannot be maintained
      */
     private void maintainUser() throws PersistenceException {
-        AuthorizationMaintainSupport support = new AuthorizationMaintainSupport(this.helper);
+        AuthorizationMaintainSupport support = new AuthorizationMaintainSupport(super.getPersistenceManager());
         this.user = support.maintainAuthorizationUser(this.user);
     }
 
@@ -148,25 +140,25 @@ public class MaintainAuthorizationUserServiceHandlerImpl extends
             queryString.append(" and g.id not in (:groupIds)");
         }
 
-        Query query = super.getEntityManager().createQuery(queryString.toString());
+        NabuccoQuery<AuthorizationGroupUserRelation> query = super.getPersistenceManager().createQuery(
+                queryString.toString());
         query.setParameter("userId", this.user.getId());
 
         if (!groupIdList.isEmpty()) {
             query.setParameter("groupIds", groupIdList);
         }
 
-        @SuppressWarnings("unchecked")
         List<AuthorizationGroupUserRelation> removedRelations = query.getResultList();
 
         // Delete old relations!
         for (AuthorizationGroupUserRelation relation : removedRelations) {
             relation.setDatatypeState(DatatypeState.DELETED);
-            this.helper.<AuthorizationGroupUserRelation> persist(relation);
+            super.getPersistenceManager().<AuthorizationGroupUserRelation> persist(relation);
         }
 
         // Create new relations!
         for (AuthorizationGroup group : this.groupList) {
-            group = this.helper.find(AuthorizationGroup.class, group);
+            group = super.getPersistenceManager().find(group);
 
             boolean alreadyExistent = false;
             for (AuthorizationGroupUserRelation relation : group.getUserList()) {
@@ -180,7 +172,7 @@ public class MaintainAuthorizationUserServiceHandlerImpl extends
                 relation.setDatatypeState(DatatypeState.INITIALIZED);
                 relation.setUser(this.user);
 
-                relation = this.helper.persist(relation);
+                relation = super.getPersistenceManager().persist(relation);
                 group.getUserList().add(relation);
             }
         }

@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,8 +32,7 @@ import org.nabucco.framework.plugin.base.model.browser.BrowserElement;
  * 
  * @author Nicolas Moser, PRODYNA AG
  */
-public class AddRoleFromBrowserHandlerImpl extends AddRoleHandlerImpl implements
-        AddRoleFromBrowserHandler {
+public class AddRoleFromBrowserHandlerImpl extends AddRoleHandlerImpl implements AddRoleFromBrowserHandler {
 
     /**
      * {@inheritDoc}
@@ -57,8 +56,7 @@ public class AddRoleFromBrowserHandlerImpl extends AddRoleHandlerImpl implements
      *            the view model
      */
     private void updateParent(AuthorizationRoleEditViewModel viewModel) {
-        BrowserElement element = Activator.getDefault().getModel().getBrowserModel()
-                .getFirstElement();
+        BrowserElement element = Activator.getDefault().getModel().getBrowserModel().getFirstElement();
 
         if (element instanceof AuthorizationGroupEditViewBrowserElement) {
             addToGroup(viewModel, (AuthorizationGroupEditViewBrowserElement) element);
@@ -75,8 +73,7 @@ public class AddRoleFromBrowserHandlerImpl extends AddRoleHandlerImpl implements
      * @param element
      *            the selected browser element
      */
-    private void addToGroup(AuthorizationRoleEditViewModel viewModel,
-            AuthorizationGroupEditViewBrowserElement element) {
+    private void addToGroup(AuthorizationRoleEditViewModel viewModel, AuthorizationGroupEditViewBrowserElement element) {
         AuthorizationGroup group = element.getViewModel().getGroup();
 
         Set<AuthorizationGroup> groupSet = new HashSet<AuthorizationGroup>();
@@ -93,8 +90,7 @@ public class AddRoleFromBrowserHandlerImpl extends AddRoleHandlerImpl implements
      * @param element
      *            the selected browser element
      */
-    private void addToUser(AuthorizationRoleEditViewModel viewModel,
-            AuthorizationUserEditViewBrowserElement element) {
+    private void addToUser(AuthorizationRoleEditViewModel viewModel, AuthorizationUserEditViewBrowserElement element) {
         AuthorizationUser user = element.getViewModel().getUser();
 
         Set<AuthorizationUser> userSet = new HashSet<AuthorizationUser>();

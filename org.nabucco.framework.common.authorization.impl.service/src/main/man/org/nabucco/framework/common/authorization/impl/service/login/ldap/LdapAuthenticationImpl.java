@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +17,8 @@
 package org.nabucco.framework.common.authorization.impl.service.login.ldap;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import javax.naming.Context;
@@ -27,16 +28,25 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
-import javax.persistence.EntityManager;
 
+import org.nabucco.common.extension.ExtensionException;
+import org.nabucco.framework.base.facade.datatype.NabuccoSystem;
+import org.nabucco.framework.base.facade.datatype.Tenant;
+import org.nabucco.framework.base.facade.datatype.extension.ExtensionPointType;
+import org.nabucco.framework.base.facade.datatype.extension.ExtensionResolver;
+import org.nabucco.framework.base.facade.datatype.extension.NabuccoExtensionComposite;
+import org.nabucco.framework.base.facade.datatype.extension.property.PropertyLoader;
+import org.nabucco.framework.base.facade.datatype.extension.property.StringProperty;
+import org.nabucco.framework.base.facade.datatype.extension.schema.authorization.authentication.LdapAuthenticationExtension;
 import org.nabucco.framework.base.facade.datatype.logger.NabuccoLogger;
 import org.nabucco.framework.base.facade.datatype.logger.NabuccoLoggingFactory;
 import org.nabucco.framework.base.facade.datatype.security.UserId;
 import org.nabucco.framework.base.facade.datatype.security.credential.Password;
+import org.nabucco.framework.base.impl.service.maintain.PersistenceManager;
 import org.nabucco.framework.common.authorization.facade.exception.login.LoginException;
 
 /**
- * LdapService
+ * LdapAuthenticationImpl
  * 
  * @author Nicolas Moser, PRODYNA AG
  */
@@ -44,112 +54,126 @@ class LdapAuthenticationImpl implements LdapAuthentication {
 
     private static final long serialVersionUID = 1L;
 
-    /** The ldap.properties file */
-    private static final String LDAP_PROPERTIES = "/env/ldap.properties";
-
-    /** The active flag property */
-    private static final String PROPERTY_ACTIVE = "ldap.active";
-
-    /** The base DN property name */
-    private static final String PROPERTY_BASE_DN = "ldap.basedn";
-
-    /** The base DN property return attributes */
-    private static final String PROPERTY_RETURN = "ldap.return";
-
     /** The default base DN */
     private static final String DEFAULT_BASE_DN = "";
-
-    /** The default return attributes */
-    private static final String DEFAULT_RETURN = "";
-
-    /** The object filter property name */
-    private static final String PROPERTY_OBJECT_FILTER = "ldap.objectfilter";
 
     /** The default object filter value. */
     private static final String DEFAULT_OBJECT_FILTER = "";
 
-    /** Regex for splitting the return attributes */
-    private static final String RETURN_SPLIT_REGEX = "/";
-
     /** The logger */
-    private static NabuccoLogger logger = NabuccoLoggingFactory.getInstance().getLogger(
-            LdapAuthentication.class);
+    private static NabuccoLogger logger = NabuccoLoggingFactory.getInstance().getLogger(LdapAuthentication.class);
 
     @Override
-    public void authenticate(UserId username, Password password) throws LoginException {
+    public void authenticate(UserId username, Password password, Tenant tenant) throws LoginException {
 
         try {
-            final Properties ldapProperties = this.loadProperties();
+            LdapAuthenticationExtension ldapConfiguration = this.loadConfiguration(tenant);
 
-            if (this.isActive(ldapProperties)) {
-                final LdapContext context = this.createContext(ldapProperties);
+            LdapContext context = this.createContext(ldapConfiguration);
 
-                final String userDn = this.distinguishName(username.getValue(), context,
-                        ldapProperties);
+            String userDn = this.distinguishName(username.getValue(), context, ldapConfiguration);
 
-                context.addToEnvironment(Context.SECURITY_PRINCIPAL, userDn);
-                context.addToEnvironment(Context.SECURITY_CREDENTIALS, password.getValue());
+            context.addToEnvironment(Context.SECURITY_PRINCIPAL, userDn);
+            context.addToEnvironment(Context.SECURITY_CREDENTIALS, password.getValue());
 
+            try {
                 // Authentication
                 context.lookup(userDn);
-            } else {
-                logger.info("LDAP Authentication is deactivated.");
+            } catch (NamingException ne) {
+                logger.warning("Cannot authenticate '", username.getValue(), "' against LDAP.");
+                throw new LoginException("Login failed. Cannot login user with username '" + username + "'.", ne);
             }
 
-        } catch (final Exception e) {
-            logger.warning(e, "Error authenticating '" + username.getValue() + "' against LDAP.");
-            throw new LoginException("Login failed. Cannot login user with username '"
-                    + username + "'.");
+        } catch (ExtensionException ee) {
+            logger.error(ee, "Error resolving LDAP Authentication Extension.");
+            throw new LoginException("Error resolving LDAP Authentication Extension.", ee);
+        } catch (NamingException ne) {
+            logger.error(ne, "Cannot establish LDAP connection.");
+            throw new LoginException("Cannot establish LDAP connection.", ne);
+        } catch (Exception e) {
+            logger.error(e, "Error authenticating '" + username.getValue() + "' against LDAP.");
+            throw new LoginException("Login failed. Cannot login user with username '" + username + "'.");
         }
     }
 
     /**
-     * Checks whether the LDAP authentication is activated or not.
+     * Loads the LDAP authentication configuration from extension point
+     * <tt>org.nabucco.framework.authorization.authentication</tt>.
      * 
-     * @param properties
-     *            the LDAP properties to validate
+     * @param tenant
+     *            the users tenant
      * 
-     * @return <b>true</b> if the LDAP is activated, <b>falsse</b> if not
-     */
-    private boolean isActive(Properties properties) {
-        if (properties == null) {
-            return false;
-        }
-        return Boolean.valueOf(properties.getProperty(PROPERTY_ACTIVE));
-    }
-
-    /**
-     * Loads the LDAP properties from ldap.properties file.
-     * 
-     * @return the LDAP properties
+     * @return the LDAP authentication configuration
      * 
      * @throws IOException
      *             if the ldap.properties file cannot be found
      */
-    private Properties loadProperties() throws IOException {
-        final InputStream inputStream = this.getClass().getResourceAsStream(LDAP_PROPERTIES);
+    private LdapAuthenticationExtension loadConfiguration(Tenant tenant) throws ExtensionException {
+        ExtensionResolver resolver = NabuccoSystem.getExtensionResolver();
+        ExtensionPointType extensionPoint = ExtensionPointType.ORG_NABUCCO_FRAMEWORK_AUTHORIZATION_AUTHENTICATION;
+        String extensionName = ExtensionResolver.DEFAULT_EXTENSION;
 
-        if (inputStream == null) {
-            logger.warning("Cannot load file '" + LDAP_PROPERTIES + "'.");
-            return null;
-        }
+        NabuccoExtensionComposite extension = resolver.resolveExtension(extensionPoint, extensionName, tenant);
 
-        final Properties properties = new Properties();
-        properties.load(inputStream);
-        return properties;
+        return (LdapAuthenticationExtension) extension;
     }
 
     /**
      * Create context for LDAP connection depending on the ldap.properties file.
      * 
-     * @param properties
+     * @param extension
      *            the LDAP connection properties
      * 
      * @throws NamingException
      *             if the LDAP authentification failed
      */
-    private LdapContext createContext(Properties properties) throws NamingException {
+    private LdapContext createContext(LdapAuthenticationExtension configuration) throws NamingException {
+
+        Properties properties = new Properties();
+        properties.put(Context.INITIAL_CONTEXT_FACTORY, this.getFactoryName(configuration));
+        properties.put(Context.PROVIDER_URL, this.getUrl(configuration));
+
+        properties.put(Context.SECURITY_AUTHENTICATION, PropertyLoader.loadProperty(configuration.getSecurityType()));
+        properties.put(Context.SECURITY_PROTOCOL, PropertyLoader.loadProperty(configuration.getSecurityProtocol()));
+        properties.put(Context.SECURITY_PRINCIPAL, PropertyLoader.loadProperty(configuration.getSecurityPrincipal()));
+        properties.put(Context.SECURITY_CREDENTIALS,
+                PropertyLoader.loadProperty(configuration.getSecurityCredentials()));
+
         return new InitialLdapContext(properties, null);
+    }
+
+    /**
+     * Resolve the LDAP factory name.
+     * 
+     * @param configuration
+     *            the LDAP authentication configuration
+     * 
+     * @return the factory class name
+     */
+    private String getFactoryName(LdapAuthenticationExtension configuration) {
+        LdapFactoryType type = PropertyLoader.loadProperty(LdapFactoryType.class, configuration.getFactory());
+        if (type != null) {
+            return type.getImplName();
+        }
+        return LdapFactoryType.SUN.getImplName();
+    }
+
+    /**
+     * Resolve the LDAP url.
+     * 
+     * @param configuration
+     *            the LDAP authentication configuration
+     * 
+     * @return the directory url
+     */
+    private String getUrl(LdapAuthenticationExtension configuration) {
+        String url = PropertyLoader.loadProperty(configuration.getUrl());
+        if (url == null || url.isEmpty()) {
+            logger.warning("No valid LDAP URL configured 'null'.");
+        } else {
+            logger.info("Authenticating against LDAP '", url, "'.");
+        }
+        return url;
     }
 
     /**
@@ -159,29 +183,29 @@ class LdapAuthenticationImpl implements LdapAuthentication {
      *            the username
      * @param context
      *            the LDAP directory context
-     * @param ldapProperties
-     *            the LDAP properties
+     * @param configuration
+     *            the LDAP configuration
      * 
      * @return the distuinguished name
      * 
      * @throws NamingException
      */
-    private String distinguishName(String username, LdapContext context, Properties ldapProperties)
+    private String distinguishName(String username, LdapContext context, LdapAuthenticationExtension configuration)
             throws NamingException {
 
-        final String filter = this.getObjectFilter(ldapProperties);
-        final String baseDn = this.getBaseDn(ldapProperties);
-        final String[] returnAttributes = this.getReturn(ldapProperties);
+        String filter = this.getObjectFilter(configuration);
+        String baseDn = this.getBaseDn(configuration);
+        String[] returnAttributes = this.getReturnAttributes(configuration);
 
-        final SearchControls searchControls = new SearchControls();
+        SearchControls searchControls = new SearchControls();
         searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
         searchControls.setReturningAttributes(returnAttributes);
 
-        final NamingEnumeration<SearchResult> resultList = context.search(baseDn, filter,
-                new String[] { username }, searchControls);
+        NamingEnumeration<SearchResult> resultList = context.search(baseDn, filter, new String[] { username },
+                searchControls);
 
         if (resultList.hasMore()) {
-            final SearchResult result = resultList.next();
+            SearchResult result = resultList.next();
             return result.getNameInNamespace();
         }
 
@@ -189,50 +213,57 @@ class LdapAuthenticationImpl implements LdapAuthentication {
     }
 
     /**
-     * Extracts the return attribute from the LDAP properties.
+     * Extracts the base distinguished name from the LDAP configuration.
      * 
-     * @param properties
-     *            the LDAP properties
+     * @param configuration
+     *            the LDAP configuration
      * 
-     * @return the return attribute
+     * @return the Base DN
      */
-    private String[] getReturn(Properties properties) {
-        String returnAttribute = properties.getProperty(PROPERTY_RETURN, DEFAULT_RETURN);
-
-        if (returnAttribute == null || returnAttribute.isEmpty()) {
-            return new String[0];
+    private String getBaseDn(LdapAuthenticationExtension configuration) {
+        String baseDn = PropertyLoader.loadProperty(configuration.getBaseDn());
+        if (baseDn == null) {
+            return DEFAULT_BASE_DN;
         }
-
-        return returnAttribute.split(RETURN_SPLIT_REGEX);
+        return baseDn;
     }
 
     /**
-     * Extracts the base distinguished name from the LDAP properties.
+     * Extracts the object filter from the LDAP configuration.
      * 
-     * @param properties
-     *            the LDAP properties
+     * @param configuration
+     *            the LDAP configuration
      * 
-     * @return the Base DN
+     * @return the object filter
      */
-    private String getBaseDn(Properties properties) {
-        return properties.getProperty(PROPERTY_BASE_DN, DEFAULT_BASE_DN);
+    private String getObjectFilter(LdapAuthenticationExtension configuration) {
+        String objectFilter = PropertyLoader.loadProperty(configuration.getObjectFilter());
+        if (objectFilter == null) {
+            return DEFAULT_OBJECT_FILTER;
+        }
+        return objectFilter;
     }
 
     /**
-     * Extracts the object filter from the LDAP properties.
+     * Extracts the return attributes from the LDAP configuration.
      * 
-     * @param properties
-     *            the LDAP properties
+     * @param configuration
+     *            the LDAP configuration
      * 
-     * @return the Base DN
+     * @return the return attributes
      */
-    private String getObjectFilter(Properties properties) {
-        return properties.getProperty(PROPERTY_OBJECT_FILTER, DEFAULT_OBJECT_FILTER);
+    private String[] getReturnAttributes(LdapAuthenticationExtension configuration) {
+        List<String> returnAttributes = new ArrayList<String>();
+        for (StringProperty attribute : configuration.getReturnAttributes()) {
+            String returnAttribute = PropertyLoader.loadProperty(attribute);
+            returnAttributes.add(returnAttribute);
+        }
+        return returnAttributes.toArray(new String[returnAttributes.size()]);
     }
 
     @Override
-    public void setEntityManager(EntityManager entityManager) {
-        // No entity manager necessary!
+    public void setPersistenceManager(PersistenceManager persistenceManager) {
+        // No persistence manager necessary!
     }
 
 }

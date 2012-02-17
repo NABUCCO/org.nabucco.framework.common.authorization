@@ -1,5 +1,18 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.facade.service.search;
 
@@ -22,37 +35,37 @@ import org.nabucco.framework.common.authorization.facade.message.search.Authoriz
 public interface SearchAuthorization extends Service {
 
     /**
-     * Missing description at method searchAuthorizationGroup.
+     * Search for a list of authorization group in the database.
      *
      * @param rq the ServiceRequest<AuthorizationSearchMsg>.
      * @return the ServiceResponse<AuthorizationGroupListMsg>.
      * @throws SearchException
      */
-    ServiceResponse<AuthorizationGroupListMsg> searchAuthorizationGroup(
-            ServiceRequest<AuthorizationSearchMsg> rq) throws SearchException;
+    ServiceResponse<AuthorizationGroupListMsg> searchAuthorizationGroup(ServiceRequest<AuthorizationSearchMsg> rq)
+            throws SearchException;
 
     /**
-     * Missing description at method searchAuthorizationUser.
+     * Search for a list of authorization users in the database.
      *
      * @param rq the ServiceRequest<AuthorizationSearchMsg>.
      * @return the ServiceResponse<AuthorizationUserListMsg>.
      * @throws SearchException
      */
-    ServiceResponse<AuthorizationUserListMsg> searchAuthorizationUser(
-            ServiceRequest<AuthorizationSearchMsg> rq) throws SearchException;
+    ServiceResponse<AuthorizationUserListMsg> searchAuthorizationUser(ServiceRequest<AuthorizationSearchMsg> rq)
+            throws SearchException;
 
     /**
-     * Missing description at method searchAuthorizationRole.
+     * Search for a list of authorization roles in the database.
      *
      * @param rq the ServiceRequest<AuthorizationSearchMsg>.
      * @return the ServiceResponse<AuthorizationRoleListMsg>.
      * @throws SearchException
      */
-    ServiceResponse<AuthorizationRoleListMsg> searchAuthorizationRole(
-            ServiceRequest<AuthorizationSearchMsg> rq) throws SearchException;
+    ServiceResponse<AuthorizationRoleListMsg> searchAuthorizationRole(ServiceRequest<AuthorizationSearchMsg> rq)
+            throws SearchException;
 
     /**
-     * Missing description at method searchAuthorizationPermission.
+     * Search for a list of authorization permissions in the database.
      *
      * @param rq the ServiceRequest<AuthorizationSearchMsg>.
      * @return the ServiceResponse<AuthorizationPermissionListMsg>.

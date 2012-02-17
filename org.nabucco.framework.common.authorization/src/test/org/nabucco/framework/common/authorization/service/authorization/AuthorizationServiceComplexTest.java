@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -48,7 +48,7 @@ import org.nabucco.framework.common.authorization.util.AuthorizationTestUtility;
 public class AuthorizationServiceComplexTest extends RuntimeTestSupport {
 
     private AuthorizationComponent component;
-    
+
     private AuthorizationGroup group;
 
     @Before
@@ -62,7 +62,7 @@ public class AuthorizationServiceComplexTest extends RuntimeTestSupport {
     public void tearDown() throws Exception {
         AuthorizationTestUtility.removeAll(this.component, this.group);
     }
-    
+
     @Test
     public void testAuthorizeByGroup() throws Exception {
 
@@ -75,12 +75,11 @@ public class AuthorizationServiceComplexTest extends RuntimeTestSupport {
 
         ServiceRequest<AuthorizationNameMsg> rq = this.createAuthorizedRequest(user, "Dummy");
 
-        ServiceResponse<AuthorizationRs> rs = this.component.getAuthorizationService()
-                .hasPermissionByName(rq);
-        
+        ServiceResponse<AuthorizationRs> rs = this.component.getAuthorizationService().hasPermissionByName(rq);
+
         Assert.assertNotNull(rs);
         Assert.assertNotNull(rs.getResponseMessage());
-        
+
         Assert.assertNotNull(rs.getResponseMessage().getValid());
         Assert.assertTrue(rs.getResponseMessage().getValid().getValue());
     }
@@ -127,8 +126,7 @@ public class AuthorizationServiceComplexTest extends RuntimeTestSupport {
      * 
      * @return the request
      */
-    private ServiceRequest<AuthorizationNameMsg> createAuthorizedRequest(AuthorizationUser user,
-            String permissionName) {
+    private ServiceRequest<AuthorizationNameMsg> createAuthorizedRequest(AuthorizationUser user, String permissionName) {
         AuthorizationNameMsg msg = new AuthorizationNameMsg();
         msg.setName(new Name(permissionName));
 

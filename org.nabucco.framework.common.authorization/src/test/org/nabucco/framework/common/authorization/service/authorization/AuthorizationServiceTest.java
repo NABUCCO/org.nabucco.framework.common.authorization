@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,24 +44,23 @@ public class AuthorizationServiceTest extends RuntimeTestSupport {
 
     @Before
     public void setUp() throws Exception {
-        component = super.getComponent(AuthorizationComponentLocator.getInstance());
+        this.component = super.getComponent(AuthorizationComponentLocator.getInstance());
     }
 
     @Test
     public void testHasPermission() throws Exception {
 
-        AuthorizationUser user = AuthorizationTestUtility.create(component,
+        AuthorizationUser user = AuthorizationTestUtility.create(this.component,
                 AuthorizationTestUtility.dummyUser("Dummy"));
 
-        AuthorizationPermission permission = AuthorizationTestUtility.addUsers(component,
+        AuthorizationPermission permission = AuthorizationTestUtility.addUsers(this.component,
                 AuthorizationTestUtility.dummyPermission("Dummy"), user);
 
-        ServiceRequest<AuthorizationPermissionMsg> rq = this.createAuthorizedRequest(user,
-                permission);
+        ServiceRequest<AuthorizationPermissionMsg> rq = this.createAuthorizedRequest(user, permission);
 
-        user = AuthorizationTestUtility.find(component, user);
+        user = AuthorizationTestUtility.find(this.component, user);
 
-        ServiceResponse<AuthorizationRs> rs = component.getAuthorizationService().hasPermission(rq);
+        ServiceResponse<AuthorizationRs> rs = this.component.getAuthorizationService().hasPermission(rq);
 
         Assert.assertNotNull(rs);
         Assert.assertNotNull(rs.getResponseMessage());
@@ -69,8 +68,8 @@ public class AuthorizationServiceTest extends RuntimeTestSupport {
         Assert.assertNotNull(rs.getResponseMessage().getValid().getValue());
         Assert.assertTrue(rs.getResponseMessage().getValid().getValue());
 
-        AuthorizationTestUtility.remove(component, user);
-        AuthorizationTestUtility.remove(component, permission);
+        AuthorizationTestUtility.remove(this.component, user);
+        AuthorizationTestUtility.remove(this.component, permission);
     }
 
     /**
@@ -82,8 +81,8 @@ public class AuthorizationServiceTest extends RuntimeTestSupport {
      * 
      * @return the request
      */
-    private ServiceRequest<AuthorizationPermissionMsg> createAuthorizedRequest(
-            AuthorizationUser user, AuthorizationPermission permission) {
+    private ServiceRequest<AuthorizationPermissionMsg> createAuthorizedRequest(AuthorizationUser user,
+            AuthorizationPermission permission) {
         AuthorizationPermissionMsg msg = new AuthorizationPermissionMsg();
         msg.setAuthorizationPermission(permission);
 
@@ -91,8 +90,7 @@ public class AuthorizationServiceTest extends RuntimeTestSupport {
         context.getSubject().setUser(user);
         context.getSubject().setToken(new byte[0]);
 
-        ServiceRequest<AuthorizationPermissionMsg> rq = new ServiceRequest<AuthorizationPermissionMsg>(
-                context);
+        ServiceRequest<AuthorizationPermissionMsg> rq = new ServiceRequest<AuthorizationPermissionMsg>(context);
         rq.setRequestMessage(msg);
         return rq;
     }
@@ -100,19 +98,17 @@ public class AuthorizationServiceTest extends RuntimeTestSupport {
     @Test
     public void testHasPermissionByName() throws Exception {
 
-        AuthorizationUser user = AuthorizationTestUtility.create(component,
+        AuthorizationUser user = AuthorizationTestUtility.create(this.component,
                 AuthorizationTestUtility.dummyUser("Dummy"));
 
-        AuthorizationPermission permission = AuthorizationTestUtility.addUsers(component,
+        AuthorizationPermission permission = AuthorizationTestUtility.addUsers(this.component,
                 AuthorizationTestUtility.dummyPermission("Dummy"), user);
 
-        ServiceRequest<AuthorizationNameMsg> rq = this.createAuthorizedRequest(user,
-                permission.getPermissionname());
+        ServiceRequest<AuthorizationNameMsg> rq = this.createAuthorizedRequest(user, permission.getPermissionname());
 
-        user = AuthorizationTestUtility.find(component, user);
+        user = AuthorizationTestUtility.find(this.component, user);
 
-        ServiceResponse<AuthorizationRs> rs = component.getAuthorizationService()
-                .hasPermissionByName(rq);
+        ServiceResponse<AuthorizationRs> rs = this.component.getAuthorizationService().hasPermissionByName(rq);
 
         Assert.assertNotNull(rs);
         Assert.assertNotNull(rs.getResponseMessage());
@@ -120,8 +116,8 @@ public class AuthorizationServiceTest extends RuntimeTestSupport {
         Assert.assertNotNull(rs.getResponseMessage().getValid().getValue());
         Assert.assertTrue(rs.getResponseMessage().getValid().getValue());
 
-        AuthorizationTestUtility.remove(component, user);
-        AuthorizationTestUtility.remove(component, permission);
+        AuthorizationTestUtility.remove(this.component, user);
+        AuthorizationTestUtility.remove(this.component, permission);
     }
 
     /**
@@ -134,8 +130,7 @@ public class AuthorizationServiceTest extends RuntimeTestSupport {
      * 
      * @return the request
      */
-    private ServiceRequest<AuthorizationNameMsg> createAuthorizedRequest(AuthorizationUser user,
-            Name permissionName) {
+    private ServiceRequest<AuthorizationNameMsg> createAuthorizedRequest(AuthorizationUser user, Name permissionName) {
         AuthorizationNameMsg msg = new AuthorizationNameMsg();
         msg.setName(permissionName);
 

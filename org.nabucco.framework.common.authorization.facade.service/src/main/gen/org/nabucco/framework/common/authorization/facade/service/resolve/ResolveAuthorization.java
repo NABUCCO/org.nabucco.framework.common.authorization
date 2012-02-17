@@ -1,5 +1,18 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.facade.service.resolve;
 
@@ -24,22 +37,22 @@ import org.nabucco.framework.common.authorization.facade.message.maintain.Author
  * ResolveAuthorization<p/>Authorization resolution service<p/>
  *
  * @version 1.0
- * @author Jens Wurm, PRODYNA AG, 2010-05-06
+ * @author Nicolas Moser, PRODYNA AG, 2010-05-06
  */
 public interface ResolveAuthorization extends Service {
 
     /**
-     * Missing description at method resolveAuthorizationGroup.
+     * Resolve an authorization group from the database.
      *
      * @param rq the ServiceRequest<AuthorizationGroupMsg>.
      * @return the ServiceResponse<AuthorizationGroupMaintainMsg>.
      * @throws ResolveException
      */
-    ServiceResponse<AuthorizationGroupMaintainMsg> resolveAuthorizationGroup(
-            ServiceRequest<AuthorizationGroupMsg> rq) throws ResolveException;
+    ServiceResponse<AuthorizationGroupMaintainMsg> resolveAuthorizationGroup(ServiceRequest<AuthorizationGroupMsg> rq)
+            throws ResolveException;
 
     /**
-     * Missing description at method resolveAuthorizationGroupList.
+     * Resolve a list of authorization groups from the database.
      *
      * @param rq the ServiceRequest<AuthorizationGroupListMsg>.
      * @return the ServiceResponse<AuthorizationGroupListMsg>.
@@ -49,7 +62,47 @@ public interface ResolveAuthorization extends Service {
             ServiceRequest<AuthorizationGroupListMsg> rq) throws ResolveException;
 
     /**
-     * Missing description at method resolveAuthorizationPermission.
+     * Resolve an authorization user from the database.
+     *
+     * @param rq the ServiceRequest<AuthorizationUserMsg>.
+     * @return the ServiceResponse<AuthorizationUserMaintainMsg>.
+     * @throws ResolveException
+     */
+    ServiceResponse<AuthorizationUserMaintainMsg> resolveAuthorizationUser(ServiceRequest<AuthorizationUserMsg> rq)
+            throws ResolveException;
+
+    /**
+     * Resolve a list of authorization users from the database.
+     *
+     * @param rq the ServiceRequest<AuthorizationUserListMsg>.
+     * @return the ServiceResponse<AuthorizationUserListMsg>.
+     * @throws ResolveException
+     */
+    ServiceResponse<AuthorizationUserListMsg> resolveAuthorizationUserList(ServiceRequest<AuthorizationUserListMsg> rq)
+            throws ResolveException;
+
+    /**
+     * Resolve an authorization role from the database.
+     *
+     * @param rq the ServiceRequest<AuthorizationRoleMsg>.
+     * @return the ServiceResponse<AuthorizationRoleMaintainMsg>.
+     * @throws ResolveException
+     */
+    ServiceResponse<AuthorizationRoleMaintainMsg> resolveAuthorizationRole(ServiceRequest<AuthorizationRoleMsg> rq)
+            throws ResolveException;
+
+    /**
+     * Resolve a list of authorization roles from the database.
+     *
+     * @param rq the ServiceRequest<AuthorizationRoleListMsg>.
+     * @return the ServiceResponse<AuthorizationRoleListMsg>.
+     * @throws ResolveException
+     */
+    ServiceResponse<AuthorizationRoleListMsg> resolveAuthorizationRoleList(ServiceRequest<AuthorizationRoleListMsg> rq)
+            throws ResolveException;
+
+    /**
+     * Resolve an authorization permission from the database.
      *
      * @param rq the ServiceRequest<AuthorizationPermissionMsg>.
      * @return the ServiceResponse<AuthorizationPermissionMaintainMsg>.
@@ -59,7 +112,7 @@ public interface ResolveAuthorization extends Service {
             ServiceRequest<AuthorizationPermissionMsg> rq) throws ResolveException;
 
     /**
-     * Missing description at method resolveAuthorizationPermissionList.
+     * Resolve a list of authorization permissions from the database.
      *
      * @param rq the ServiceRequest<AuthorizationPermissionListMsg>.
      * @return the ServiceResponse<AuthorizationPermissionListMsg>.
@@ -67,44 +120,4 @@ public interface ResolveAuthorization extends Service {
      */
     ServiceResponse<AuthorizationPermissionListMsg> resolveAuthorizationPermissionList(
             ServiceRequest<AuthorizationPermissionListMsg> rq) throws ResolveException;
-
-    /**
-     * Missing description at method resolveAuthorizationRole.
-     *
-     * @param rq the ServiceRequest<AuthorizationRoleMsg>.
-     * @return the ServiceResponse<AuthorizationRoleMaintainMsg>.
-     * @throws ResolveException
-     */
-    ServiceResponse<AuthorizationRoleMaintainMsg> resolveAuthorizationRole(
-            ServiceRequest<AuthorizationRoleMsg> rq) throws ResolveException;
-
-    /**
-     * Missing description at method resolveAuthorizationRoleList.
-     *
-     * @param rq the ServiceRequest<AuthorizationRoleListMsg>.
-     * @return the ServiceResponse<AuthorizationRoleListMsg>.
-     * @throws ResolveException
-     */
-    ServiceResponse<AuthorizationRoleListMsg> resolveAuthorizationRoleList(
-            ServiceRequest<AuthorizationRoleListMsg> rq) throws ResolveException;
-
-    /**
-     * Missing description at method resolveAuthorizationUser.
-     *
-     * @param rq the ServiceRequest<AuthorizationUserMsg>.
-     * @return the ServiceResponse<AuthorizationUserMaintainMsg>.
-     * @throws ResolveException
-     */
-    ServiceResponse<AuthorizationUserMaintainMsg> resolveAuthorizationUser(
-            ServiceRequest<AuthorizationUserMsg> rq) throws ResolveException;
-
-    /**
-     * Missing description at method resolveAuthorizationUserList.
-     *
-     * @param rq the ServiceRequest<AuthorizationUserListMsg>.
-     * @return the ServiceResponse<AuthorizationUserListMsg>.
-     * @throws ResolveException
-     */
-    ServiceResponse<AuthorizationUserListMsg> resolveAuthorizationUserList(
-            ServiceRequest<AuthorizationUserListMsg> rq) throws ResolveException;
 }

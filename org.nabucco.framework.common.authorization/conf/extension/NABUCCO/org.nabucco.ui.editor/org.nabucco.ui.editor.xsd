@@ -1,0 +1,823 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright 2011 PRODYNA AG
+
+	Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.opensource.org/licenses/eclipse-1.0.php or
+	http://nabuccosource.org/License.html
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<xsd:schema
+	targetNamespace="org.nabucco.ui.editor"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="org.nabucco.ui.editor"
+	xmlns:bts="org.nabucco.bootstrap"
+	elementFormDefault="qualified"
+	xmlns:base="org.nabucco">
+	<xsd:import
+		schemaLocation="../org.nabucco.xsd"
+		namespace="org.nabucco"></xsd:import>
+	<xsd:element
+		name="extension"
+		type="EditorExtensionType">
+	</xsd:element>
+	<xsd:complexType name="PermissionType">
+		<xsd:complexContent>
+			<xsd:extension base="base:UiPermissionType"></xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="EditorType">
+		<xsd:complexContent>
+			<xsd:extension base="base:UiElement">
+				<xsd:sequence
+					minOccurs="1"
+					maxOccurs="unbounded">
+					<xsd:element
+						name="permission"
+						type="PermissionType"
+						maxOccurs="unbounded"
+						minOccurs="0">
+					</xsd:element>
+					<xsd:element
+						name="browser"
+						type="NbcBrowserType"
+						maxOccurs="unbounded"
+						minOccurs="1">
+					</xsd:element>
+					<xsd:element
+						name="workItemActions"
+						type="WorkItemActionsType"
+						maxOccurs="1"
+						minOccurs="0">
+					</xsd:element>
+					<xsd:element
+						name="workflow"
+						type="WorkflowType"
+						maxOccurs="unbounded"
+						minOccurs="0">
+					</xsd:element>
+					<xsd:element
+						name="button"
+						type="ButtonType"
+						maxOccurs="unbounded"
+						minOccurs="0">
+					</xsd:element>
+					<xsd:element
+						name="tab"
+						type="TabType"
+						maxOccurs="unbounded"
+						minOccurs="1">
+					</xsd:element>
+					<xsd:element
+						name="relation"
+						type="RelationType"
+						maxOccurs="unbounded"
+						minOccurs="0">
+					</xsd:element>
+				</xsd:sequence>
+				<xsd:attribute
+					name="label"
+					type="xsd:string"
+					use="required"></xsd:attribute>
+				<xsd:attribute
+					name="tooltip"
+					type="xsd:string"
+					use="required">
+				</xsd:attribute>
+				<xsd:attribute
+					name="icon"
+					type="xsd:string"
+					use="required"></xsd:attribute>
+				<xsd:attribute
+					name="perspective"
+					type="xsd:string"
+					use="optional">
+				</xsd:attribute>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="WorkItemActionsType">
+		<xsd:sequence>
+			<xsd:element
+				name="action"
+				maxOccurs="unbounded"
+				minOccurs="1">
+				<xsd:complexType>
+					<xsd:attribute
+						name="type"
+						use="required">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:enumeration value="SAVE"></xsd:enumeration>
+								<xsd:enumeration value="CLOSE"></xsd:enumeration>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:attribute>
+					<xsd:attribute
+						name="actionId"
+						use="required"
+						type="base:ActionIdType">
+					</xsd:attribute>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="WorkflowType">
+		<xsd:attribute
+			name="label"
+			type="xsd:string"
+			use="required"></xsd:attribute>
+		<xsd:attribute
+			name="tooltip"
+			type="xsd:string"
+			use="required">
+		</xsd:attribute>
+		<xsd:attribute
+			name="signalIcon"
+			type="xsd:string"
+			use="required">
+		</xsd:attribute>
+		<xsd:attribute
+			name="workflowIcon"
+			type="xsd:string"
+			use="required">
+		</xsd:attribute>
+		<xsd:attribute
+			name="noWorkflowLabel"
+			type="xsd:string"
+			use="required">
+		</xsd:attribute>
+		<xsd:attribute
+			name="actionId"
+			type="base:ActionIdType"
+			use="required"></xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="NbcBrowserType">
+		<xsd:sequence>
+			<xsd:element
+				name="entry"
+				maxOccurs="unbounded"
+				minOccurs="0">
+				<xsd:complexType>
+					<xsd:attribute
+						name="id"
+						type="xsd:string"
+						use="required">
+					</xsd:attribute>
+					<xsd:attributeGroup ref="DefaultUIAttributeGroup">
+					</xsd:attributeGroup>
+					<xsd:attribute
+						name="property"
+						type="xsd:string"
+						use="required">
+					</xsd:attribute>
+					<xsd:attribute
+						name="propertyLabel"
+						type="xsd:string"
+						use="required">
+					</xsd:attribute>
+					<xsd:attribute
+						name="propertyTooltip"
+						type="xsd:string"
+						use="required">
+					</xsd:attribute>
+					<xsd:attribute
+						name="grouping"
+						use="optional">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:pattern value="\d+"></xsd:pattern>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:attribute>
+					<xsd:attribute
+						name="actionId"
+						type="base:ActionIdType"
+						use="optional">
+					</xsd:attribute>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute
+			name="refId"
+			type="xsd:string"></xsd:attribute>
+		<xsd:attribute
+			name="label"
+			type="xsd:string"
+			use="required"></xsd:attribute>
+		<xsd:attribute
+			name="icon"
+			type="xsd:string"
+			use="required"></xsd:attribute>
+		<xsd:attribute
+			name="tooltip"
+			type="xsd:string"
+			use="required"></xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="TabType">
+		<xsd:choice
+			minOccurs="0"
+			maxOccurs="unbounded">
+			<xsd:element
+				name="text"
+				type="TextControlType"
+				maxOccurs="1"
+				minOccurs="1">
+			</xsd:element>
+			<xsd:element
+				name="dropdown"
+				type="DropDownControlType"
+				maxOccurs="1"
+				minOccurs="1">
+			</xsd:element>
+			<xsd:element
+				name="link"
+				type="LinkControlType"
+				maxOccurs="1"
+				minOccurs="1">
+			</xsd:element>
+			<xsd:element
+				name="picker"
+				type="PickerControlType"
+				maxOccurs="1"
+				minOccurs="1">
+			</xsd:element>
+			<xsd:element
+				name="currency"
+				type="CurrencyControlType"
+				maxOccurs="1"
+				minOccurs="1">
+			</xsd:element>
+			<xsd:element
+				name="date"
+				type="DateControlType"
+				maxOccurs="1"
+				minOccurs="1">
+			</xsd:element>
+			<xsd:element
+				name="radio"
+				type="RadioControlType"
+				maxOccurs="1"
+				minOccurs="1">
+			</xsd:element>
+			<xsd:element
+				name="checkbox"
+				type="CheckboxControlType"
+				maxOccurs="1"
+				minOccurs="1">
+			</xsd:element>
+			<xsd:element
+				name="image"
+				type="ImageFieldType"
+				maxOccurs="1"
+				minOccurs="1">
+			</xsd:element>
+			<xsd:element
+				name="textarea"
+				type="TextareaControlType"
+				maxOccurs="1"
+				minOccurs="1">
+			</xsd:element>
+			<xsd:element
+				name="password"
+				type="PasswordType" maxOccurs="1" minOccurs="1">
+			</xsd:element>
+		</xsd:choice>
+		<xsd:attribute
+			name="id"
+			type="xsd:string"></xsd:attribute>
+		<xsd:attribute
+			name="grid"
+			type="xsd:string"></xsd:attribute>
+		<xsd:attributeGroup ref="DefaultUIAttributeGroup"></xsd:attributeGroup>
+	</xsd:complexType>
+	<xsd:complexType name="RelationType">
+		<xsd:sequence>
+			<xsd:element
+				name="dependencySet"
+				type="DependencySetType"
+				maxOccurs="1"
+				minOccurs="0">
+			</xsd:element>
+			<xsd:element
+				name="button"
+				maxOccurs="unbounded"
+				minOccurs="0"
+				type="RelationButtonType">
+			</xsd:element>
+			<xsd:element
+				name="column"
+				maxOccurs="unbounded"
+				minOccurs="1">
+				<xsd:complexType>
+					<xsd:attribute
+						name="id"
+						type="xsd:string"
+						use="required">
+					</xsd:attribute>
+					<xsd:attribute
+						name="label"
+						type="xsd:string"
+						use="required">
+					</xsd:attribute>
+					<xsd:attribute
+						name="property"
+						type="xsd:string"
+						use="required">
+					</xsd:attribute>
+					<xsd:attribute
+						name="tooltip"
+						type="xsd:string"
+						use="required">
+					</xsd:attribute>
+					<xsd:attribute
+						name="sortable"
+						type="xsd:boolean"
+						use="optional"
+						default="true">
+					</xsd:attribute>
+					<xsd:attribute
+						name="visible"
+						type="xsd:boolean"
+						use="optional"
+						default="true">
+					</xsd:attribute>
+					<xsd:attribute
+						name="width"
+						type="xsd:int" use="optional">
+					</xsd:attribute>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute
+			name="id"
+			type="xsd:string"
+			use="required"></xsd:attribute>
+		<xsd:attribute
+			name="property"
+			type="xsd:string"
+			use="required">
+		</xsd:attribute>
+		<xsd:attribute
+			name="label"
+			type="xsd:string"></xsd:attribute>
+		<xsd:attribute
+			name="tooltip"
+			type="xsd:string"></xsd:attribute>
+		<xsd:attribute
+			name="doubleclickAction"
+			type="xsd:string"
+			use="optional"></xsd:attribute>
+	</xsd:complexType>
+	<xsd:attributeGroup name="DefaultUIAttributeGroup">
+		<xsd:attribute
+			name="label"
+			type="xsd:string"
+			use="required"></xsd:attribute>
+		<xsd:attribute
+			name="icon"
+			type="xsd:string"
+			use="required"></xsd:attribute>
+		<xsd:attribute
+			name="tooltip"
+			type="xsd:string"
+			use="required">
+		</xsd:attribute>
+	</xsd:attributeGroup>
+	<xsd:complexType name="ButtonType">
+		<xsd:attribute
+			name="id"
+			type="xsd:string"
+			use="required">
+		</xsd:attribute>
+		<xsd:attribute
+			name="parameter"
+			type="xsd:string"
+			use="optional">
+			<xsd:annotation>
+				<xsd:documentation>Parameter that can be used by the action</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute
+			name="actionId"
+			type="base:ActionIdType"
+			use="optional">
+		</xsd:attribute>
+		<xsd:attributeGroup ref="DefaultUIAttributeGroup"></xsd:attributeGroup>
+	</xsd:complexType>
+	<xsd:complexType
+		name="ControlType"
+		abstract="true">
+		<xsd:sequence
+			maxOccurs="1"
+			minOccurs="0">
+			<xsd:element
+				name="dependencySet"
+				type="DependencySetType"
+				maxOccurs="1"
+				minOccurs="1">
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute
+			name="id"
+			type="xsd:string"
+			use="required">
+			<xsd:annotation>
+				<xsd:documentation>The id of the control</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute
+			name="property"
+			type="xsd:string"
+			use="required">
+			<xsd:annotation>
+				<xsd:documentation> The bound property of the control. Navigation possible ("person.name")
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute
+			name="label"
+			type="xsd:string"
+			use="optional">
+			<xsd:annotation>
+				<xsd:documentation>The label to show</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute
+			name="tooltip"
+			type="xsd:string"
+			use="required">
+			<xsd:annotation>
+				<xsd:documentation>The tooltip to show</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute
+			name="position"
+			type="xsd:string"
+			use="required">
+			<xsd:annotation>
+				<xsd:documentation>The position in the grid</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute
+			name="hint"
+			use="required">
+			<xsd:annotation>
+				<xsd:documentation>The position in the grid cell</xsd:documentation>
+			</xsd:annotation>
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="std"></xsd:enumeration>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute
+			name="editable"
+			type="xsd:boolean"
+			use="optional"
+			fixed="false">
+			<xsd:annotation>
+				<xsd:documentation>Defines if the editing is possible</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:simpleType name="ControlTypeEnum">
+		<xsd:annotation>
+			<xsd:documentation> The supported types of controls
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="TEXT"></xsd:enumeration>
+			<xsd:enumeration value="DROP_DOWN"></xsd:enumeration>
+			<xsd:enumeration value="DATE"></xsd:enumeration>
+			<xsd:enumeration value="PICKER"></xsd:enumeration>
+			<xsd:enumeration value="CURRENCY"></xsd:enumeration>
+			<xsd:enumeration value="LINK"></xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="EditorExtensionType">
+		<xsd:complexContent>
+			<xsd:extension base="base:ExtensionType">
+				<xsd:sequence>
+					<xsd:element
+						name="editor"
+						type="EditorType"
+						maxOccurs="1"
+						minOccurs="1"></xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="TextControlType">
+		<xsd:complexContent>
+			<xsd:extension base="ControlType">
+				<xsd:attribute
+					name="regex"
+					type="xsd:string"
+					use="optional">
+					<xsd:annotation>
+						<xsd:documentation>The regex expression for the text fields to be validated</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute
+					name="formatType"
+					use="optional">
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:enumeration value="PERCENT"></xsd:enumeration>
+							<xsd:enumeration value="NONE"></xsd:enumeration>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:attribute>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="DropDownControlType">
+		<xsd:complexContent>
+			<xsd:extension base="ControlType">
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="LinkControlType">
+		<xsd:complexContent>
+			<xsd:extension base="ControlType">
+				<xsd:attribute
+					name="actionId"
+					type="base:ActionIdType"
+					use="optional">
+					<xsd:annotation>
+						<xsd:documentation> The action to be fired by the Link element
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="PickerControlType">
+		<xsd:annotation>
+			<xsd:documentation>The Picker control with dialog selection</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="ControlType">
+				<xsd:sequence
+					maxOccurs="1"
+					minOccurs="0">
+					<xsd:element
+						name="queryParameterMapping"
+						type="QueryParameterMappingType"
+						maxOccurs="1"
+						minOccurs="1">
+					</xsd:element>
+				</xsd:sequence>
+				<xsd:attribute
+					name="multipleSelection"
+					type="xsd:boolean"
+					use="optional"
+					default="false">
+					<xsd:annotation>
+						<xsd:documentation>allow multiple selection by pickers</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute
+					name="displayPath"
+					type="xsd:string"
+					use="required">
+					<xsd:annotation>
+						<xsd:documentation> The Path to display by pickers. Combining and Binding of values possible ( Username
+							{master.name} )
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute
+					name="pickerDialog"
+					type="xsd:string"
+					use="required">
+					<xsd:annotation>
+						<xsd:documentation>The referenced picker dialog</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute
+					name="openAction"
+					type="base:ActionIdType"
+					use="optional">
+					<xsd:annotation>
+						<xsd:documentation>the action to use to open the element from picker dialog</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="CurrencyControlType">
+		<xsd:complexContent>
+			<xsd:extension base="ControlType">
+				<xsd:attribute
+					name="signed"
+					type="xsd:boolean"
+					use="required">
+					<xsd:annotation>
+						<xsd:documentation> Express if the currency field can have a negative value
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute
+					name="separator"
+					type="xsd:string"
+					use="required">
+					<xsd:annotation>
+						<xsd:documentation> The symbol to use as a separator (. , etc) in a currency field
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute
+					name="minimumFractionDigits"
+					use="optional"
+					type="xsd:int">
+					<xsd:annotation>
+						<xsd:documentation> the number of digits (min) after the comma
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute
+					name="maximumFractionDigits"
+					type="xsd:int"
+					use="optional">
+					<xsd:annotation>
+						<xsd:documentation> the number of digits (max) after the comma
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute
+					name="minimumIntegerDigits"
+					type="xsd:int"
+					use="optional">
+					<xsd:annotation>
+						<xsd:documentation> the number of digits (min) before the comma
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute
+					name="maximumIntegerDigits"
+					type="xsd:int"
+					use="optional">
+					<xsd:annotation>
+						<xsd:documentation> the number of digits (max) before the comma
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="DateControlType">
+		<xsd:complexContent>
+			<xsd:extension base="ControlType"></xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="RadioControlType">
+		<xsd:complexContent>
+			<xsd:extension base="ControlType"></xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="CheckboxControlType">
+		<xsd:complexContent>
+			<xsd:extension base="ControlType"></xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="DependencySetType">
+		<xsd:sequence>
+			<xsd:element
+				name="dependency"
+				maxOccurs="unbounded"
+				minOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>The list with dependencies</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:attribute
+						name="targetProperty"
+						type="xsd:string"
+						use="required">
+					</xsd:attribute>
+					<xsd:attribute
+						name="condition"
+						use="required">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:enumeration value="NULL"></xsd:enumeration>
+								<xsd:enumeration value="VALUE"></xsd:enumeration>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:attribute>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute
+			name="affectedConstraint"
+			use="required">
+			<xsd:annotation>
+				<xsd:documentation>The constraint to be manipulated by changes in the dependencies</xsd:documentation>
+			</xsd:annotation>
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="VISIBLE"></xsd:enumeration>
+					<xsd:enumeration value="EDITABLE"></xsd:enumeration>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute
+			name="connectionType"
+			use="required">
+			<xsd:annotation>
+				<xsd:documentation>type of the evaluating of dependencies. AND Means that all dependencies must be valid to return
+					true. The OR means the min one of them must be valid to return true.
+				</xsd:documentation>
+			</xsd:annotation>
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="AND"></xsd:enumeration>
+					<xsd:enumeration value="OR"></xsd:enumeration>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="QueryParameterMappingType">
+		<xsd:sequence>
+			<xsd:element
+				name="parameter"
+				maxOccurs="unbounded"
+				minOccurs="1">
+				<xsd:complexType>
+					<xsd:sequence>
+					</xsd:sequence>
+					<xsd:attribute
+						name="name"
+						type="xsd:string"
+						use="required">
+					</xsd:attribute>
+					<xsd:attribute
+						name="targetProperty"
+						type="xsd:string"
+						use="required">
+					</xsd:attribute>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ImageFieldType">
+		<xsd:complexContent>
+			<xsd:extension base="ControlType">
+				<xsd:attribute
+					name="uploadDialogId"
+					type="xsd:string"
+					use="required">
+				</xsd:attribute>
+				<xsd:attribute
+					name="uploadPath"
+					type="xsd:string"
+					use="required">
+				</xsd:attribute>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="TextareaControlType">
+		<xsd:complexContent>
+			<xsd:extension base="TextControlType"></xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="RelationButtonType">
+		<xsd:complexContent>
+			<xsd:extension base="ButtonType">
+				<xsd:attribute
+					name="selection"
+					type="xsd:boolean"
+					use="optional"
+					default="false">
+				</xsd:attribute>
+				<xsd:attribute
+					name="modification"
+					use="required">
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:enumeration value="ADD"></xsd:enumeration>
+							<xsd:enumeration value="REMOVE"></xsd:enumeration>
+							<xsd:enumeration value="NONE"></xsd:enumeration>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:attribute>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="PasswordType">
+		<xsd:complexContent>
+			<xsd:extension base="ControlType"></xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+</xsd:schema>

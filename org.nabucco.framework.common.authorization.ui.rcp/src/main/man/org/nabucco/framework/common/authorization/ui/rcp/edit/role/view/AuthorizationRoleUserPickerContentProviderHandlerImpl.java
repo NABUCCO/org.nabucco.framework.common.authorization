@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,8 +37,7 @@ public class AuthorizationRoleUserPickerContentProviderHandlerImpl implements
     private AuthorizationRole currentRole;
 
     @Override
-    public Map<String, AuthorizationUser[]> loadAllAuthorizationUser(
-            AuthorizationRoleEditViewModel viewModel) {
+    public Map<String, AuthorizationUser[]> loadAllAuthorizationUser(AuthorizationRoleEditViewModel viewModel) {
         if (needsRefresh(viewModel)) {
             authorizationUsers = loadAllAuthorizationUsers(viewModel);
         }
@@ -54,8 +53,7 @@ public class AuthorizationRoleUserPickerContentProviderHandlerImpl implements
         return result;
     }
 
-    private Map<String, AuthorizationUser[]> loadAllAuthorizationUsers(
-            AuthorizationRoleEditViewModel viewModel) {
+    private Map<String, AuthorizationUser[]> loadAllAuthorizationUsers(AuthorizationRoleEditViewModel viewModel) {
         final HashMap<String, AuthorizationUser[]> result = new HashMap<String, AuthorizationUser[]>();
         try {
             final SearchAuthorizationDelegate searchAuthorization = AuthorizationComponentServiceDelegateFactory

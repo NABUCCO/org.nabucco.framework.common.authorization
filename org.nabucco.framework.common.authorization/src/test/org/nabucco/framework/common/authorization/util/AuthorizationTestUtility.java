@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,7 +24,6 @@ import org.nabucco.framework.base.facade.datatype.DatatypeState;
 import org.nabucco.framework.base.facade.datatype.Description;
 import org.nabucco.framework.base.facade.datatype.Name;
 import org.nabucco.framework.base.facade.datatype.Owner;
-import org.nabucco.framework.base.facade.datatype.code.CodeType;
 import org.nabucco.framework.base.facade.datatype.visitor.DatatypeVisitor;
 import org.nabucco.framework.base.facade.datatype.visitor.VisitorException;
 import org.nabucco.framework.base.facade.exception.service.ServiceException;
@@ -67,9 +66,6 @@ public class AuthorizationTestUtility {
         Description description = new Description();
         description.setValue("This is a test user");
 
-        CodeType type = new CodeType();
-        type.setValue("USR");
-
         Owner owner = new Owner();
         owner.setValue("PRODYNA");
 
@@ -77,7 +73,7 @@ public class AuthorizationTestUtility {
         user.setUsername(username);
         user.setDescription(description);
         user.setOwner(owner);
-        user.setUserType(type);
+        user.setUserTypeRefId(1l);
         user.setDatatypeState(DatatypeState.INITIALIZED);
 
         return user;
@@ -98,14 +94,11 @@ public class AuthorizationTestUtility {
         Owner owner = new Owner();
         owner.setValue("PRODYNA");
 
-        CodeType type = new CodeType();
-        type.setValue("ADMIN");
-
         AuthorizationGroup group = new AuthorizationGroup();
         group.setGroupname(groupName);
         group.setDescription(description);
         group.setOwner(owner);
-        group.setGroupType(type);
+        group.setGroupTypeRefId(1l);
         group.setDatatypeState(DatatypeState.INITIALIZED);
 
         return group;
@@ -126,14 +119,11 @@ public class AuthorizationTestUtility {
         Owner owner = new Owner();
         owner.setValue("PRODYNA");
 
-        CodeType type = new CodeType();
-        type.setValue("ADMIN");
-
         AuthorizationRole role = new AuthorizationRole();
         role.setRolename(roleName);
         role.setDescription(description);
         role.setOwner(owner);
-        role.setRoleType(type);
+        role.setRoleTypeRefId(1l);
         role.setDatatypeState(DatatypeState.INITIALIZED);
 
         return role;
@@ -154,21 +144,18 @@ public class AuthorizationTestUtility {
         Owner owner = new Owner();
         owner.setValue("PRODYNA");
 
-        CodeType type = new CodeType();
-        type.setValue("ADMIN");
-
         AuthorizationPermission permission = new AuthorizationPermission();
         permission.setPermissionname(permissionName);
         permission.setDescription(description);
         permission.setOwner(owner);
-        permission.setPermissionType(type);
+        permission.setPermissionTypeRefId(1l);
         permission.setDatatypeState(DatatypeState.INITIALIZED);
 
         return permission;
     }
 
-    public static AuthorizationGroup create(AuthorizationComponent component,
-            AuthorizationGroup group) throws ServiceException {
+    public static AuthorizationGroup create(AuthorizationComponent component, AuthorizationGroup group)
+            throws ServiceException {
 
         group.setDatatypeState(DatatypeState.INITIALIZED);
 
@@ -206,8 +193,7 @@ public class AuthorizationTestUtility {
         return rs.getResponseMessage().getAuthorizationGroup();
     }
 
-    public static void remove(AuthorizationComponent component, AuthorizationGroup group)
-            throws ServiceException {
+    public static void remove(AuthorizationComponent component, AuthorizationGroup group) throws ServiceException {
 
         group = find(component, group);
 
@@ -222,8 +208,8 @@ public class AuthorizationTestUtility {
         component.getMaintainAuthorization().maintainAuthorizationGroup(rq);
     }
 
-    public static AuthorizationUser create(AuthorizationComponent component,
-            AuthorizationUser user, AuthorizationGroup... groups) throws ServiceException {
+    public static AuthorizationUser create(AuthorizationComponent component, AuthorizationUser user,
+            AuthorizationGroup... groups) throws ServiceException {
 
         user.setDatatypeState(DatatypeState.INITIALIZED);
 
@@ -262,8 +248,7 @@ public class AuthorizationTestUtility {
         return rs.getResponseMessage().getAuthorizationUser();
     }
 
-    public static void remove(AuthorizationComponent component, AuthorizationUser user)
-            throws ServiceException {
+    public static void remove(AuthorizationComponent component, AuthorizationUser user) throws ServiceException {
 
         user = find(component, user);
 
@@ -317,8 +302,7 @@ public class AuthorizationTestUtility {
         return rs.getResponseMessage().getAuthorizationRole();
     }
 
-    public static void remove(AuthorizationComponent component, AuthorizationRole role)
-            throws ServiceException {
+    public static void remove(AuthorizationComponent component, AuthorizationRole role) throws ServiceException {
 
         role = find(component, role);
 
@@ -353,7 +337,7 @@ public class AuthorizationTestUtility {
                 } catch (ServiceException se) {
                     throw new VisitorException(se);
                 }
-                
+
                 super.visit(datatype);
             }
         };
@@ -378,8 +362,8 @@ public class AuthorizationTestUtility {
                 RuntimeTestSupport.createServiceContext());
         rq.setRequestMessage(msg);
 
-        ServiceResponse<AuthorizationPermissionMaintainMsg> rs = component
-                .getMaintainAuthorization().maintainAuthorizationPermission(rq);
+        ServiceResponse<AuthorizationPermissionMaintainMsg> rs = component.getMaintainAuthorization()
+                .maintainAuthorizationPermission(rq);
 
         return rs.getResponseMessage().getAuthorizationPermission();
     }
@@ -393,15 +377,14 @@ public class AuthorizationTestUtility {
         AuthorizationPermissionMaintainMsg requestMessage = new AuthorizationPermissionMaintainMsg();
         requestMessage.setAuthorizationPermission(authorizationPermission);
         rq.setRequestMessage(requestMessage);
-        authorizationPermission = component.getMaintainAuthorization()
-                .maintainAuthorizationPermission(rq).getResponseMessage()
-                .getAuthorizationPermission();
+        authorizationPermission = component.getMaintainAuthorization().maintainAuthorizationPermission(rq)
+                .getResponseMessage().getAuthorizationPermission();
 
         return authorizationPermission;
     }
 
-    public static AuthorizationPermission find(AuthorizationComponent component,
-            AuthorizationPermission permission) throws ServiceException {
+    public static AuthorizationPermission find(AuthorizationComponent component, AuthorizationPermission permission)
+            throws ServiceException {
 
         AuthorizationPermissionMsg msg = new AuthorizationPermissionMsg();
         msg.setAuthorizationPermission(permission);
@@ -411,8 +394,8 @@ public class AuthorizationTestUtility {
 
         rq.setRequestMessage(msg);
 
-        ServiceResponse<AuthorizationPermissionMaintainMsg> rs = component
-                .getResolveAuthorization().resolveAuthorizationPermission(rq);
+        ServiceResponse<AuthorizationPermissionMaintainMsg> rs = component.getResolveAuthorization()
+                .resolveAuthorizationPermission(rq);
 
         Assert.assertNotNull(rs);
         Assert.assertNotNull(rs.getResponseMessage());

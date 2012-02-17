@@ -6,7 +6,7 @@
 * You may obtain a copy of the License at
 *
 * http://www.opensource.org/licenses/eclipse-1.0.php or
-* http://www.nabucco-source.org/nabucco-license.html
+* http://nabuccosource.org/License.html
 *
 * Unless required by applicable law or agreed to in writing, software
 * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,6 +25,7 @@ import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationG
 @Description	Message for passing an AuthorizationGroup
 public Message AuthorizationGroupMsg {
 
+	@Description		The authorization group.
 	private Datatype AuthorizationGroup[1] authorizationGroup;
 
 

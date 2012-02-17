@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -51,8 +51,7 @@ public class NabuccoLoginDialogWidgetFactory extends WidgetFactory {
      * @param model
      *            the login model
      */
-    public NabuccoLoginDialogWidgetFactory(NabuccoFormToolkit formToolkit,
-            NabuccoLoginDialogModel model) {
+    public NabuccoLoginDialogWidgetFactory(NabuccoFormToolkit formToolkit, NabuccoLoginDialogModel model) {
         super(formToolkit);
         this.model = model;
     }
@@ -87,7 +86,7 @@ public class NabuccoLoginDialogWidgetFactory extends WidgetFactory {
     public Combo createDropdownBoxConnections(final Composite parent) {
         Combo dropDownBox = nabuccoFormToolKit.createDropdown(parent);
 
-        for (ConnectionSpecification connectionSpecification : model.getConnectionSpecifications()) {
+        for (ConnectionSpecification connectionSpecification : model.getConnections()) {
             dropDownBox.add(connectionSpecification.getEnvironment());
         }
 
@@ -98,8 +97,8 @@ public class NabuccoLoginDialogWidgetFactory extends WidgetFactory {
                 Combo combo = (Combo) e.getSource();
                 int index = combo.getSelectionIndex();
 
-                ConnectionSpecification spec = model.getConnectionSpecifications().get(index);
-                model.setSelectedConnectionSpecification(spec);
+                ConnectionSpecification spec = model.getConnections().get(index);
+                model.setSelectedConnection(spec);
 
                 Activator.getDefault().logDebug("Selected Connection: " + spec);
             }
@@ -111,7 +110,7 @@ public class NabuccoLoginDialogWidgetFactory extends WidgetFactory {
 
         if (dropDownBox.getItemCount() > 0) {
             dropDownBox.select(0);
-            model.setSelectedConnectionSpecification(model.getConnectionSpecifications().get(0));
+            model.setSelectedConnection(model.getConnections().get(0));
         }
 
         return dropDownBox;

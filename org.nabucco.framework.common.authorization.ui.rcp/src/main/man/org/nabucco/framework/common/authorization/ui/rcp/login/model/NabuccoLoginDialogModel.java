@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,7 +19,7 @@ package org.nabucco.framework.common.authorization.ui.rcp.login.model;
 import java.util.List;
 
 import org.nabucco.framework.base.facade.component.connection.ConnectionSpecification;
-import org.nabucco.framework.base.facade.datatype.security.Subject;
+import org.nabucco.framework.base.facade.datatype.session.authorization.SecurityContext;
 import org.nabucco.framework.plugin.base.Activator;
 import org.nabucco.framework.plugin.base.model.ViewModel;
 
@@ -34,11 +34,11 @@ public class NabuccoLoginDialogModel extends ViewModel {
 
     private String password = "";
 
-    private List<ConnectionSpecification> connectionSpecifications;
+    private SecurityContext securityContext;
 
-    private ConnectionSpecification selectedConnectionSpecification;
+    private List<ConnectionSpecification> connections;
 
-    private Subject subject;
+    private ConnectionSpecification selectedConnection;
 
     public static final String PROPERTY_USER_NAME = "userName";
 
@@ -46,9 +46,9 @@ public class NabuccoLoginDialogModel extends ViewModel {
 
     public static final String PROPERTY_USER_ID = "userId";
 
-    public static final String PROPERTY_CONNECTION_SPECIFICATION = "connectionSpecifications";
+    public static final String PROPERTY_CONNECTION_SPECIFICATION = "connections";
 
-    public static final String PROPERTY_SELECTED_CONNECTION_SPECIFICATION = "selectedConnectionSpecification";
+    public static final String PROPERTY_SELECTED_CONNECTION = "selectedConnection";
 
     /**
      * Getter for the username string.
@@ -88,33 +88,43 @@ public class NabuccoLoginDialogModel extends ViewModel {
         updateProperty(PROPERTY_PASSWORD, this.password, this.password = password);
     }
 
-    public List<ConnectionSpecification> getConnectionSpecifications() {
-        return connectionSpecifications;
+    public List<ConnectionSpecification> getConnections() {
+        return connections;
     }
 
-    public void setConnectionSpecifications(List<ConnectionSpecification> connectionSpecifications) {
-        this.connectionSpecifications = connectionSpecifications;
+    public void setConnections(List<ConnectionSpecification> connectionSpecifications) {
+        this.connections = connectionSpecifications;
     }
 
-    public ConnectionSpecification getSelectedConnectionSpecification() {
-        return selectedConnectionSpecification;
+    public ConnectionSpecification getSelectedConnection() {
+        return selectedConnection;
     }
 
-    public void setSelectedConnectionSpecification(
-            final ConnectionSpecification selectedConnectionSpecification) {
-        Activator.getDefault().setCurrentConnectionSpecification(selectedConnectionSpecification);
-        updateProperty(PROPERTY_SELECTED_CONNECTION_SPECIFICATION,
-                this.selectedConnectionSpecification,
-                this.selectedConnectionSpecification = selectedConnectionSpecification);
+    public void setSelectedConnection(final ConnectionSpecification newValue) {
+        ConnectionSpecification oldValue = this.selectedConnection;
+        super.updateProperty(PROPERTY_SELECTED_CONNECTION, oldValue, newValue);
+
+        this.selectedConnection = newValue;
+        Activator.getDefault().setCurrentConnectionSpecification(newValue);
     }
 
-    public Subject getAuthenticatedSubject() {
-        return this.subject;
+    /**
+     * Getter for the securityContext.
+     * 
+     * @return Returns the securityContext.
+     */
+    public SecurityContext getSecurityContext() {
+        return this.securityContext;
     }
 
-    public void setAuthenticatedSubject(Subject subject) {
-        Subject oldSubject = this.subject;
-        updateProperty(PROPERTY_USER_NAME, oldSubject, subject);
-        this.subject = subject;
+    /**
+     * Setter for the securityContext.
+     * 
+     * @param securityContext
+     *            The securityContext to set.
+     */
+    public void setSecurityContext(SecurityContext securityContext) {
+        this.securityContext = securityContext;
     }
+
 }

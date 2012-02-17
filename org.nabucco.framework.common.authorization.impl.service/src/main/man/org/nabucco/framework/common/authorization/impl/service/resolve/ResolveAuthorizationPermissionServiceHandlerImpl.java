@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,16 +18,13 @@ package org.nabucco.framework.common.authorization.impl.service.resolve;
 
 import java.util.List;
 
-import javax.persistence.Query;
-
 import org.nabucco.framework.base.facade.exception.persistence.PersistenceException;
 import org.nabucco.framework.base.facade.exception.service.ResolveException;
-import org.nabucco.framework.base.impl.service.maintain.PersistenceHelper;
+import org.nabucco.framework.base.impl.service.maintain.NabuccoQuery;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroup;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationPermission;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationRole;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUser;
-
 import org.nabucco.framework.common.authorization.facade.message.AuthorizationPermissionMsg;
 import org.nabucco.framework.common.authorization.facade.message.maintain.AuthorizationPermissionMaintainMsg;
 
@@ -36,24 +33,20 @@ import org.nabucco.framework.common.authorization.facade.message.maintain.Author
  * 
  * @author Jens Wurm, PRODYNA AG
  */
-public class ResolveAuthorizationPermissionServiceHandlerImpl extends
-        ResolveAuthorizationPermissionServiceHandler {
+public class ResolveAuthorizationPermissionServiceHandlerImpl extends ResolveAuthorizationPermissionServiceHandler {
 
     private static final long serialVersionUID = 1L;
-
-    private PersistenceHelper helper;
 
     private AuthorizationPermissionMaintainMsg response;
 
     private AuthorizationPermission permission;
 
     @Override
-    public AuthorizationPermissionMaintainMsg resolveAuthorizationPermission(
-            AuthorizationPermissionMsg msg) throws ResolveException {
+    public AuthorizationPermissionMaintainMsg resolveAuthorizationPermission(AuthorizationPermissionMsg msg)
+            throws ResolveException {
 
         this.permission = msg.getAuthorizationPermission();
         this.response = new AuthorizationPermissionMaintainMsg();
-        this.helper = new PersistenceHelper(super.getEntityManager());
 
         try {
             this.resolve();
@@ -63,8 +56,7 @@ public class ResolveAuthorizationPermissionServiceHandlerImpl extends
             this.loadParentRoles();
 
         } catch (PersistenceException e) {
-            throw new ResolveException("Cannot resolve AuthorizationPermission with id "
-                    + this.permission.getId());
+            throw new ResolveException("Cannot resolve AuthorizationPermission with id " + this.permission.getId());
         }
 
         this.response.setAuthorizationPermission(this.permission);
@@ -78,13 +70,16 @@ public class ResolveAuthorizationPermissionServiceHandlerImpl extends
      *             when the permission is not persistent
      */
     private void resolve() throws PersistenceException {
-        this.permission = this.helper.find(AuthorizationPermission.class, this.permission);
+        this.permission = super.getPersistenceManager().find(this.permission);
     }
 
     /**
      * Load all groups holding the permission.
+     * 
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private void loadParentGroups() throws ResolveException {
+    private void loadParentGroups() throws ResolveException, PersistenceException {
 
         StringBuilder queryString = new StringBuilder();
         queryString.append("select g from AuthorizationGroup g");
@@ -92,18 +87,20 @@ public class ResolveAuthorizationPermissionServiceHandlerImpl extends
         queryString.append(" inner join gp.permission p");
         queryString.append(" where (p.id = :permissionId)");
 
-        Query query = super.getEntityManager().createQuery(queryString.toString());
+        NabuccoQuery<AuthorizationGroup> query = super.getPersistenceManager().createQuery(queryString.toString());
         query.setParameter("permissionId", this.permission.getId());
 
-        @SuppressWarnings("unchecked")
         List<AuthorizationGroup> resultList = query.getResultList();
         this.response.getAuthorizationGroupList().addAll(resultList);
     }
 
     /**
      * Load all users holding the permission.
+     * 
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private void loadParentUsers() throws ResolveException {
+    private void loadParentUsers() throws ResolveException, PersistenceException {
 
         StringBuilder queryString = new StringBuilder();
         queryString.append("select u from AuthorizationUser u");
@@ -111,18 +108,20 @@ public class ResolveAuthorizationPermissionServiceHandlerImpl extends
         queryString.append(" inner join up.permission p");
         queryString.append(" where (p.id = :permissionId)");
 
-        Query query = super.getEntityManager().createQuery(queryString.toString());
+        NabuccoQuery<AuthorizationUser> query = super.getPersistenceManager().createQuery(queryString.toString());
         query.setParameter("permissionId", this.permission.getId());
 
-        @SuppressWarnings("unchecked")
         List<AuthorizationUser> resultList = query.getResultList();
         this.response.getAuthorizationUserList().addAll(resultList);
     }
 
     /**
      * Load all roles holding the permission.
+     * 
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private void loadParentRoles() throws ResolveException {
+    private void loadParentRoles() throws PersistenceException {
 
         StringBuilder queryString = new StringBuilder();
         queryString.append("select r from AuthorizationRole r");
@@ -130,10 +129,9 @@ public class ResolveAuthorizationPermissionServiceHandlerImpl extends
         queryString.append(" inner join rp.permission p");
         queryString.append(" where (p.id = :permissionId)");
 
-        Query query = super.getEntityManager().createQuery(queryString.toString());
+        NabuccoQuery<AuthorizationRole> query = super.getPersistenceManager().createQuery(queryString.toString());
         query.setParameter("permissionId", this.permission.getId());
 
-        @SuppressWarnings("unchecked")
         List<AuthorizationRole> resultList = query.getResultList();
         this.response.getAuthorizationRoleList().addAll(resultList);
     }

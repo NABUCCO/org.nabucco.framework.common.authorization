@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,18 +47,16 @@ public class ResolveAuthorizationUserTest extends RuntimeTestSupport {
     @Test
     public void testResolveAuthorizationUser() throws Exception {
 
-        AuthorizationUser user = AuthorizationTestUtility.create(this.component,
-                AuthorizationTestUtility.dummyUser());
+        AuthorizationUser user = AuthorizationTestUtility.create(this.component, AuthorizationTestUtility.dummyUser());
 
         AuthorizationUserMsg msg = new AuthorizationUserMsg();
         msg.setAuthorizationUser(user);
 
-        ServiceRequest<AuthorizationUserMsg> rq = new ServiceRequest<AuthorizationUserMsg>(
-                super.createServiceContext());
+        ServiceRequest<AuthorizationUserMsg> rq = new ServiceRequest<AuthorizationUserMsg>(super.createServiceContext());
         rq.setRequestMessage(msg);
 
-        AuthorizationUserMaintainMsg rs = this.component.getResolveAuthorization()
-                .resolveAuthorizationUser(rq).getResponseMessage();
+        AuthorizationUserMaintainMsg rs = this.component.getResolveAuthorization().resolveAuthorizationUser(rq)
+                .getResponseMessage();
 
         Assert.assertNotNull(rs);
         user = rs.getAuthorizationUser();
@@ -74,8 +72,7 @@ public class ResolveAuthorizationUserTest extends RuntimeTestSupport {
     @Test
     public void testResolveAuthorizationUserList() throws Exception {
 
-        AuthorizationUser user = AuthorizationTestUtility.create(this.component,
-                AuthorizationTestUtility.dummyUser());
+        AuthorizationUser user = AuthorizationTestUtility.create(this.component, AuthorizationTestUtility.dummyUser());
 
         AuthorizationUserListMsg msg = new AuthorizationUserListMsg();
         msg.getAuthorizationUserList().add(user);
@@ -84,8 +81,8 @@ public class ResolveAuthorizationUserTest extends RuntimeTestSupport {
                 super.createServiceContext());
         rq.setRequestMessage(msg);
 
-        AuthorizationUserListMsg rs = this.component.getResolveAuthorization()
-                .resolveAuthorizationUserList(rq).getResponseMessage();
+        AuthorizationUserListMsg rs = this.component.getResolveAuthorization().resolveAuthorizationUserList(rq)
+                .getResponseMessage();
 
         Assert.assertNotNull(rs);
         Assert.assertEquals(1, rs.getAuthorizationUserList().size());

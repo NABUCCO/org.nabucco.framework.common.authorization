@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,14 +22,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.Query;
-
 import org.nabucco.framework.base.facade.datatype.DatatypeState;
+import org.nabucco.framework.base.facade.exception.persistence.PersistenceException;
 import org.nabucco.framework.base.facade.exception.service.SearchException;
+import org.nabucco.framework.base.impl.service.maintain.NabuccoQuery;
 import org.nabucco.framework.base.impl.service.search.QuerySupport;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroup;
 import org.nabucco.framework.common.authorization.facade.datatype.search.AuthorizationSearchParameter;
-
 import org.nabucco.framework.common.authorization.facade.message.AuthorizationGroupListMsg;
 import org.nabucco.framework.common.authorization.facade.message.search.AuthorizationSearchMsg;
 
@@ -38,8 +37,7 @@ import org.nabucco.framework.common.authorization.facade.message.search.Authoriz
  * 
  * @author Nicolas Moser, PRODYNA AG
  */
-public class SearchAuthorizationGroupServiceHandlerImpl extends
-        SearchAuthorizationGroupServiceHandler {
+public class SearchAuthorizationGroupServiceHandlerImpl extends SearchAuthorizationGroupServiceHandler {
 
     private static final long serialVersionUID = 1L;
 
@@ -50,8 +48,7 @@ public class SearchAuthorizationGroupServiceHandlerImpl extends
     private Set<AuthorizationGroup> resultSet;
 
     @Override
-    public AuthorizationGroupListMsg searchAuthorizationGroup(AuthorizationSearchMsg msg)
-            throws SearchException {
+    public AuthorizationGroupListMsg searchAuthorizationGroup(AuthorizationSearchMsg msg) throws SearchException {
 
         this.request = msg;
         this.resultSet = new HashSet<AuthorizationGroup>();
@@ -79,8 +76,11 @@ public class SearchAuthorizationGroupServiceHandlerImpl extends
      * 
      * @throws SearchException
      *             when the search did not finish normally
+     * 
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private void search() throws SearchException {
+    private void search() throws SearchException, PersistenceException {
 
         this.parameterMap = new HashMap<String, Object>();
 
@@ -115,8 +115,11 @@ public class SearchAuthorizationGroupServiceHandlerImpl extends
 
     /**
      * Search Groups by user.
+     * 
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private void searchByUser() {
+    private void searchByUser() throws PersistenceException {
 
         // Group for User
 
@@ -133,8 +136,11 @@ public class SearchAuthorizationGroupServiceHandlerImpl extends
 
     /**
      * Search Groups by role.
+     * 
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private void searchByRole() {
+    private void searchByRole() throws PersistenceException {
 
         // Group for Role
 
@@ -151,8 +157,11 @@ public class SearchAuthorizationGroupServiceHandlerImpl extends
 
     /**
      * Search Groups by permission.
+     * 
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private void searchByPermission() {
+    private void searchByPermission() throws PersistenceException {
 
         // Group for Permission
 
@@ -183,8 +192,11 @@ public class SearchAuthorizationGroupServiceHandlerImpl extends
 
     /**
      * Execute a basic search.
+     * 
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private void searchBasic() {
+    private void searchBasic() throws PersistenceException {
         StringBuilder query = new StringBuilder();
         query.append("select g from AuthorizationGroup g");
 
@@ -206,14 +218,11 @@ public class SearchAuthorizationGroupServiceHandlerImpl extends
         }
         query.append(" (g.groupname = :name or :name is null)");
         query.append(" and (g.owner = :owner or :owner is null)");
-        query.append(" and (g.groupType = :type or :type is null)");
         query.append(" and (g.description like :description or :description is null)");
 
         this.parameterMap.put("name", this.request.getName());
         this.parameterMap.put("owner", this.request.getOwner());
-        this.parameterMap.put("type", this.request.getCodeType());
-        this.parameterMap.put("description",
-                QuerySupport.searchParameter(this.request.getDescription()));
+        this.parameterMap.put("description", QuerySupport.searchParameter(this.request.getDescription()));
     }
 
     /**
@@ -237,15 +246,17 @@ public class SearchAuthorizationGroupServiceHandlerImpl extends
      * 
      * @param queryString
      *            the string holding the query
+     * 
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private void executeQuery(String queryString) {
-        Query query = super.getEntityManager().createQuery(queryString);
+    private void executeQuery(String queryString) throws PersistenceException {
+        NabuccoQuery<AuthorizationGroup> query = super.getPersistenceManager().createQuery(queryString);
 
         for (String key : parameterMap.keySet()) {
             query.setParameter(key, parameterMap.get(key));
         }
 
-        @SuppressWarnings("unchecked")
         List<AuthorizationGroup> resultList = query.getResultList();
         this.resultSet.addAll(resultList);
     }

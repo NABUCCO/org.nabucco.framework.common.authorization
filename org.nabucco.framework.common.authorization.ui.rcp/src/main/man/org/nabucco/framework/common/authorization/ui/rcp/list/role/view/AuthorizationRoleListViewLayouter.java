@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -43,17 +43,13 @@ import org.nabucco.framework.plugin.base.view.NabuccoMessageManager;
  * 
  * @author Michael Krausse, PRODYNA AG
  */
-public class AuthorizationRoleListViewLayouter extends
-        NabuccoAbstractListLayouter<AuthorizationRoleListViewModel> {
+public class AuthorizationRoleListViewLayouter extends NabuccoAbstractListLayouter<AuthorizationRoleListViewModel> {
 
-    private static final String COLUMN_NAME_TITLE = AuthorizationRoleListView.ID
-            + ".column.name.title";
+    private static final String COLUMN_NAME_TITLE = AuthorizationRoleListView.ID + ".column.name.title";
 
-    private static final String COLUMN_NAME_TOOLTIP = AuthorizationRoleListView.ID
-            + ".column.name.tooltip";
+    private static final String COLUMN_NAME_TOOLTIP = AuthorizationRoleListView.ID + ".column.name.tooltip";
 
-    private static final String COLUMN_DESCRIPTION_TITLE = AuthorizationRoleListView.ID
-            + ".column.description.title";
+    private static final String COLUMN_DESCRIPTION_TITLE = AuthorizationRoleListView.ID + ".column.description.title";
 
     private static final String COLUMN_DESCRIPTION_TOOLTIP = AuthorizationRoleListView.ID
             + ".column.description.tooltip";
@@ -63,13 +59,11 @@ public class AuthorizationRoleListViewLayouter extends
             AuthorizationRoleListViewModel model, Layoutable<AuthorizationRoleListViewModel> view) {
         NabuccoFormToolkit ntk = new NabuccoFormToolkit(parent);
 
-        AuthorizationRoleListViewWidgetFactory widgetFactory = new AuthorizationRoleListViewWidgetFactory(
-                ntk);
+        AuthorizationRoleListViewWidgetFactory widgetFactory = new AuthorizationRoleListViewWidgetFactory(ntk);
 
-        NabuccoTableParameter parameter = new NabuccoTableParameter(
-                new NabuccoDefaultTableSorter<AuthorizationRole>(createTableComparators()),
-                new AuthorizationRoleListViewTableFilter(), new NabuccoDefaultListContentProvider(
-                        model), createTableColumnInfo(), getDoubleClickCommand(view));
+        NabuccoTableParameter parameter = new NabuccoTableParameter(new NabuccoDefaultTableSorter<AuthorizationRole>(
+                createTableComparators()), new AuthorizationRoleListViewTableFilter(),
+                new NabuccoDefaultListContentProvider(model), createTableColumnInfo(), getDoubleClickCommand(view));
         return widgetFactory.createTable(parent, parameter, model);
     }
 
@@ -88,13 +82,11 @@ public class AuthorizationRoleListViewLayouter extends
     private NabuccoTableColumnInfo[] createTableColumnInfo() {
         NabuccoTableColumnInfo[] result = {
 
-                new NabuccoTableColumnInfo(COLUMN_NAME_TITLE, COLUMN_NAME_TOOLTIP, 200, SWT.CENTER,
-                        SWT.CENTER,
+                new NabuccoTableColumnInfo(COLUMN_NAME_TITLE, COLUMN_NAME_TOOLTIP, 200, SWT.CENTER, SWT.CENTER,
                         new AuthorizationRoleListViewAuthorizationRoleNameLabelProvider()),
 
-                new NabuccoTableColumnInfo(COLUMN_DESCRIPTION_TITLE, COLUMN_DESCRIPTION_TOOLTIP,
-                        300, SWT.RIGHT, SWT.RIGHT,
-                        new AuthorizationRoleListViewAuthorizationRoleDescriptionLabelProvider()) };
+                new NabuccoTableColumnInfo(COLUMN_DESCRIPTION_TITLE, COLUMN_DESCRIPTION_TOOLTIP, 300, SWT.RIGHT,
+                        SWT.RIGHT, new AuthorizationRoleListViewAuthorizationRoleDescriptionLabelProvider()) };
 
         return result;
     }

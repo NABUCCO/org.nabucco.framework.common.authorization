@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,19 +18,15 @@ package org.nabucco.framework.common.authorization.impl.service.search;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.Query;
-
-import org.nabucco.framework.base.facade.datatype.DatatypeState;
-import org.nabucco.framework.base.facade.datatype.security.credential.Password;
+import org.nabucco.framework.base.facade.exception.persistence.PersistenceException;
 import org.nabucco.framework.base.facade.exception.service.SearchException;
+import org.nabucco.framework.base.impl.service.maintain.NabuccoQuery;
 import org.nabucco.framework.base.impl.service.search.QuerySupport;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUser;
 import org.nabucco.framework.common.authorization.facade.datatype.search.AuthorizationSearchParameter;
-
 import org.nabucco.framework.common.authorization.facade.message.AuthorizationUserListMsg;
 import org.nabucco.framework.common.authorization.facade.message.search.AuthorizationSearchMsg;
 
@@ -39,8 +35,7 @@ import org.nabucco.framework.common.authorization.facade.message.search.Authoriz
  * 
  * @author Nicolas Moser, PRODYNA AG
  */
-public class SearchAuthorizationUserServiceHandlerImpl extends
-        SearchAuthorizationUserServiceHandler {
+public class SearchAuthorizationUserServiceHandlerImpl extends SearchAuthorizationUserServiceHandler {
 
     private static final long serialVersionUID = 1L;
 
@@ -51,8 +46,7 @@ public class SearchAuthorizationUserServiceHandlerImpl extends
     private Set<AuthorizationUser> resultSet;
 
     @Override
-    public AuthorizationUserListMsg searchAuthorizationUser(AuthorizationSearchMsg msg)
-            throws SearchException {
+    public AuthorizationUserListMsg searchAuthorizationUser(AuthorizationSearchMsg msg) throws SearchException {
 
         this.request = msg;
         this.resultSet = new HashSet<AuthorizationUser>();
@@ -66,11 +60,7 @@ public class SearchAuthorizationUserServiceHandlerImpl extends
         }
 
         AuthorizationUserListMsg response = new AuthorizationUserListMsg();
-        for (AuthorizationUser user : this.resultSet) {
-            user.setDatatypeState(DatatypeState.PERSISTENT);
-            user.setPassword((Password) null);
-            response.getAuthorizationUserList().add(user);
-        }
+        response.getAuthorizationUserList().addAll(this.resultSet);
 
         return response;
     }
@@ -80,8 +70,10 @@ public class SearchAuthorizationUserServiceHandlerImpl extends
      * 
      * @throws SearchException
      *             when the search did not finish normally
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private void search() throws SearchException {
+    private void search() throws SearchException, PersistenceException {
 
         this.parameterMap = new HashMap<String, Object>();
 
@@ -116,8 +108,11 @@ public class SearchAuthorizationUserServiceHandlerImpl extends
 
     /**
      * Search Users by Group.
+     * 
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private void searchByGroup() {
+    private void searchByGroup() throws PersistenceException {
 
         // User for Group
 
@@ -134,8 +129,11 @@ public class SearchAuthorizationUserServiceHandlerImpl extends
 
     /**
      * Search Users by Role.
+     * 
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private void searchByRole() {
+    private void searchByRole() throws PersistenceException {
 
         // User with Role
 
@@ -166,8 +164,11 @@ public class SearchAuthorizationUserServiceHandlerImpl extends
 
     /**
      * Search Users by Permission.
+     * 
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private void searchByPermission() {
+    private void searchByPermission() throws PersistenceException {
 
         // User with Permission
 
@@ -228,8 +229,11 @@ public class SearchAuthorizationUserServiceHandlerImpl extends
 
     /**
      * Execute a basic search.
+     * 
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private void searchBasic() {
+    private void searchBasic() throws PersistenceException {
         StringBuilder query = new StringBuilder();
         query.append("select u from AuthorizationUser u");
 
@@ -251,14 +255,11 @@ public class SearchAuthorizationUserServiceHandlerImpl extends
         }
         query.append(" (u.username = :name or :name is null)");
         query.append(" and (u.owner = :owner or :owner is null)");
-        query.append(" and (u.userType = :type or :type is null)");
         query.append(" and (u.description like :description or :description is null)");
 
         this.parameterMap.put("name", this.request.getName());
         this.parameterMap.put("owner", this.request.getOwner());
-        this.parameterMap.put("type", this.request.getCodeType());
-        this.parameterMap.put("description",
-                QuerySupport.searchParameter(this.request.getDescription()));
+        this.parameterMap.put("description", QuerySupport.searchParameter(this.request.getDescription()));
     }
 
     /**
@@ -282,17 +283,18 @@ public class SearchAuthorizationUserServiceHandlerImpl extends
      * 
      * @param queryString
      *            the string holding the query
+     * 
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private void executeQuery(String queryString) {
-        Query query = super.getEntityManager().createQuery(queryString);
+    private void executeQuery(String queryString) throws PersistenceException {
+        NabuccoQuery<AuthorizationUser> query = super.getPersistenceManager().createQuery(queryString);
 
         for (String key : parameterMap.keySet()) {
             query.setParameter(key, parameterMap.get(key));
         }
 
-        @SuppressWarnings("unchecked")
-        List<AuthorizationUser> resultList = query.getResultList();
-        this.resultSet.addAll(resultList);
+        this.resultSet.addAll(query.getResultList());
     }
 
 }

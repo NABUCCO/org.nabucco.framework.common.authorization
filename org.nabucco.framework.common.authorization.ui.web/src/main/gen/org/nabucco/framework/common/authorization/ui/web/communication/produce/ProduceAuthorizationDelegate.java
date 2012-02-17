@@ -1,9 +1,24 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.ui.web.communication.produce;
 
-import org.nabucco.framework.base.facade.datatype.security.Subject;
+import org.nabucco.framework.base.facade.datatype.NabuccoSystem;
+import org.nabucco.framework.base.facade.datatype.context.ServiceSubContext;
+import org.nabucco.framework.base.facade.datatype.session.NabuccoSession;
 import org.nabucco.framework.base.facade.exception.service.ProduceException;
 import org.nabucco.framework.base.facade.message.EmptyServiceMessage;
 import org.nabucco.framework.base.facade.message.ServiceRequest;
@@ -38,180 +53,145 @@ public class ProduceAuthorizationDelegate extends ServiceDelegateSupport {
     /**
      * ProduceAuthorizationGroup.
      *
-     * @param rq the EmptyServiceMessage.
+     * @param subContexts the ServiceSubContext....
+     * @param session the NabuccoSession.
+     * @param message the EmptyServiceMessage.
      * @return the AuthorizationGroupMsg.
      * @throws ProduceException
      */
-    public AuthorizationGroupMsg produceAuthorizationGroup(EmptyServiceMessage rq)
-            throws ProduceException {
+    public AuthorizationGroupMsg produceAuthorizationGroup(EmptyServiceMessage message, NabuccoSession session,
+            ServiceSubContext... subContexts) throws ProduceException {
         ServiceRequest<EmptyServiceMessage> request = new ServiceRequest<EmptyServiceMessage>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<AuthorizationGroupMsg> rs;
-        if ((service != null)) {
-            rs = service.produceAuthorizationGroup(request);
-        } else {
-            throw new ProduceException(
-                    "Cannot execute service operation: ProduceAuthorization.produceAuthorizationGroup");
+                super.createServiceContext(session, subContexts));
+        request.setRequestMessage(message);
+        ServiceResponse<AuthorizationGroupMsg> response = null;
+        Exception exception = null;
+        if ((this.service != null)) {
+            super.handleRequest(request, session);
+            long start = NabuccoSystem.getCurrentTimeMillis();
+            try {
+                response = service.produceAuthorizationGroup(request);
+            } catch (Exception e) {
+                exception = e;
+            } finally {
+                long end = NabuccoSystem.getCurrentTimeMillis();
+                long duration = (end - start);
+                super.monitorResult(ProduceAuthorization.class, "produceAuthorizationGroup", duration, exception);
+            }
+            if ((response != null)) {
+                super.handleResponse(response, session);
+                return response.getResponseMessage();
+            }
         }
-        return rs.getResponseMessage();
-    }
-
-    /**
-     * ProduceAuthorizationGroup.
-     *
-     * @param subject the Subject.
-     * @param rq the EmptyServiceMessage.
-     * @return the AuthorizationGroupMsg.
-     * @throws ProduceException
-     */
-    public AuthorizationGroupMsg produceAuthorizationGroup(EmptyServiceMessage rq, Subject subject)
-            throws ProduceException {
-        ServiceRequest<EmptyServiceMessage> request = new ServiceRequest<EmptyServiceMessage>(
-                super.createServiceContext(subject));
-        request.setRequestMessage(rq);
-        ServiceResponse<AuthorizationGroupMsg> rs;
-        if ((service != null)) {
-            rs = service.produceAuthorizationGroup(request);
-        } else {
-            throw new ProduceException(
-                    "Cannot execute service operation: ProduceAuthorization.produceAuthorizationGroup");
-        }
-        return rs.getResponseMessage();
+        throw new ProduceException("Cannot execute service operation: ProduceAuthorization.produceAuthorizationGroup");
     }
 
     /**
      * ProduceAuthorizationUser.
      *
-     * @param rq the EmptyServiceMessage.
+     * @param subContexts the ServiceSubContext....
+     * @param session the NabuccoSession.
+     * @param message the EmptyServiceMessage.
      * @return the AuthorizationUserMsg.
      * @throws ProduceException
      */
-    public AuthorizationUserMsg produceAuthorizationUser(EmptyServiceMessage rq)
-            throws ProduceException {
+    public AuthorizationUserMsg produceAuthorizationUser(EmptyServiceMessage message, NabuccoSession session,
+            ServiceSubContext... subContexts) throws ProduceException {
         ServiceRequest<EmptyServiceMessage> request = new ServiceRequest<EmptyServiceMessage>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<AuthorizationUserMsg> rs;
-        if ((service != null)) {
-            rs = service.produceAuthorizationUser(request);
-        } else {
-            throw new ProduceException(
-                    "Cannot execute service operation: ProduceAuthorization.produceAuthorizationUser");
+                super.createServiceContext(session, subContexts));
+        request.setRequestMessage(message);
+        ServiceResponse<AuthorizationUserMsg> response = null;
+        Exception exception = null;
+        if ((this.service != null)) {
+            super.handleRequest(request, session);
+            long start = NabuccoSystem.getCurrentTimeMillis();
+            try {
+                response = service.produceAuthorizationUser(request);
+            } catch (Exception e) {
+                exception = e;
+            } finally {
+                long end = NabuccoSystem.getCurrentTimeMillis();
+                long duration = (end - start);
+                super.monitorResult(ProduceAuthorization.class, "produceAuthorizationUser", duration, exception);
+            }
+            if ((response != null)) {
+                super.handleResponse(response, session);
+                return response.getResponseMessage();
+            }
         }
-        return rs.getResponseMessage();
-    }
-
-    /**
-     * ProduceAuthorizationUser.
-     *
-     * @param subject the Subject.
-     * @param rq the EmptyServiceMessage.
-     * @return the AuthorizationUserMsg.
-     * @throws ProduceException
-     */
-    public AuthorizationUserMsg produceAuthorizationUser(EmptyServiceMessage rq, Subject subject)
-            throws ProduceException {
-        ServiceRequest<EmptyServiceMessage> request = new ServiceRequest<EmptyServiceMessage>(
-                super.createServiceContext(subject));
-        request.setRequestMessage(rq);
-        ServiceResponse<AuthorizationUserMsg> rs;
-        if ((service != null)) {
-            rs = service.produceAuthorizationUser(request);
-        } else {
-            throw new ProduceException(
-                    "Cannot execute service operation: ProduceAuthorization.produceAuthorizationUser");
-        }
-        return rs.getResponseMessage();
+        throw new ProduceException("Cannot execute service operation: ProduceAuthorization.produceAuthorizationUser");
     }
 
     /**
      * ProduceAuthorizationRole.
      *
-     * @param rq the EmptyServiceMessage.
+     * @param subContexts the ServiceSubContext....
+     * @param session the NabuccoSession.
+     * @param message the EmptyServiceMessage.
      * @return the AuthorizationRoleMsg.
      * @throws ProduceException
      */
-    public AuthorizationRoleMsg produceAuthorizationRole(EmptyServiceMessage rq)
-            throws ProduceException {
+    public AuthorizationRoleMsg produceAuthorizationRole(EmptyServiceMessage message, NabuccoSession session,
+            ServiceSubContext... subContexts) throws ProduceException {
         ServiceRequest<EmptyServiceMessage> request = new ServiceRequest<EmptyServiceMessage>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<AuthorizationRoleMsg> rs;
-        if ((service != null)) {
-            rs = service.produceAuthorizationRole(request);
-        } else {
-            throw new ProduceException(
-                    "Cannot execute service operation: ProduceAuthorization.produceAuthorizationRole");
+                super.createServiceContext(session, subContexts));
+        request.setRequestMessage(message);
+        ServiceResponse<AuthorizationRoleMsg> response = null;
+        Exception exception = null;
+        if ((this.service != null)) {
+            super.handleRequest(request, session);
+            long start = NabuccoSystem.getCurrentTimeMillis();
+            try {
+                response = service.produceAuthorizationRole(request);
+            } catch (Exception e) {
+                exception = e;
+            } finally {
+                long end = NabuccoSystem.getCurrentTimeMillis();
+                long duration = (end - start);
+                super.monitorResult(ProduceAuthorization.class, "produceAuthorizationRole", duration, exception);
+            }
+            if ((response != null)) {
+                super.handleResponse(response, session);
+                return response.getResponseMessage();
+            }
         }
-        return rs.getResponseMessage();
-    }
-
-    /**
-     * ProduceAuthorizationRole.
-     *
-     * @param subject the Subject.
-     * @param rq the EmptyServiceMessage.
-     * @return the AuthorizationRoleMsg.
-     * @throws ProduceException
-     */
-    public AuthorizationRoleMsg produceAuthorizationRole(EmptyServiceMessage rq, Subject subject)
-            throws ProduceException {
-        ServiceRequest<EmptyServiceMessage> request = new ServiceRequest<EmptyServiceMessage>(
-                super.createServiceContext(subject));
-        request.setRequestMessage(rq);
-        ServiceResponse<AuthorizationRoleMsg> rs;
-        if ((service != null)) {
-            rs = service.produceAuthorizationRole(request);
-        } else {
-            throw new ProduceException(
-                    "Cannot execute service operation: ProduceAuthorization.produceAuthorizationRole");
-        }
-        return rs.getResponseMessage();
+        throw new ProduceException("Cannot execute service operation: ProduceAuthorization.produceAuthorizationRole");
     }
 
     /**
      * ProduceAuthorizationPermission.
      *
-     * @param rq the EmptyServiceMessage.
+     * @param subContexts the ServiceSubContext....
+     * @param session the NabuccoSession.
+     * @param message the EmptyServiceMessage.
      * @return the AuthorizationPermissionMsg.
      * @throws ProduceException
      */
-    public AuthorizationPermissionMsg produceAuthorizationPermission(EmptyServiceMessage rq)
-            throws ProduceException {
+    public AuthorizationPermissionMsg produceAuthorizationPermission(EmptyServiceMessage message,
+            NabuccoSession session, ServiceSubContext... subContexts) throws ProduceException {
         ServiceRequest<EmptyServiceMessage> request = new ServiceRequest<EmptyServiceMessage>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<AuthorizationPermissionMsg> rs;
-        if ((service != null)) {
-            rs = service.produceAuthorizationPermission(request);
-        } else {
-            throw new ProduceException(
-                    "Cannot execute service operation: ProduceAuthorization.produceAuthorizationPermission");
+                super.createServiceContext(session, subContexts));
+        request.setRequestMessage(message);
+        ServiceResponse<AuthorizationPermissionMsg> response = null;
+        Exception exception = null;
+        if ((this.service != null)) {
+            super.handleRequest(request, session);
+            long start = NabuccoSystem.getCurrentTimeMillis();
+            try {
+                response = service.produceAuthorizationPermission(request);
+            } catch (Exception e) {
+                exception = e;
+            } finally {
+                long end = NabuccoSystem.getCurrentTimeMillis();
+                long duration = (end - start);
+                super.monitorResult(ProduceAuthorization.class, "produceAuthorizationPermission", duration, exception);
+            }
+            if ((response != null)) {
+                super.handleResponse(response, session);
+                return response.getResponseMessage();
+            }
         }
-        return rs.getResponseMessage();
-    }
-
-    /**
-     * ProduceAuthorizationPermission.
-     *
-     * @param subject the Subject.
-     * @param rq the EmptyServiceMessage.
-     * @return the AuthorizationPermissionMsg.
-     * @throws ProduceException
-     */
-    public AuthorizationPermissionMsg produceAuthorizationPermission(EmptyServiceMessage rq,
-            Subject subject) throws ProduceException {
-        ServiceRequest<EmptyServiceMessage> request = new ServiceRequest<EmptyServiceMessage>(
-                super.createServiceContext(subject));
-        request.setRequestMessage(rq);
-        ServiceResponse<AuthorizationPermissionMsg> rs;
-        if ((service != null)) {
-            rs = service.produceAuthorizationPermission(request);
-        } else {
-            throw new ProduceException(
-                    "Cannot execute service operation: ProduceAuthorization.produceAuthorizationPermission");
-        }
-        return rs.getResponseMessage();
+        throw new ProduceException(
+                "Cannot execute service operation: ProduceAuthorization.produceAuthorizationPermission");
     }
 }

@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,17 +41,13 @@ import org.nabucco.framework.plugin.base.view.NabuccoMessageManager;
  * 
  * @author Michael Krausse, PRODYNA AG
  */
-public class AuthorizationGroupListViewLayouter extends
-        NabuccoAbstractListLayouter<AuthorizationGroupListViewModel> {
+public class AuthorizationGroupListViewLayouter extends NabuccoAbstractListLayouter<AuthorizationGroupListViewModel> {
 
-    private static final String COLUMN_NAME_TITLE = AuthorizationGroupListView.ID
-            + ".column.name.title";
+    private static final String COLUMN_NAME_TITLE = AuthorizationGroupListView.ID + ".column.name.title";
 
-    private static final String COLUMN_NAME_TOOLTIP = AuthorizationGroupListView.ID
-            + ".column.name.tooltip";
+    private static final String COLUMN_NAME_TOOLTIP = AuthorizationGroupListView.ID + ".column.name.tooltip";
 
-    private static final String COLUMN_DESCRIPTION_TITLE = AuthorizationGroupListView.ID
-            + ".column.description.title";
+    private static final String COLUMN_DESCRIPTION_TITLE = AuthorizationGroupListView.ID + ".column.description.title";
 
     private static final String COLUMN_DESCRIPTION_TOOLTIP = AuthorizationGroupListView.ID
             + ".column.description.tooltip";
@@ -61,13 +57,11 @@ public class AuthorizationGroupListViewLayouter extends
             AuthorizationGroupListViewModel model, Layoutable<AuthorizationGroupListViewModel> view) {
 
         NabuccoFormToolkit ntk = new NabuccoFormToolkit(parent);
-        AuthorizationGroupListViewWidgetFactory widgetFactory = new AuthorizationGroupListViewWidgetFactory(
-                ntk);
+        AuthorizationGroupListViewWidgetFactory widgetFactory = new AuthorizationGroupListViewWidgetFactory(ntk);
 
-        NabuccoTableParameter parameter = new NabuccoTableParameter(
-                new NabuccoDefaultTableSorter<AuthorizationGroup>(createComparators()),
-                new AuthorizationGroupListViewTableFilter(), new NabuccoDefaultListContentProvider(
-                        model), createTableColumnInfo(), getDoubleClickCommand(view));
+        NabuccoTableParameter parameter = new NabuccoTableParameter(new NabuccoDefaultTableSorter<AuthorizationGroup>(
+                createComparators()), new AuthorizationGroupListViewTableFilter(),
+                new NabuccoDefaultListContentProvider(model), createTableColumnInfo(), getDoubleClickCommand(view));
 
         return widgetFactory.createTable(parent, parameter, model);
     }
@@ -92,13 +86,11 @@ public class AuthorizationGroupListViewLayouter extends
     private NabuccoTableColumnInfo[] createTableColumnInfo() {
         NabuccoTableColumnInfo[] result = new NabuccoTableColumnInfo[2];
 
-        result[0] = new NabuccoTableColumnInfo(COLUMN_NAME_TITLE, COLUMN_NAME_TOOLTIP, 200,
-                SWT.CENTER, SWT.CENTER,
+        result[0] = new NabuccoTableColumnInfo(COLUMN_NAME_TITLE, COLUMN_NAME_TOOLTIP, 200, SWT.CENTER, SWT.CENTER,
                 new AuthorizationGroupListViewAuthorizationGroupNameLabelProvider());
 
-        result[1] = new NabuccoTableColumnInfo(COLUMN_DESCRIPTION_TITLE,
-                COLUMN_DESCRIPTION_TOOLTIP, 300, SWT.RIGHT, SWT.RIGHT,
-                new AuthorizationGroupListViewAuthorizationGroupDescriptionLabelProvider());
+        result[1] = new NabuccoTableColumnInfo(COLUMN_DESCRIPTION_TITLE, COLUMN_DESCRIPTION_TOOLTIP, 300, SWT.RIGHT,
+                SWT.RIGHT, new AuthorizationGroupListViewAuthorizationGroupDescriptionLabelProvider());
 
         return result;
     }

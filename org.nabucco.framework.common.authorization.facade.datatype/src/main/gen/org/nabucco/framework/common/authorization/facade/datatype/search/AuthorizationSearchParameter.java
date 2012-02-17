@@ -1,17 +1,35 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.facade.datatype.search;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.nabucco.framework.base.facade.datatype.Datatype;
 import org.nabucco.framework.base.facade.datatype.DatatypeSupport;
 import org.nabucco.framework.base.facade.datatype.Identifier;
 import org.nabucco.framework.base.facade.datatype.Name;
 import org.nabucco.framework.base.facade.datatype.Owner;
-import org.nabucco.framework.base.facade.datatype.property.BasetypeProperty;
-import org.nabucco.framework.base.facade.datatype.property.EnumProperty;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoProperty;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyContainer;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyDescriptor;
+import org.nabucco.framework.base.facade.datatype.property.PropertyCache;
+import org.nabucco.framework.base.facade.datatype.property.PropertyDescriptorSupport;
 import org.nabucco.framework.common.authorization.facade.datatype.search.AuthorizationType;
 
 /**
@@ -24,10 +42,16 @@ public class AuthorizationSearchParameter extends DatatypeSupport implements Dat
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] PROPERTY_NAMES = { "id", "name", "owner", "type" };
+    private static final String[] PROPERTY_CONSTRAINTS = { "l0,n;u0,n;m0,1;", "l0,255;u0,n;m0,1;", "l3,12;u0,n;m0,1;",
+            "m1,1;" };
 
-    private static final String[] PROPERTY_CONSTRAINTS = { "l0,n;m0,1;", "l0,n;m0,1;",
-            "l0,n;m0,1;", "m1,1;" };
+    public static final String ID = "id";
+
+    public static final String NAME = "name";
+
+    public static final String OWNER = "owner";
+
+    public static final String TYPE = "type";
 
     /** ID of the referencing element */
     private Identifier id;
@@ -70,23 +94,60 @@ public class AuthorizationSearchParameter extends DatatypeSupport implements Dat
         clone.setType(this.getType());
     }
 
+    /**
+     * CreatePropertyContainer.
+     *
+     * @return the NabuccoPropertyContainer.
+     */
+    protected static NabuccoPropertyContainer createPropertyContainer() {
+        Map<String, NabuccoPropertyDescriptor> propertyMap = new HashMap<String, NabuccoPropertyDescriptor>();
+        propertyMap.put(ID,
+                PropertyDescriptorSupport.createBasetype(ID, Identifier.class, 0, PROPERTY_CONSTRAINTS[0], false));
+        propertyMap.put(NAME,
+                PropertyDescriptorSupport.createBasetype(NAME, Name.class, 1, PROPERTY_CONSTRAINTS[1], false));
+        propertyMap.put(OWNER,
+                PropertyDescriptorSupport.createBasetype(OWNER, Owner.class, 2, PROPERTY_CONSTRAINTS[2], false));
+        propertyMap.put(TYPE, PropertyDescriptorSupport.createEnumeration(TYPE, AuthorizationType.class, 3,
+                PROPERTY_CONSTRAINTS[3], false));
+        return new NabuccoPropertyContainer(propertyMap);
+    }
+
     @Override
     public void init() {
         this.initDefaults();
     }
 
     @Override
-    public List<NabuccoProperty<?>> getProperties() {
-        List<NabuccoProperty<?>> properties = super.getProperties();
-        properties.add(new BasetypeProperty<Identifier>(PROPERTY_NAMES[0], Identifier.class,
-                PROPERTY_CONSTRAINTS[0], this.id));
-        properties.add(new BasetypeProperty<Name>(PROPERTY_NAMES[1], Name.class,
-                PROPERTY_CONSTRAINTS[1], this.name));
-        properties.add(new BasetypeProperty<Owner>(PROPERTY_NAMES[2], Owner.class,
-                PROPERTY_CONSTRAINTS[2], this.owner));
-        properties.add(new EnumProperty<AuthorizationType>(PROPERTY_NAMES[3],
-                AuthorizationType.class, PROPERTY_CONSTRAINTS[3], this.type));
+    public Set<NabuccoProperty> getProperties() {
+        Set<NabuccoProperty> properties = super.getProperties();
+        properties.add(super.createProperty(AuthorizationSearchParameter.getPropertyDescriptor(ID), this.id, null));
+        properties.add(super.createProperty(AuthorizationSearchParameter.getPropertyDescriptor(NAME), this.name, null));
+        properties
+                .add(super.createProperty(AuthorizationSearchParameter.getPropertyDescriptor(OWNER), this.owner, null));
+        properties.add(super.createProperty(AuthorizationSearchParameter.getPropertyDescriptor(TYPE), this.getType(),
+                null));
         return properties;
+    }
+
+    @Override
+    public boolean setProperty(NabuccoProperty property) {
+        if (super.setProperty(property)) {
+            return true;
+        }
+        if ((property.getName().equals(ID) && (property.getType() == Identifier.class))) {
+            this.setId(((Identifier) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(NAME) && (property.getType() == Name.class))) {
+            this.setName(((Name) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(OWNER) && (property.getType() == Owner.class))) {
+            this.setOwner(((Owner) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(TYPE) && (property.getType() == AuthorizationType.class))) {
+            this.setType(((AuthorizationType) property.getInstance()));
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -139,19 +200,6 @@ public class AuthorizationSearchParameter extends DatatypeSupport implements Dat
     }
 
     @Override
-    public String toString() {
-        StringBuilder appendable = new StringBuilder();
-        appendable.append("<AuthorizationSearchParameter>\n");
-        appendable.append(super.toString());
-        appendable.append((("<id>" + this.id) + "</id>\n"));
-        appendable.append((("<name>" + this.name) + "</name>\n"));
-        appendable.append((("<owner>" + this.owner) + "</owner>\n"));
-        appendable.append((("<type>" + this.type) + "</type>\n"));
-        appendable.append("</AuthorizationSearchParameter>\n");
-        return appendable.toString();
-    }
-
-    @Override
     public AuthorizationSearchParameter cloneObject() {
         AuthorizationSearchParameter clone = new AuthorizationSearchParameter();
         this.cloneObject(clone);
@@ -183,6 +231,9 @@ public class AuthorizationSearchParameter extends DatatypeSupport implements Dat
      */
     public void setId(Long id) {
         if ((this.id == null)) {
+            if ((id == null)) {
+                return;
+            }
             this.id = new Identifier();
         }
         this.id.setValue(id);
@@ -213,6 +264,9 @@ public class AuthorizationSearchParameter extends DatatypeSupport implements Dat
      */
     public void setName(String name) {
         if ((this.name == null)) {
+            if ((name == null)) {
+                return;
+            }
             this.name = new Name();
         }
         this.name.setValue(name);
@@ -243,6 +297,9 @@ public class AuthorizationSearchParameter extends DatatypeSupport implements Dat
      */
     public void setOwner(String owner) {
         if ((this.owner == null)) {
+            if ((owner == null)) {
+                return;
+            }
             this.owner = new Owner();
         }
         this.owner.setValue(owner);
@@ -277,5 +334,24 @@ public class AuthorizationSearchParameter extends DatatypeSupport implements Dat
         } else {
             this.type = AuthorizationType.valueOf(type);
         }
+    }
+
+    /**
+     * Getter for the PropertyDescriptor.
+     *
+     * @param propertyName the String.
+     * @return the NabuccoPropertyDescriptor.
+     */
+    public static NabuccoPropertyDescriptor getPropertyDescriptor(String propertyName) {
+        return PropertyCache.getInstance().retrieve(AuthorizationSearchParameter.class).getProperty(propertyName);
+    }
+
+    /**
+     * Getter for the PropertyDescriptorList.
+     *
+     * @return the List<NabuccoPropertyDescriptor>.
+     */
+    public static List<NabuccoPropertyDescriptor> getPropertyDescriptorList() {
+        return PropertyCache.getInstance().retrieve(AuthorizationSearchParameter.class).getAllProperties();
     }
 }

@@ -37,23 +37,8 @@ Objectives
 
 Contact
 -------
-*Find more Information on our [website](http://nabuccosource.org/).*
+*Find more Information on our [website](http://nabucco.org/).*
 
-*The complete documentation may be found on our [Confluence](http://www.nabucco-source.org/confluence/). Sign up for free to add comments and help us to improve NABUCCO.*
+*The complete documentation may be found on our [Confluence](http://www.nabucco.org/confluence/). Sign up for free to add comments and help us to improve NABUCCO.*
 
-*Found any bugs? Want to track improvements? Report them in our public [Jira](http://www.nabucco-source.org/jira/).*
-
-
-org.nabucco.framework.common.authorization
-==========================================
-The authorization component enables the complete management of users, groups and privileges. In doing so, the components can perform the management themselves or they can be connected through an adapter to an LDAP or Active Directory.
-
-The main functions are
-
-* Management of users and their assignment to groups
-* Allocation of privileges to groups or to users. Privileges for groups are assigned through the users
-* Management of roles and their privileges. Roles can be assigned to groups and users
-* Authentication (if necessary, externally through LDAP) of users
-* Reviewing each application request for authorization
-* Dissolving the rights of a user
-* Dissolving the groups of a user
+*Found any bugs? Want to track improvements? Report them in our public [Jira](http://www.nabucco.org/jira/).*

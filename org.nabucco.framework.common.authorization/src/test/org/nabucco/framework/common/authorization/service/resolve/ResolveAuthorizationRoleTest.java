@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,18 +47,16 @@ public class ResolveAuthorizationRoleTest extends RuntimeTestSupport {
     @Test
     public void testResolveAuthorizationRole() throws Exception {
 
-        AuthorizationRole role = AuthorizationTestUtility.create(this.component,
-                AuthorizationTestUtility.dummyRole());
+        AuthorizationRole role = AuthorizationTestUtility.create(this.component, AuthorizationTestUtility.dummyRole());
 
         AuthorizationRoleMsg msg = new AuthorizationRoleMsg();
         msg.setAuthorizationRole(role);
 
-        ServiceRequest<AuthorizationRoleMsg> rq = new ServiceRequest<AuthorizationRoleMsg>(
-                super.createServiceContext());
+        ServiceRequest<AuthorizationRoleMsg> rq = new ServiceRequest<AuthorizationRoleMsg>(super.createServiceContext());
         rq.setRequestMessage(msg);
 
-        AuthorizationRoleMaintainMsg rs = this.component.getResolveAuthorization()
-                .resolveAuthorizationRole(rq).getResponseMessage();
+        AuthorizationRoleMaintainMsg rs = this.component.getResolveAuthorization().resolveAuthorizationRole(rq)
+                .getResponseMessage();
 
         Assert.assertNotNull(rs);
         role = rs.getAuthorizationRole();
@@ -74,8 +72,7 @@ public class ResolveAuthorizationRoleTest extends RuntimeTestSupport {
     @Test
     public void testResolveAuthorizationRoleList() throws Exception {
 
-        AuthorizationRole role = AuthorizationTestUtility.create(this.component,
-                AuthorizationTestUtility.dummyRole());
+        AuthorizationRole role = AuthorizationTestUtility.create(this.component, AuthorizationTestUtility.dummyRole());
 
         AuthorizationRoleListMsg msg = new AuthorizationRoleListMsg();
         msg.getAuthorizationRoleList().add(role);
@@ -84,8 +81,8 @@ public class ResolveAuthorizationRoleTest extends RuntimeTestSupport {
                 super.createServiceContext());
         rq.setRequestMessage(msg);
 
-        AuthorizationRoleListMsg rs = this.component.getResolveAuthorization()
-                .resolveAuthorizationRoleList(rq).getResponseMessage();
+        AuthorizationRoleListMsg rs = this.component.getResolveAuthorization().resolveAuthorizationRoleList(rq)
+                .getResponseMessage();
 
         Assert.assertNotNull(rs);
         Assert.assertEquals(1, rs.getAuthorizationRoleList().size());

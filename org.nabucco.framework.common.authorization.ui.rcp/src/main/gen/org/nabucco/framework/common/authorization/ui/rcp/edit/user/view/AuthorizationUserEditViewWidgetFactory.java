@@ -1,5 +1,18 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.ui.rcp.edit.user.view;
 
@@ -13,7 +26,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.Section;
+import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationUser;
 import org.nabucco.framework.common.authorization.ui.rcp.edit.user.model.AuthorizationUserEditViewModel;
+import org.nabucco.framework.plugin.base.component.picker.combo.CodeComboViewer;
 import org.nabucco.framework.plugin.base.component.picker.dialog.ElementPickerParameter;
 import org.nabucco.framework.plugin.base.component.picker.dialog.LabelForDialog;
 import org.nabucco.framework.plugin.base.component.picker.dialog.ListPickerComposite;
@@ -21,8 +36,11 @@ import org.nabucco.framework.plugin.base.layout.WidgetFactory;
 import org.nabucco.framework.plugin.base.view.NabuccoFormToolkit;
 
 /**
- * AuthorizationUserEditViewWidgetFactory<p/>Edit view for datatype AuthorizationUser<p/>
- *
+ * AuthorizationUserEditViewWidgetFactory
+ * <p/>
+ * Edit view for datatype AuthorizationUser
+ * <p/>
+ * 
  * @version 1.0
  * @author Frank Ratschinski, PRODYNA AG, 2010-01-18
  */
@@ -39,14 +57,18 @@ public class AuthorizationUserEditViewWidgetFactory extends WidgetFactory {
     public static final String LABEL_DESCRIPTION = "authorization.user.description";
 
     public static final String OBSERVE_VALUE_DESCRIPTION = AuthorizationUserEditViewModel.PROPERTY_USER_DESCRIPTION;
+    
+    public static final String LABEL_PASSWORD = "authorization.user.password";
+    
+    public static final String OBSERVE_VALUE_PASSWORD = AuthorizationUserEditViewModel.PROPERTY_USER_PASSWORD;
+
+    public static final String LABEL_USERTYPE = "authorization.user.userType";
+
+    public static final String OBSERVE_VALUE_USERTYPE = AuthorizationUserEditViewModel.PROPERTY_USER_TYPE;
 
     public static final String LABEL_OWNER = "authorization.user.owner";
 
     public static final String OBSERVE_VALUE_OWNER = AuthorizationUserEditViewModel.PROPERTY_USER_OWNER;
-
-    public static final String LABEL_USERTYPE = "authorization.user.userType";
-
-    public static final String OBSERVE_VALUE_USERTYPE = AuthorizationUserEditViewModel.PROPERTY_USER_USERTYPE;
 
     public static final String LABEL_AUTHORIZATIONUSERGROUPPICKER = "authorization.group";
 
@@ -62,13 +84,15 @@ public class AuthorizationUserEditViewWidgetFactory extends WidgetFactory {
 
     public static final String PATH_LABEL_AUTHORIZATIONUSERGROUPPICKER = "newPATH_LABEL";
 
-    public static final String OBSERVE_VALUE_AUTHORIZATIONUSERGROUPPICKER = AuthorizationUserEditViewModel.PROPERTY_GROUPSET_GROUPTYPE;
+    public static final String OBSERVE_VALUE_AUTHORIZATIONUSERGROUPPICKER = AuthorizationUserEditViewModel.PROPERTY_GROUPSET_GROUPNAME;
 
     /**
      * Constructs a new AuthorizationUserEditViewWidgetFactory instance.
-     *
-     * @param model the AuthorizationUserEditViewModel.
-     * @param nabuccoFormToolKit the NabuccoFormToolkit.
+     * 
+     * @param model
+     *            the AuthorizationUserEditViewModel.
+     * @param nabuccoFormToolKit
+     *            the NabuccoFormToolkit.
      */
     public AuthorizationUserEditViewWidgetFactory(NabuccoFormToolkit nabuccoFormToolKit,
             AuthorizationUserEditViewModel model) {
@@ -78,8 +102,9 @@ public class AuthorizationUserEditViewWidgetFactory extends WidgetFactory {
 
     /**
      * CreateSectionHeading.
-     *
-     * @param parent the Composite.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Section.
      */
     public Section createSectionHeading(Composite parent) {
@@ -88,8 +113,9 @@ public class AuthorizationUserEditViewWidgetFactory extends WidgetFactory {
 
     /**
      * CreateLabelName.
-     *
-     * @param parent the Composite.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Label.
      */
     public Label createLabelName(Composite parent) {
@@ -98,8 +124,9 @@ public class AuthorizationUserEditViewWidgetFactory extends WidgetFactory {
 
     /**
      * CreateInputFieldName.
-     *
-     * @param parent the Composite.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Text.
      */
     public Text createInputFieldName(Composite parent) {
@@ -112,9 +139,34 @@ public class AuthorizationUserEditViewWidgetFactory extends WidgetFactory {
     }
 
     /**
+     * CreateLabelName.
+     * 
+     * @param parent
+     *            the Composite.
+     * @return the Label.
+     */
+    public Label createLabelUserType(Composite parent) {
+        return nabuccoFormToolKit.createRealLabel(parent, LABEL_USERTYPE);
+    }
+
+    /**
+     * CreateInputFieldName.
+     * 
+     * @param parent
+     *            the Composite.
+     * @return the Text.
+     */
+    public CodeComboViewer createComboUserType(Composite parent) {
+        CodeComboViewer codeComboViewer = new CodeComboViewer(parent, AuthorizationUser.getUserTypeCodePath(), model,
+                OBSERVE_VALUE_USERTYPE);
+        return codeComboViewer;
+    }
+
+    /**
      * CreateLabelDescription.
-     *
-     * @param parent the Composite.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Label.
      */
     public Label createLabelDescription(Composite parent) {
@@ -123,24 +175,52 @@ public class AuthorizationUserEditViewWidgetFactory extends WidgetFactory {
 
     /**
      * CreateInputFieldDescription.
-     *
-     * @param parent the Composite.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Text.
      */
     public Text createInputFieldDescription(Composite parent) {
         Text result = nabuccoFormToolKit.createTextInput(parent);
         DataBindingContext bindingContext = new DataBindingContext();
         IObservableValue uiElement = SWTObservables.observeText(result, SWT.Modify);
-        IObservableValue modelElement = BeansObservables.observeValue(model,
-                OBSERVE_VALUE_DESCRIPTION);
+        IObservableValue modelElement = BeansObservables.observeValue(model, OBSERVE_VALUE_DESCRIPTION);
+        bindingContext.bindValue(uiElement, modelElement, null, null);
+        return result;
+    }
+    
+    /**
+     * CreateLabelPassword.
+     * 
+     * @param parent
+     *            the Composite.
+     * @return the Label.
+     */
+    public Label createLabelPassword(Composite parent) {
+        return nabuccoFormToolKit.createRealLabel(parent, LABEL_PASSWORD);
+    }
+    
+    /**
+     * CreateInputFieldPassword.
+     * 
+     * @param parent
+     *            the Composite.
+     * @return the Text.
+     */
+    public Text createInputFieldPassword(Composite parent) {
+        Text result = nabuccoFormToolKit.createTextInput(parent);
+        DataBindingContext bindingContext = new DataBindingContext();
+        IObservableValue uiElement = SWTObservables.observeText(result, SWT.Modify);
+        IObservableValue modelElement = BeansObservables.observeValue(model, OBSERVE_VALUE_PASSWORD);
         bindingContext.bindValue(uiElement, modelElement, null, null);
         return result;
     }
 
     /**
      * CreateLabelOwner.
-     *
-     * @param parent the Composite.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Label.
      */
     public Label createLabelOwner(Composite parent) {
@@ -149,8 +229,9 @@ public class AuthorizationUserEditViewWidgetFactory extends WidgetFactory {
 
     /**
      * CreateInputFieldOwner.
-     *
-     * @param parent the Composite.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Text.
      */
     public Text createInputFieldOwner(Composite parent) {
@@ -163,35 +244,10 @@ public class AuthorizationUserEditViewWidgetFactory extends WidgetFactory {
     }
 
     /**
-     * CreateLabelUserType.
-     *
-     * @param parent the Composite.
-     * @return the Label.
-     */
-    public Label createLabelUserType(Composite parent) {
-        return nabuccoFormToolKit.createRealLabel(parent, LABEL_USERTYPE);
-    }
-
-    /**
-     * CreateInputFieldUserType.
-     *
-     * @param parent the Composite.
-     * @return the Text.
-     */
-    public Text createInputFieldUserType(Composite parent) {
-        Text result = nabuccoFormToolKit.createTextInput(parent);
-        DataBindingContext bindingContext = new DataBindingContext();
-        IObservableValue uiElement = SWTObservables.observeText(result, SWT.Modify);
-        IObservableValue modelElement = BeansObservables
-                .observeValue(model, OBSERVE_VALUE_USERTYPE);
-        bindingContext.bindValue(uiElement, modelElement, null, null);
-        return result;
-    }
-
-    /**
      * CreateLabelAuthorizationUserGroupPicker.
-     *
-     * @param parent the Composite.
+     * 
+     * @param parent
+     *            the Composite.
      * @return the Label.
      */
     public Label createLabelAuthorizationUserGroupPicker(Composite parent) {
@@ -200,25 +256,23 @@ public class AuthorizationUserEditViewWidgetFactory extends WidgetFactory {
 
     /**
      * CreateListPickerAuthorizationUserGroupPicker.
-     *
-     * @param params the ElementPickerParameter.
-     * @param parent the Composite.
+     * 
+     * @param params
+     *            the ElementPickerParameter.
+     * @param parent
+     *            the Composite.
      */
-    public void createListPickerAuthorizationUserGroupPicker(Composite parent,
-            ElementPickerParameter params) {
+    public void createListPickerAuthorizationUserGroupPicker(Composite parent, ElementPickerParameter params) {
         ListPickerComposite picker = new ListPickerComposite(parent, SWT.NONE, params,
-                params.getInputFieldLabelProvider(), new LabelForDialog(
-                        TITLE_AUTHORIZATIONUSERGROUPPICKER, MESSAGE_AUTHORIZATIONUSERGROUPPICKER,
-                        SHELL_TITLE_AUTHORIZATIONUSERGROUPPICKER,
-                        MESSAGE_TABLE_AUTHORIZATIONUSERGROUPPICKER,
-                        MESSAGE_COMBO_AUTHORIZATIONUSERGROUPPICKER,
+                params.getInputFieldLabelProvider(), new LabelForDialog(TITLE_AUTHORIZATIONUSERGROUPPICKER,
+                        MESSAGE_AUTHORIZATIONUSERGROUPPICKER, SHELL_TITLE_AUTHORIZATIONUSERGROUPPICKER,
+                        MESSAGE_TABLE_AUTHORIZATIONUSERGROUPPICKER, MESSAGE_COMBO_AUTHORIZATIONUSERGROUPPICKER,
                         PATH_LABEL_AUTHORIZATIONUSERGROUPPICKER));
         DataBindingContext bindingContext = new DataBindingContext();
         IObservableValue uiElement;
         IObservableValue modelElement;
         uiElement = SWTObservables.observeText(picker.getInputText(), SWT.Modify);
-        modelElement = BeansObservables.observeValue(model,
-                OBSERVE_VALUE_AUTHORIZATIONUSERGROUPPICKER);
+        modelElement = BeansObservables.observeValue(model, OBSERVE_VALUE_AUTHORIZATIONUSERGROUPPICKER);
         bindingContext.bindValue(uiElement, modelElement, null, null);
         picker.addElementSelected(new AuthorizationUserGroupPickerHandler(model));
     }

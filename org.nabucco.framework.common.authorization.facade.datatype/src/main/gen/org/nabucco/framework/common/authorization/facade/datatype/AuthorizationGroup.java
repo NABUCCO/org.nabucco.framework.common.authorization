@@ -1,14 +1,36 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.facade.datatype;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.nabucco.framework.base.facade.datatype.Datatype;
+import org.nabucco.framework.base.facade.datatype.code.Code;
 import org.nabucco.framework.base.facade.datatype.collection.NabuccoCollectionState;
 import org.nabucco.framework.base.facade.datatype.collection.NabuccoList;
-import org.nabucco.framework.base.facade.datatype.property.ListProperty;
+import org.nabucco.framework.base.facade.datatype.collection.NabuccoListImpl;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoProperty;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyContainer;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyDescriptor;
+import org.nabucco.framework.base.facade.datatype.property.PropertyAssociationType;
+import org.nabucco.framework.base.facade.datatype.property.PropertyCache;
+import org.nabucco.framework.base.facade.datatype.property.PropertyDescriptorSupport;
 import org.nabucco.framework.base.facade.datatype.security.Group;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroupPermissionRelation;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroupRoleRelation;
@@ -24,18 +46,25 @@ public class AuthorizationGroup extends Group implements Datatype {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] PROPERTY_NAMES = { "childGroupList", "userList", "roleList",
-            "permissionList" };
-
     private static final String[] PROPERTY_CONSTRAINTS = { "m0,n;", "m0,n;", "m0,n;", "m0,n;" };
 
-    private List<AuthorizationGroup> childGroupList;
+    public static final String CHILDGROUPLIST = "childGroupList";
 
-    private List<AuthorizationGroupUserRelation> userList;
+    public static final String USERLIST = "userList";
 
-    private List<AuthorizationGroupRoleRelation> roleList;
+    public static final String ROLELIST = "roleList";
 
-    private List<AuthorizationGroupPermissionRelation> permissionList;
+    public static final String PERMISSIONLIST = "permissionList";
+
+    private NabuccoList<AuthorizationGroup> childGroupList;
+
+    private NabuccoList<AuthorizationGroupUserRelation> userList;
+
+    private NabuccoList<AuthorizationGroupRoleRelation> roleList;
+
+    private NabuccoList<AuthorizationGroupPermissionRelation> permissionList;
+
+    private Long groupTypeRefId;
 
     /** Constructs a new AuthorizationGroup instance. */
     public AuthorizationGroup() {
@@ -54,21 +83,17 @@ public class AuthorizationGroup extends Group implements Datatype {
      */
     protected void cloneObject(AuthorizationGroup clone) {
         super.cloneObject(clone);
-        if ((this.childGroupList instanceof NabuccoList<?>)) {
-            clone.childGroupList = ((NabuccoList<AuthorizationGroup>) this.childGroupList)
-                    .cloneCollection();
+        if ((this.childGroupList != null)) {
+            clone.childGroupList = this.childGroupList.cloneCollection();
         }
-        if ((this.userList instanceof NabuccoList<?>)) {
-            clone.userList = ((NabuccoList<AuthorizationGroupUserRelation>) this.userList)
-                    .cloneCollection();
+        if ((this.userList != null)) {
+            clone.userList = this.userList.cloneCollection();
         }
-        if ((this.roleList instanceof NabuccoList<?>)) {
-            clone.roleList = ((NabuccoList<AuthorizationGroupRoleRelation>) this.roleList)
-                    .cloneCollection();
+        if ((this.roleList != null)) {
+            clone.roleList = this.roleList.cloneCollection();
         }
-        if ((this.permissionList instanceof NabuccoList<?>)) {
-            clone.permissionList = ((NabuccoList<AuthorizationGroupPermissionRelation>) this.permissionList)
-                    .cloneCollection();
+        if ((this.permissionList != null)) {
+            clone.permissionList = this.permissionList.cloneCollection();
         }
     }
 
@@ -79,9 +104,9 @@ public class AuthorizationGroup extends Group implements Datatype {
      */
     List<AuthorizationGroup> getChildGroupListJPA() {
         if ((this.childGroupList == null)) {
-            this.childGroupList = new NabuccoList<AuthorizationGroup>(NabuccoCollectionState.LAZY);
+            this.childGroupList = new NabuccoListImpl<AuthorizationGroup>(NabuccoCollectionState.LAZY);
         }
-        return ((NabuccoList<AuthorizationGroup>) this.childGroupList).getDelegate();
+        return ((NabuccoListImpl<AuthorizationGroup>) this.childGroupList).getDelegate();
     }
 
     /**
@@ -91,9 +116,9 @@ public class AuthorizationGroup extends Group implements Datatype {
      */
     void setChildGroupListJPA(List<AuthorizationGroup> childGroupList) {
         if ((this.childGroupList == null)) {
-            this.childGroupList = new NabuccoList<AuthorizationGroup>(NabuccoCollectionState.LAZY);
+            this.childGroupList = new NabuccoListImpl<AuthorizationGroup>(NabuccoCollectionState.LAZY);
         }
-        ((NabuccoList<AuthorizationGroup>) this.childGroupList).setDelegate(childGroupList);
+        ((NabuccoListImpl<AuthorizationGroup>) this.childGroupList).setDelegate(childGroupList);
     }
 
     /**
@@ -103,10 +128,9 @@ public class AuthorizationGroup extends Group implements Datatype {
      */
     List<AuthorizationGroupUserRelation> getUserListJPA() {
         if ((this.userList == null)) {
-            this.userList = new NabuccoList<AuthorizationGroupUserRelation>(
-                    NabuccoCollectionState.LAZY);
+            this.userList = new NabuccoListImpl<AuthorizationGroupUserRelation>(NabuccoCollectionState.LAZY);
         }
-        return ((NabuccoList<AuthorizationGroupUserRelation>) this.userList).getDelegate();
+        return ((NabuccoListImpl<AuthorizationGroupUserRelation>) this.userList).getDelegate();
     }
 
     /**
@@ -116,10 +140,9 @@ public class AuthorizationGroup extends Group implements Datatype {
      */
     void setUserListJPA(List<AuthorizationGroupUserRelation> userList) {
         if ((this.userList == null)) {
-            this.userList = new NabuccoList<AuthorizationGroupUserRelation>(
-                    NabuccoCollectionState.LAZY);
+            this.userList = new NabuccoListImpl<AuthorizationGroupUserRelation>(NabuccoCollectionState.LAZY);
         }
-        ((NabuccoList<AuthorizationGroupUserRelation>) this.userList).setDelegate(userList);
+        ((NabuccoListImpl<AuthorizationGroupUserRelation>) this.userList).setDelegate(userList);
     }
 
     /**
@@ -129,10 +152,9 @@ public class AuthorizationGroup extends Group implements Datatype {
      */
     List<AuthorizationGroupRoleRelation> getRoleListJPA() {
         if ((this.roleList == null)) {
-            this.roleList = new NabuccoList<AuthorizationGroupRoleRelation>(
-                    NabuccoCollectionState.LAZY);
+            this.roleList = new NabuccoListImpl<AuthorizationGroupRoleRelation>(NabuccoCollectionState.LAZY);
         }
-        return ((NabuccoList<AuthorizationGroupRoleRelation>) this.roleList).getDelegate();
+        return ((NabuccoListImpl<AuthorizationGroupRoleRelation>) this.roleList).getDelegate();
     }
 
     /**
@@ -142,10 +164,9 @@ public class AuthorizationGroup extends Group implements Datatype {
      */
     void setRoleListJPA(List<AuthorizationGroupRoleRelation> roleList) {
         if ((this.roleList == null)) {
-            this.roleList = new NabuccoList<AuthorizationGroupRoleRelation>(
-                    NabuccoCollectionState.LAZY);
+            this.roleList = new NabuccoListImpl<AuthorizationGroupRoleRelation>(NabuccoCollectionState.LAZY);
         }
-        ((NabuccoList<AuthorizationGroupRoleRelation>) this.roleList).setDelegate(roleList);
+        ((NabuccoListImpl<AuthorizationGroupRoleRelation>) this.roleList).setDelegate(roleList);
     }
 
     /**
@@ -155,11 +176,9 @@ public class AuthorizationGroup extends Group implements Datatype {
      */
     List<AuthorizationGroupPermissionRelation> getPermissionListJPA() {
         if ((this.permissionList == null)) {
-            this.permissionList = new NabuccoList<AuthorizationGroupPermissionRelation>(
-                    NabuccoCollectionState.LAZY);
+            this.permissionList = new NabuccoListImpl<AuthorizationGroupPermissionRelation>(NabuccoCollectionState.LAZY);
         }
-        return ((NabuccoList<AuthorizationGroupPermissionRelation>) this.permissionList)
-                .getDelegate();
+        return ((NabuccoListImpl<AuthorizationGroupPermissionRelation>) this.permissionList).getDelegate();
     }
 
     /**
@@ -169,11 +188,31 @@ public class AuthorizationGroup extends Group implements Datatype {
      */
     void setPermissionListJPA(List<AuthorizationGroupPermissionRelation> permissionList) {
         if ((this.permissionList == null)) {
-            this.permissionList = new NabuccoList<AuthorizationGroupPermissionRelation>(
-                    NabuccoCollectionState.LAZY);
+            this.permissionList = new NabuccoListImpl<AuthorizationGroupPermissionRelation>(NabuccoCollectionState.LAZY);
         }
-        ((NabuccoList<AuthorizationGroupPermissionRelation>) this.permissionList)
-                .setDelegate(permissionList);
+        ((NabuccoListImpl<AuthorizationGroupPermissionRelation>) this.permissionList).setDelegate(permissionList);
+    }
+
+    /**
+     * CreatePropertyContainer.
+     *
+     * @return the NabuccoPropertyContainer.
+     */
+    protected static NabuccoPropertyContainer createPropertyContainer() {
+        Map<String, NabuccoPropertyDescriptor> propertyMap = new HashMap<String, NabuccoPropertyDescriptor>();
+        propertyMap.putAll(PropertyCache.getInstance().retrieve(Group.class).getPropertyMap());
+        propertyMap.put(CHILDGROUPLIST, PropertyDescriptorSupport.createCollection(CHILDGROUPLIST,
+                AuthorizationGroup.class, 8, PROPERTY_CONSTRAINTS[0], false, PropertyAssociationType.COMPOSITION));
+        propertyMap.put(USERLIST, PropertyDescriptorSupport.createCollection(USERLIST,
+                AuthorizationGroupUserRelation.class, 9, PROPERTY_CONSTRAINTS[1], false,
+                PropertyAssociationType.COMPOSITION));
+        propertyMap.put(ROLELIST, PropertyDescriptorSupport.createCollection(ROLELIST,
+                AuthorizationGroupRoleRelation.class, 10, PROPERTY_CONSTRAINTS[2], false,
+                PropertyAssociationType.COMPOSITION));
+        propertyMap.put(PERMISSIONLIST, PropertyDescriptorSupport.createCollection(PERMISSIONLIST,
+                AuthorizationGroupPermissionRelation.class, 11, PROPERTY_CONSTRAINTS[3], false,
+                PropertyAssociationType.COMPOSITION));
+        return new NabuccoPropertyContainer(propertyMap);
     }
 
     @Override
@@ -182,25 +221,70 @@ public class AuthorizationGroup extends Group implements Datatype {
     }
 
     @Override
-    public List<NabuccoProperty<?>> getProperties() {
-        List<NabuccoProperty<?>> properties = super.getProperties();
-        properties.add(new ListProperty<AuthorizationGroup>(PROPERTY_NAMES[0],
-                AuthorizationGroup.class, PROPERTY_CONSTRAINTS[0], this.childGroupList));
-        properties.add(new ListProperty<AuthorizationGroupUserRelation>(PROPERTY_NAMES[1],
-                AuthorizationGroupUserRelation.class, PROPERTY_CONSTRAINTS[1], this.userList));
-        properties.add(new ListProperty<AuthorizationGroupRoleRelation>(PROPERTY_NAMES[2],
-                AuthorizationGroupRoleRelation.class, PROPERTY_CONSTRAINTS[2], this.roleList));
-        properties.add(new ListProperty<AuthorizationGroupPermissionRelation>(PROPERTY_NAMES[3],
-                AuthorizationGroupPermissionRelation.class, PROPERTY_CONSTRAINTS[3],
-                this.permissionList));
+    public Set<NabuccoProperty> getProperties() {
+        Set<NabuccoProperty> properties = super.getProperties();
+        properties.add(super.createProperty(AuthorizationGroup.getPropertyDescriptor(CHILDGROUPLIST),
+                this.childGroupList, null));
+        properties.add(super.createProperty(AuthorizationGroup.getPropertyDescriptor(USERLIST), this.userList, null));
+        properties.add(super.createProperty(AuthorizationGroup.getPropertyDescriptor(ROLELIST), this.roleList, null));
+        properties.add(super.createProperty(AuthorizationGroup.getPropertyDescriptor(PERMISSIONLIST),
+                this.permissionList, null));
+        properties.add(super.createProperty(AuthorizationGroup.getPropertyDescriptor(GROUPTYPE), this.getGroupType(),
+                this.groupTypeRefId));
         return properties;
     }
 
     @Override
-    public String toString() {
-        StringBuilder appendable = new StringBuilder();
-        appendable.append(super.toString());
-        return appendable.toString();
+    @SuppressWarnings("unchecked")
+    public boolean setProperty(NabuccoProperty property) {
+        if (super.setProperty(property)) {
+            return true;
+        }
+        if ((property.getName().equals(CHILDGROUPLIST) && (property.getType() == AuthorizationGroup.class))) {
+            this.childGroupList = ((NabuccoList<AuthorizationGroup>) property.getInstance());
+            return true;
+        } else if ((property.getName().equals(USERLIST) && (property.getType() == AuthorizationGroupUserRelation.class))) {
+            this.userList = ((NabuccoList<AuthorizationGroupUserRelation>) property.getInstance());
+            return true;
+        } else if ((property.getName().equals(ROLELIST) && (property.getType() == AuthorizationGroupRoleRelation.class))) {
+            this.roleList = ((NabuccoList<AuthorizationGroupRoleRelation>) property.getInstance());
+            return true;
+        } else if ((property.getName().equals(PERMISSIONLIST) && (property.getType() == AuthorizationGroupPermissionRelation.class))) {
+            this.permissionList = ((NabuccoList<AuthorizationGroupPermissionRelation>) property.getInstance());
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if ((this == obj)) {
+            return true;
+        }
+        if ((obj == null)) {
+            return false;
+        }
+        if ((this.getClass() != obj.getClass())) {
+            return false;
+        }
+        if ((!super.equals(obj))) {
+            return false;
+        }
+        final AuthorizationGroup other = ((AuthorizationGroup) obj);
+        if ((this.groupTypeRefId == null)) {
+            if ((other.groupTypeRefId != null))
+                return false;
+        } else if ((!this.groupTypeRefId.equals(other.groupTypeRefId)))
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int PRIME = 31;
+        int result = super.hashCode();
+        result = ((PRIME * result) + ((this.groupTypeRefId == null) ? 0 : this.groupTypeRefId.hashCode()));
+        return result;
     }
 
     @Override
@@ -213,12 +297,11 @@ public class AuthorizationGroup extends Group implements Datatype {
     /**
      * Missing description at method getChildGroupList.
      *
-     * @return the List<AuthorizationGroup>.
+     * @return the NabuccoList<AuthorizationGroup>.
      */
-    public List<AuthorizationGroup> getChildGroupList() {
+    public NabuccoList<AuthorizationGroup> getChildGroupList() {
         if ((this.childGroupList == null)) {
-            this.childGroupList = new NabuccoList<AuthorizationGroup>(
-                    NabuccoCollectionState.INITIALIZED);
+            this.childGroupList = new NabuccoListImpl<AuthorizationGroup>(NabuccoCollectionState.INITIALIZED);
         }
         return this.childGroupList;
     }
@@ -226,12 +309,11 @@ public class AuthorizationGroup extends Group implements Datatype {
     /**
      * Missing description at method getUserList.
      *
-     * @return the List<AuthorizationGroupUserRelation>.
+     * @return the NabuccoList<AuthorizationGroupUserRelation>.
      */
-    public List<AuthorizationGroupUserRelation> getUserList() {
+    public NabuccoList<AuthorizationGroupUserRelation> getUserList() {
         if ((this.userList == null)) {
-            this.userList = new NabuccoList<AuthorizationGroupUserRelation>(
-                    NabuccoCollectionState.INITIALIZED);
+            this.userList = new NabuccoListImpl<AuthorizationGroupUserRelation>(NabuccoCollectionState.INITIALIZED);
         }
         return this.userList;
     }
@@ -239,12 +321,11 @@ public class AuthorizationGroup extends Group implements Datatype {
     /**
      * Missing description at method getRoleList.
      *
-     * @return the List<AuthorizationGroupRoleRelation>.
+     * @return the NabuccoList<AuthorizationGroupRoleRelation>.
      */
-    public List<AuthorizationGroupRoleRelation> getRoleList() {
+    public NabuccoList<AuthorizationGroupRoleRelation> getRoleList() {
         if ((this.roleList == null)) {
-            this.roleList = new NabuccoList<AuthorizationGroupRoleRelation>(
-                    NabuccoCollectionState.INITIALIZED);
+            this.roleList = new NabuccoListImpl<AuthorizationGroupRoleRelation>(NabuccoCollectionState.INITIALIZED);
         }
         return this.roleList;
     }
@@ -252,13 +333,64 @@ public class AuthorizationGroup extends Group implements Datatype {
     /**
      * Missing description at method getPermissionList.
      *
-     * @return the List<AuthorizationGroupPermissionRelation>.
+     * @return the NabuccoList<AuthorizationGroupPermissionRelation>.
      */
-    public List<AuthorizationGroupPermissionRelation> getPermissionList() {
+    public NabuccoList<AuthorizationGroupPermissionRelation> getPermissionList() {
         if ((this.permissionList == null)) {
-            this.permissionList = new NabuccoList<AuthorizationGroupPermissionRelation>(
+            this.permissionList = new NabuccoListImpl<AuthorizationGroupPermissionRelation>(
                     NabuccoCollectionState.INITIALIZED);
         }
         return this.permissionList;
+    }
+
+    /**
+     * Getter for the GroupTypeRefId.
+     *
+     * @return the Long.
+     */
+    public Long getGroupTypeRefId() {
+        return this.groupTypeRefId;
+    }
+
+    /**
+     * Setter for the GroupTypeRefId.
+     *
+     * @param groupTypeRefId the Long.
+     */
+    public void setGroupTypeRefId(Long groupTypeRefId) {
+        this.groupTypeRefId = groupTypeRefId;
+    }
+
+    /**
+     * Setter for the GroupType.
+     *
+     * @param groupType the Code.
+     */
+    public void setGroupType(Code groupType) {
+        super.setGroupType(groupType);
+        if ((groupType != null)) {
+            this.setGroupTypeRefId(groupType.getId());
+        } else {
+            this.setGroupTypeRefId(null);
+        }
+    }
+
+    /**
+     * Getter for the PropertyDescriptor.
+     *
+     * @param propertyName the String.
+     * @return the NabuccoPropertyDescriptor.
+     */
+    public static NabuccoPropertyDescriptor getPropertyDescriptor(String propertyName) {
+        return PropertyCache.getInstance().retrieve(AuthorizationGroup.class).getProperty(propertyName);
+    }
+
+    /**
+     * Getter for the PropertyDescriptorList.
+     *
+     * @return the List<NabuccoPropertyDescriptor>.
+     */
+    public static List<NabuccoPropertyDescriptor> getPropertyDescriptorList() {
+        return PropertyCache.getInstance().retrieve(AuthorizationGroup.class).getAllProperties();
     }
 }

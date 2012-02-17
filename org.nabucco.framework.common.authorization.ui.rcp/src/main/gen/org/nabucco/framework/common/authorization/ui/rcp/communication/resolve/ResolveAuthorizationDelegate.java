@@ -1,8 +1,23 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.ui.rcp.communication.resolve;
 
+import org.nabucco.framework.base.facade.datatype.NabuccoSystem;
+import org.nabucco.framework.base.facade.datatype.context.ServiceSubContext;
 import org.nabucco.framework.base.facade.exception.client.ClientException;
 import org.nabucco.framework.base.facade.message.ServiceRequest;
 import org.nabucco.framework.base.facade.message.ServiceResponse;
@@ -19,15 +34,13 @@ import org.nabucco.framework.common.authorization.facade.message.maintain.Author
 import org.nabucco.framework.common.authorization.facade.message.maintain.AuthorizationRoleMaintainMsg;
 import org.nabucco.framework.common.authorization.facade.message.maintain.AuthorizationUserMaintainMsg;
 import org.nabucco.framework.common.authorization.facade.service.resolve.ResolveAuthorization;
-import org.nabucco.framework.plugin.base.Activator;
 import org.nabucco.framework.plugin.base.component.communication.ServiceDelegateSupport;
-import org.nabucco.framework.plugin.base.logging.NabuccoLogMessage;
 
 /**
  * ResolveAuthorizationDelegate<p/>Authorization resolution service<p/>
  *
  * @version 1.0
- * @author Jens Wurm, PRODYNA AG, 2010-05-06
+ * @author Nicolas Moser, PRODYNA AG, 2010-05-06
  */
 public class ResolveAuthorizationDelegate extends ServiceDelegateSupport {
 
@@ -46,61 +59,68 @@ public class ResolveAuthorizationDelegate extends ServiceDelegateSupport {
     /**
      * ResolveAuthorizationGroup.
      *
-     * @param rq the AuthorizationGroupMsg.
+     * @param subContexts the ServiceSubContext....
+     * @param message the AuthorizationGroupMsg.
      * @return the AuthorizationGroupMaintainMsg.
      * @throws ClientException
      */
-    public AuthorizationGroupMaintainMsg resolveAuthorizationGroup(AuthorizationGroupMsg rq)
-            throws ClientException {
+    public AuthorizationGroupMaintainMsg resolveAuthorizationGroup(AuthorizationGroupMsg message,
+            ServiceSubContext... subContexts) throws ClientException {
         ServiceRequest<AuthorizationGroupMsg> request = new ServiceRequest<AuthorizationGroupMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<AuthorizationGroupMaintainMsg> rs;
+                super.createServiceContext(subContexts));
+        request.setRequestMessage(message);
+        ServiceResponse<AuthorizationGroupMaintainMsg> response = null;
+        Exception exception = null;
         if ((service != null)) {
-            long start = System.currentTimeMillis();
+            super.handleRequest(request);
+            long start = NabuccoSystem.getCurrentTimeMillis();
             try {
-                rs = service.resolveAuthorizationGroup(request);
-                return rs.getResponseMessage();
-            } catch (Exception exception) {
-                super.processException(exception);
+                response = service.resolveAuthorizationGroup(request);
+            } catch (Exception e) {
+                exception = e;
             } finally {
-                long end = System.currentTimeMillis();
-                Activator.getDefault().logDebug(
-                        new NabuccoLogMessage(ResolveAuthorizationDelegate.class, "Service: ",
-                                "ResolveAuthorization.resolveAuthorizationGroup", " Time: ", String
-                                        .valueOf((end - start)), "ms."));
+                long end = NabuccoSystem.getCurrentTimeMillis();
+                long duration = (end - start);
+                super.monitorResult(ResolveAuthorization.class, "resolveAuthorizationGroup", duration, exception);
+            }
+            if ((response != null)) {
+                super.handleResponse(response);
+                return response.getResponseMessage();
             }
         }
-        throw new ClientException(
-                "Cannot execute service operation: ResolveAuthorization.resolveAuthorizationGroup");
+        throw new ClientException("Cannot execute service operation: ResolveAuthorization.resolveAuthorizationGroup");
     }
 
     /**
      * ResolveAuthorizationGroupList.
      *
-     * @param rq the AuthorizationGroupListMsg.
+     * @param subContexts the ServiceSubContext....
+     * @param message the AuthorizationGroupListMsg.
      * @return the AuthorizationGroupListMsg.
      * @throws ClientException
      */
-    public AuthorizationGroupListMsg resolveAuthorizationGroupList(AuthorizationGroupListMsg rq)
-            throws ClientException {
+    public AuthorizationGroupListMsg resolveAuthorizationGroupList(AuthorizationGroupListMsg message,
+            ServiceSubContext... subContexts) throws ClientException {
         ServiceRequest<AuthorizationGroupListMsg> request = new ServiceRequest<AuthorizationGroupListMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<AuthorizationGroupListMsg> rs;
+                super.createServiceContext(subContexts));
+        request.setRequestMessage(message);
+        ServiceResponse<AuthorizationGroupListMsg> response = null;
+        Exception exception = null;
         if ((service != null)) {
-            long start = System.currentTimeMillis();
+            super.handleRequest(request);
+            long start = NabuccoSystem.getCurrentTimeMillis();
             try {
-                rs = service.resolveAuthorizationGroupList(request);
-                return rs.getResponseMessage();
-            } catch (Exception exception) {
-                super.processException(exception);
+                response = service.resolveAuthorizationGroupList(request);
+            } catch (Exception e) {
+                exception = e;
             } finally {
-                long end = System.currentTimeMillis();
-                Activator.getDefault().logDebug(
-                        new NabuccoLogMessage(ResolveAuthorizationDelegate.class, "Service: ",
-                                "ResolveAuthorization.resolveAuthorizationGroupList", " Time: ",
-                                String.valueOf((end - start)), "ms."));
+                long end = NabuccoSystem.getCurrentTimeMillis();
+                long duration = (end - start);
+                super.monitorResult(ResolveAuthorization.class, "resolveAuthorizationGroupList", duration, exception);
+            }
+            if ((response != null)) {
+                super.handleResponse(response);
+                return response.getResponseMessage();
             }
         }
         throw new ClientException(
@@ -108,31 +128,175 @@ public class ResolveAuthorizationDelegate extends ServiceDelegateSupport {
     }
 
     /**
+     * ResolveAuthorizationUser.
+     *
+     * @param subContexts the ServiceSubContext....
+     * @param message the AuthorizationUserMsg.
+     * @return the AuthorizationUserMaintainMsg.
+     * @throws ClientException
+     */
+    public AuthorizationUserMaintainMsg resolveAuthorizationUser(AuthorizationUserMsg message,
+            ServiceSubContext... subContexts) throws ClientException {
+        ServiceRequest<AuthorizationUserMsg> request = new ServiceRequest<AuthorizationUserMsg>(
+                super.createServiceContext(subContexts));
+        request.setRequestMessage(message);
+        ServiceResponse<AuthorizationUserMaintainMsg> response = null;
+        Exception exception = null;
+        if ((service != null)) {
+            super.handleRequest(request);
+            long start = NabuccoSystem.getCurrentTimeMillis();
+            try {
+                response = service.resolveAuthorizationUser(request);
+            } catch (Exception e) {
+                exception = e;
+            } finally {
+                long end = NabuccoSystem.getCurrentTimeMillis();
+                long duration = (end - start);
+                super.monitorResult(ResolveAuthorization.class, "resolveAuthorizationUser", duration, exception);
+            }
+            if ((response != null)) {
+                super.handleResponse(response);
+                return response.getResponseMessage();
+            }
+        }
+        throw new ClientException("Cannot execute service operation: ResolveAuthorization.resolveAuthorizationUser");
+    }
+
+    /**
+     * ResolveAuthorizationUserList.
+     *
+     * @param subContexts the ServiceSubContext....
+     * @param message the AuthorizationUserListMsg.
+     * @return the AuthorizationUserListMsg.
+     * @throws ClientException
+     */
+    public AuthorizationUserListMsg resolveAuthorizationUserList(AuthorizationUserListMsg message,
+            ServiceSubContext... subContexts) throws ClientException {
+        ServiceRequest<AuthorizationUserListMsg> request = new ServiceRequest<AuthorizationUserListMsg>(
+                super.createServiceContext(subContexts));
+        request.setRequestMessage(message);
+        ServiceResponse<AuthorizationUserListMsg> response = null;
+        Exception exception = null;
+        if ((service != null)) {
+            super.handleRequest(request);
+            long start = NabuccoSystem.getCurrentTimeMillis();
+            try {
+                response = service.resolveAuthorizationUserList(request);
+            } catch (Exception e) {
+                exception = e;
+            } finally {
+                long end = NabuccoSystem.getCurrentTimeMillis();
+                long duration = (end - start);
+                super.monitorResult(ResolveAuthorization.class, "resolveAuthorizationUserList", duration, exception);
+            }
+            if ((response != null)) {
+                super.handleResponse(response);
+                return response.getResponseMessage();
+            }
+        }
+        throw new ClientException("Cannot execute service operation: ResolveAuthorization.resolveAuthorizationUserList");
+    }
+
+    /**
+     * ResolveAuthorizationRole.
+     *
+     * @param subContexts the ServiceSubContext....
+     * @param message the AuthorizationRoleMsg.
+     * @return the AuthorizationRoleMaintainMsg.
+     * @throws ClientException
+     */
+    public AuthorizationRoleMaintainMsg resolveAuthorizationRole(AuthorizationRoleMsg message,
+            ServiceSubContext... subContexts) throws ClientException {
+        ServiceRequest<AuthorizationRoleMsg> request = new ServiceRequest<AuthorizationRoleMsg>(
+                super.createServiceContext(subContexts));
+        request.setRequestMessage(message);
+        ServiceResponse<AuthorizationRoleMaintainMsg> response = null;
+        Exception exception = null;
+        if ((service != null)) {
+            super.handleRequest(request);
+            long start = NabuccoSystem.getCurrentTimeMillis();
+            try {
+                response = service.resolveAuthorizationRole(request);
+            } catch (Exception e) {
+                exception = e;
+            } finally {
+                long end = NabuccoSystem.getCurrentTimeMillis();
+                long duration = (end - start);
+                super.monitorResult(ResolveAuthorization.class, "resolveAuthorizationRole", duration, exception);
+            }
+            if ((response != null)) {
+                super.handleResponse(response);
+                return response.getResponseMessage();
+            }
+        }
+        throw new ClientException("Cannot execute service operation: ResolveAuthorization.resolveAuthorizationRole");
+    }
+
+    /**
+     * ResolveAuthorizationRoleList.
+     *
+     * @param subContexts the ServiceSubContext....
+     * @param message the AuthorizationRoleListMsg.
+     * @return the AuthorizationRoleListMsg.
+     * @throws ClientException
+     */
+    public AuthorizationRoleListMsg resolveAuthorizationRoleList(AuthorizationRoleListMsg message,
+            ServiceSubContext... subContexts) throws ClientException {
+        ServiceRequest<AuthorizationRoleListMsg> request = new ServiceRequest<AuthorizationRoleListMsg>(
+                super.createServiceContext(subContexts));
+        request.setRequestMessage(message);
+        ServiceResponse<AuthorizationRoleListMsg> response = null;
+        Exception exception = null;
+        if ((service != null)) {
+            super.handleRequest(request);
+            long start = NabuccoSystem.getCurrentTimeMillis();
+            try {
+                response = service.resolveAuthorizationRoleList(request);
+            } catch (Exception e) {
+                exception = e;
+            } finally {
+                long end = NabuccoSystem.getCurrentTimeMillis();
+                long duration = (end - start);
+                super.monitorResult(ResolveAuthorization.class, "resolveAuthorizationRoleList", duration, exception);
+            }
+            if ((response != null)) {
+                super.handleResponse(response);
+                return response.getResponseMessage();
+            }
+        }
+        throw new ClientException("Cannot execute service operation: ResolveAuthorization.resolveAuthorizationRoleList");
+    }
+
+    /**
      * ResolveAuthorizationPermission.
      *
-     * @param rq the AuthorizationPermissionMsg.
+     * @param subContexts the ServiceSubContext....
+     * @param message the AuthorizationPermissionMsg.
      * @return the AuthorizationPermissionMaintainMsg.
      * @throws ClientException
      */
-    public AuthorizationPermissionMaintainMsg resolveAuthorizationPermission(
-            AuthorizationPermissionMsg rq) throws ClientException {
+    public AuthorizationPermissionMaintainMsg resolveAuthorizationPermission(AuthorizationPermissionMsg message,
+            ServiceSubContext... subContexts) throws ClientException {
         ServiceRequest<AuthorizationPermissionMsg> request = new ServiceRequest<AuthorizationPermissionMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<AuthorizationPermissionMaintainMsg> rs;
+                super.createServiceContext(subContexts));
+        request.setRequestMessage(message);
+        ServiceResponse<AuthorizationPermissionMaintainMsg> response = null;
+        Exception exception = null;
         if ((service != null)) {
-            long start = System.currentTimeMillis();
+            super.handleRequest(request);
+            long start = NabuccoSystem.getCurrentTimeMillis();
             try {
-                rs = service.resolveAuthorizationPermission(request);
-                return rs.getResponseMessage();
-            } catch (Exception exception) {
-                super.processException(exception);
+                response = service.resolveAuthorizationPermission(request);
+            } catch (Exception e) {
+                exception = e;
             } finally {
-                long end = System.currentTimeMillis();
-                Activator.getDefault().logDebug(
-                        new NabuccoLogMessage(ResolveAuthorizationDelegate.class, "Service: ",
-                                "ResolveAuthorization.resolveAuthorizationPermission", " Time: ",
-                                String.valueOf((end - start)), "ms."));
+                long end = NabuccoSystem.getCurrentTimeMillis();
+                long duration = (end - start);
+                super.monitorResult(ResolveAuthorization.class, "resolveAuthorizationPermission", duration, exception);
+            }
+            if ((response != null)) {
+                super.handleResponse(response);
+                return response.getResponseMessage();
             }
         }
         throw new ClientException(
@@ -142,160 +306,37 @@ public class ResolveAuthorizationDelegate extends ServiceDelegateSupport {
     /**
      * ResolveAuthorizationPermissionList.
      *
-     * @param rq the AuthorizationPermissionListMsg.
+     * @param subContexts the ServiceSubContext....
+     * @param message the AuthorizationPermissionListMsg.
      * @return the AuthorizationPermissionListMsg.
      * @throws ClientException
      */
-    public AuthorizationPermissionListMsg resolveAuthorizationPermissionList(
-            AuthorizationPermissionListMsg rq) throws ClientException {
+    public AuthorizationPermissionListMsg resolveAuthorizationPermissionList(AuthorizationPermissionListMsg message,
+            ServiceSubContext... subContexts) throws ClientException {
         ServiceRequest<AuthorizationPermissionListMsg> request = new ServiceRequest<AuthorizationPermissionListMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<AuthorizationPermissionListMsg> rs;
+                super.createServiceContext(subContexts));
+        request.setRequestMessage(message);
+        ServiceResponse<AuthorizationPermissionListMsg> response = null;
+        Exception exception = null;
         if ((service != null)) {
-            long start = System.currentTimeMillis();
+            super.handleRequest(request);
+            long start = NabuccoSystem.getCurrentTimeMillis();
             try {
-                rs = service.resolveAuthorizationPermissionList(request);
-                return rs.getResponseMessage();
-            } catch (Exception exception) {
-                super.processException(exception);
+                response = service.resolveAuthorizationPermissionList(request);
+            } catch (Exception e) {
+                exception = e;
             } finally {
-                long end = System.currentTimeMillis();
-                Activator.getDefault().logDebug(
-                        new NabuccoLogMessage(ResolveAuthorizationDelegate.class, "Service: ",
-                                "ResolveAuthorization.resolveAuthorizationPermissionList",
-                                " Time: ", String.valueOf((end - start)), "ms."));
+                long end = NabuccoSystem.getCurrentTimeMillis();
+                long duration = (end - start);
+                super.monitorResult(ResolveAuthorization.class, "resolveAuthorizationPermissionList", duration,
+                        exception);
+            }
+            if ((response != null)) {
+                super.handleResponse(response);
+                return response.getResponseMessage();
             }
         }
         throw new ClientException(
                 "Cannot execute service operation: ResolveAuthorization.resolveAuthorizationPermissionList");
-    }
-
-    /**
-     * ResolveAuthorizationRole.
-     *
-     * @param rq the AuthorizationRoleMsg.
-     * @return the AuthorizationRoleMaintainMsg.
-     * @throws ClientException
-     */
-    public AuthorizationRoleMaintainMsg resolveAuthorizationRole(AuthorizationRoleMsg rq)
-            throws ClientException {
-        ServiceRequest<AuthorizationRoleMsg> request = new ServiceRequest<AuthorizationRoleMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<AuthorizationRoleMaintainMsg> rs;
-        if ((service != null)) {
-            long start = System.currentTimeMillis();
-            try {
-                rs = service.resolveAuthorizationRole(request);
-                return rs.getResponseMessage();
-            } catch (Exception exception) {
-                super.processException(exception);
-            } finally {
-                long end = System.currentTimeMillis();
-                Activator.getDefault().logDebug(
-                        new NabuccoLogMessage(ResolveAuthorizationDelegate.class, "Service: ",
-                                "ResolveAuthorization.resolveAuthorizationRole", " Time: ", String
-                                        .valueOf((end - start)), "ms."));
-            }
-        }
-        throw new ClientException(
-                "Cannot execute service operation: ResolveAuthorization.resolveAuthorizationRole");
-    }
-
-    /**
-     * ResolveAuthorizationRoleList.
-     *
-     * @param rq the AuthorizationRoleListMsg.
-     * @return the AuthorizationRoleListMsg.
-     * @throws ClientException
-     */
-    public AuthorizationRoleListMsg resolveAuthorizationRoleList(AuthorizationRoleListMsg rq)
-            throws ClientException {
-        ServiceRequest<AuthorizationRoleListMsg> request = new ServiceRequest<AuthorizationRoleListMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<AuthorizationRoleListMsg> rs;
-        if ((service != null)) {
-            long start = System.currentTimeMillis();
-            try {
-                rs = service.resolveAuthorizationRoleList(request);
-                return rs.getResponseMessage();
-            } catch (Exception exception) {
-                super.processException(exception);
-            } finally {
-                long end = System.currentTimeMillis();
-                Activator.getDefault().logDebug(
-                        new NabuccoLogMessage(ResolveAuthorizationDelegate.class, "Service: ",
-                                "ResolveAuthorization.resolveAuthorizationRoleList", " Time: ",
-                                String.valueOf((end - start)), "ms."));
-            }
-        }
-        throw new ClientException(
-                "Cannot execute service operation: ResolveAuthorization.resolveAuthorizationRoleList");
-    }
-
-    /**
-     * ResolveAuthorizationUser.
-     *
-     * @param rq the AuthorizationUserMsg.
-     * @return the AuthorizationUserMaintainMsg.
-     * @throws ClientException
-     */
-    public AuthorizationUserMaintainMsg resolveAuthorizationUser(AuthorizationUserMsg rq)
-            throws ClientException {
-        ServiceRequest<AuthorizationUserMsg> request = new ServiceRequest<AuthorizationUserMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<AuthorizationUserMaintainMsg> rs;
-        if ((service != null)) {
-            long start = System.currentTimeMillis();
-            try {
-                rs = service.resolveAuthorizationUser(request);
-                return rs.getResponseMessage();
-            } catch (Exception exception) {
-                super.processException(exception);
-            } finally {
-                long end = System.currentTimeMillis();
-                Activator.getDefault().logDebug(
-                        new NabuccoLogMessage(ResolveAuthorizationDelegate.class, "Service: ",
-                                "ResolveAuthorization.resolveAuthorizationUser", " Time: ", String
-                                        .valueOf((end - start)), "ms."));
-            }
-        }
-        throw new ClientException(
-                "Cannot execute service operation: ResolveAuthorization.resolveAuthorizationUser");
-    }
-
-    /**
-     * ResolveAuthorizationUserList.
-     *
-     * @param rq the AuthorizationUserListMsg.
-     * @return the AuthorizationUserListMsg.
-     * @throws ClientException
-     */
-    public AuthorizationUserListMsg resolveAuthorizationUserList(AuthorizationUserListMsg rq)
-            throws ClientException {
-        ServiceRequest<AuthorizationUserListMsg> request = new ServiceRequest<AuthorizationUserListMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<AuthorizationUserListMsg> rs;
-        if ((service != null)) {
-            long start = System.currentTimeMillis();
-            try {
-                rs = service.resolveAuthorizationUserList(request);
-                return rs.getResponseMessage();
-            } catch (Exception exception) {
-                super.processException(exception);
-            } finally {
-                long end = System.currentTimeMillis();
-                Activator.getDefault().logDebug(
-                        new NabuccoLogMessage(ResolveAuthorizationDelegate.class, "Service: ",
-                                "ResolveAuthorization.resolveAuthorizationUserList", " Time: ",
-                                String.valueOf((end - start)), "ms."));
-            }
-        }
-        throw new ClientException(
-                "Cannot execute service operation: ResolveAuthorization.resolveAuthorizationUserList");
     }
 }

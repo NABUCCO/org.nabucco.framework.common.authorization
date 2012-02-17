@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,11 +18,9 @@ package org.nabucco.framework.common.authorization.impl.service.resolve;
 
 import java.util.List;
 
-import javax.persistence.Query;
-
 import org.nabucco.framework.base.facade.exception.persistence.PersistenceException;
 import org.nabucco.framework.base.facade.exception.service.ResolveException;
-import org.nabucco.framework.base.impl.service.maintain.PersistenceHelper;
+import org.nabucco.framework.base.impl.service.maintain.NabuccoQuery;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroup;
 import org.nabucco.framework.common.authorization.facade.message.AuthorizationGroupMsg;
 import org.nabucco.framework.common.authorization.facade.message.maintain.AuthorizationGroupMaintainMsg;
@@ -32,24 +30,19 @@ import org.nabucco.framework.common.authorization.facade.message.maintain.Author
  * 
  * @author Jens Wurm, Nicolas Moser, PRODYNA AG
  */
-public class ResolveAuthorizationGroupServiceHandlerImpl extends
-        ResolveAuthorizationGroupServiceHandler {
+public class ResolveAuthorizationGroupServiceHandlerImpl extends ResolveAuthorizationGroupServiceHandler {
 
     private static final long serialVersionUID = 1L;
-
-    private PersistenceHelper helper;
 
     private AuthorizationGroup group;
 
     private AuthorizationGroupMaintainMsg response;
 
     @Override
-    public AuthorizationGroupMaintainMsg resolveAuthorizationGroup(AuthorizationGroupMsg msg)
-            throws ResolveException {
+    public AuthorizationGroupMaintainMsg resolveAuthorizationGroup(AuthorizationGroupMsg msg) throws ResolveException {
 
         this.group = msg.getAuthorizationGroup();
         this.response = new AuthorizationGroupMaintainMsg();
-        this.helper = new PersistenceHelper(super.getEntityManager());
 
         try {
             this.resolve();
@@ -57,11 +50,9 @@ public class ResolveAuthorizationGroupServiceHandlerImpl extends
             this.loadParentGroup();
 
         } catch (PersistenceException e) {
-            throw new ResolveException("Cannot resolve AuthorizationGroup with id "
-                    + this.group.getId(), e);
+            throw new ResolveException("Cannot resolve AuthorizationGroup with id " + this.group.getId(), e);
         } catch (Exception e) {
-            throw new ResolveException("Cannot resolve AuthorizationGroup with id "
-                    + this.group.getId(), e);
+            throw new ResolveException("Cannot resolve AuthorizationGroup with id " + this.group.getId(), e);
         }
 
         this.response.setAuthorizationGroup(this.group);
@@ -75,7 +66,7 @@ public class ResolveAuthorizationGroupServiceHandlerImpl extends
      *             when the group is not persistent and cannot be resolved
      */
     private void resolve() throws PersistenceException {
-        this.group = this.helper.find(AuthorizationGroup.class, this.group);
+        this.group = super.getPersistenceManager().find(this.group);
 
         this.group.getChildGroupList().size();
         this.group.getUserList().size();
@@ -86,20 +77,19 @@ public class ResolveAuthorizationGroupServiceHandlerImpl extends
     /**
      * Load the parent group of this group.
      * 
-     * @throws ResolveException
-     *             when the group is not persistent
+     * @throws PersistenceException
+     *             when the query execution fails
      */
-    private void loadParentGroup() throws ResolveException {
+    private void loadParentGroup() throws PersistenceException {
 
         StringBuilder queryString = new StringBuilder();
         queryString.append("select pg from AuthorizationGroup pg");
         queryString.append(" inner join pg.childGroupListJPA cg");
         queryString.append(" where (cg.id = :groupId)");
 
-        Query query = super.getEntityManager().createQuery(queryString.toString());
+        NabuccoQuery<AuthorizationGroup> query = super.getPersistenceManager().createQuery(queryString.toString());
         query.setParameter("groupId", this.group.getId());
 
-        @SuppressWarnings("unchecked")
         List<AuthorizationGroup> resultList = query.getResultList();
 
         if (!resultList.isEmpty()) {

@@ -1,8 +1,25 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.impl.service.produce;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import javax.persistence.EntityManager;
 import org.nabucco.framework.base.facade.exception.service.ProduceException;
 import org.nabucco.framework.base.facade.message.EmptyServiceMessage;
 import org.nabucco.framework.base.facade.message.ServiceRequest;
@@ -10,6 +27,8 @@ import org.nabucco.framework.base.facade.message.ServiceResponse;
 import org.nabucco.framework.base.facade.service.injection.InjectionException;
 import org.nabucco.framework.base.facade.service.injection.InjectionProvider;
 import org.nabucco.framework.base.impl.service.ServiceSupport;
+import org.nabucco.framework.base.impl.service.maintain.PersistenceManager;
+import org.nabucco.framework.base.impl.service.maintain.PersistenceManagerFactory;
 import org.nabucco.framework.common.authorization.facade.message.AuthorizationGroupMsg;
 import org.nabucco.framework.common.authorization.facade.message.AuthorizationPermissionMsg;
 import org.nabucco.framework.common.authorization.facade.message.AuthorizationRoleMsg;
@@ -28,6 +47,8 @@ public class ProduceAuthorizationImpl extends ServiceSupport implements ProduceA
 
     private static final String ID = "ProduceAuthorization";
 
+    private static Map<String, String[]> ASPECTS;
+
     private ProduceAuthorizationGroupServiceHandler produceAuthorizationGroupServiceHandler;
 
     private ProduceAuthorizationUserServiceHandler produceAuthorizationUserServiceHandler;
@@ -36,52 +57,69 @@ public class ProduceAuthorizationImpl extends ServiceSupport implements ProduceA
 
     private ProduceAuthorizationPermissionServiceHandler produceAuthorizationPermissionServiceHandler;
 
+    private EntityManager entityManager;
+
     /** Constructs a new ProduceAuthorizationImpl instance. */
     public ProduceAuthorizationImpl() {
         super();
     }
 
-    /** PostConstruct. */
+    @Override
     public void postConstruct() {
+        super.postConstruct();
         InjectionProvider injector = InjectionProvider.getInstance(ID);
-        this.produceAuthorizationGroupServiceHandler = injector
-                .inject(ProduceAuthorizationGroupServiceHandler.getId());
+        PersistenceManager persistenceManager = PersistenceManagerFactory.getInstance().createPersistenceManager(
+                this.entityManager, super.getLogger());
+        this.produceAuthorizationGroupServiceHandler = injector.inject(ProduceAuthorizationGroupServiceHandler.getId());
         if ((this.produceAuthorizationGroupServiceHandler != null)) {
-            this.produceAuthorizationGroupServiceHandler.setEntityManager(null);
+            this.produceAuthorizationGroupServiceHandler.setPersistenceManager(persistenceManager);
             this.produceAuthorizationGroupServiceHandler.setLogger(super.getLogger());
         }
-        this.produceAuthorizationUserServiceHandler = injector
-                .inject(ProduceAuthorizationUserServiceHandler.getId());
+        this.produceAuthorizationUserServiceHandler = injector.inject(ProduceAuthorizationUserServiceHandler.getId());
         if ((this.produceAuthorizationUserServiceHandler != null)) {
-            this.produceAuthorizationUserServiceHandler.setEntityManager(null);
+            this.produceAuthorizationUserServiceHandler.setPersistenceManager(persistenceManager);
             this.produceAuthorizationUserServiceHandler.setLogger(super.getLogger());
         }
-        this.produceAuthorizationRoleServiceHandler = injector
-                .inject(ProduceAuthorizationRoleServiceHandler.getId());
+        this.produceAuthorizationRoleServiceHandler = injector.inject(ProduceAuthorizationRoleServiceHandler.getId());
         if ((this.produceAuthorizationRoleServiceHandler != null)) {
-            this.produceAuthorizationRoleServiceHandler.setEntityManager(null);
+            this.produceAuthorizationRoleServiceHandler.setPersistenceManager(persistenceManager);
             this.produceAuthorizationRoleServiceHandler.setLogger(super.getLogger());
         }
         this.produceAuthorizationPermissionServiceHandler = injector
                 .inject(ProduceAuthorizationPermissionServiceHandler.getId());
         if ((this.produceAuthorizationPermissionServiceHandler != null)) {
-            this.produceAuthorizationPermissionServiceHandler.setEntityManager(null);
+            this.produceAuthorizationPermissionServiceHandler.setPersistenceManager(persistenceManager);
             this.produceAuthorizationPermissionServiceHandler.setLogger(super.getLogger());
         }
     }
 
-    /** PreDestroy. */
+    @Override
     public void preDestroy() {
+        super.preDestroy();
     }
 
     @Override
-    public ServiceResponse<AuthorizationGroupMsg> produceAuthorizationGroup(
-            ServiceRequest<EmptyServiceMessage> rq) throws ProduceException {
+    public String[] getAspects(String operationName) {
+        if ((ASPECTS == null)) {
+            ASPECTS = new HashMap<String, String[]>();
+            ASPECTS.put("produceAuthorizationGroup", NO_ASPECTS);
+            ASPECTS.put("produceAuthorizationUser", NO_ASPECTS);
+            ASPECTS.put("produceAuthorizationRole", NO_ASPECTS);
+            ASPECTS.put("produceAuthorizationPermission", NO_ASPECTS);
+        }
+        String[] aspects = ASPECTS.get(operationName);
+        if ((aspects == null)) {
+            return ServiceSupport.NO_ASPECTS;
+        }
+        return Arrays.copyOf(aspects, aspects.length);
+    }
+
+    @Override
+    public ServiceResponse<AuthorizationGroupMsg> produceAuthorizationGroup(ServiceRequest<EmptyServiceMessage> rq)
+            throws ProduceException {
         if ((this.produceAuthorizationGroupServiceHandler == null)) {
-            super.getLogger().error(
-                    "No service implementation configured for produceAuthorizationGroup().");
-            throw new InjectionException(
-                    "No service implementation configured for produceAuthorizationGroup().");
+            super.getLogger().error("No service implementation configured for produceAuthorizationGroup().");
+            throw new InjectionException("No service implementation configured for produceAuthorizationGroup().");
         }
         ServiceResponse<AuthorizationGroupMsg> rs;
         this.produceAuthorizationGroupServiceHandler.init();
@@ -91,13 +129,11 @@ public class ProduceAuthorizationImpl extends ServiceSupport implements ProduceA
     }
 
     @Override
-    public ServiceResponse<AuthorizationUserMsg> produceAuthorizationUser(
-            ServiceRequest<EmptyServiceMessage> rq) throws ProduceException {
+    public ServiceResponse<AuthorizationUserMsg> produceAuthorizationUser(ServiceRequest<EmptyServiceMessage> rq)
+            throws ProduceException {
         if ((this.produceAuthorizationUserServiceHandler == null)) {
-            super.getLogger().error(
-                    "No service implementation configured for produceAuthorizationUser().");
-            throw new InjectionException(
-                    "No service implementation configured for produceAuthorizationUser().");
+            super.getLogger().error("No service implementation configured for produceAuthorizationUser().");
+            throw new InjectionException("No service implementation configured for produceAuthorizationUser().");
         }
         ServiceResponse<AuthorizationUserMsg> rs;
         this.produceAuthorizationUserServiceHandler.init();
@@ -107,13 +143,11 @@ public class ProduceAuthorizationImpl extends ServiceSupport implements ProduceA
     }
 
     @Override
-    public ServiceResponse<AuthorizationRoleMsg> produceAuthorizationRole(
-            ServiceRequest<EmptyServiceMessage> rq) throws ProduceException {
+    public ServiceResponse<AuthorizationRoleMsg> produceAuthorizationRole(ServiceRequest<EmptyServiceMessage> rq)
+            throws ProduceException {
         if ((this.produceAuthorizationRoleServiceHandler == null)) {
-            super.getLogger().error(
-                    "No service implementation configured for produceAuthorizationRole().");
-            throw new InjectionException(
-                    "No service implementation configured for produceAuthorizationRole().");
+            super.getLogger().error("No service implementation configured for produceAuthorizationRole().");
+            throw new InjectionException("No service implementation configured for produceAuthorizationRole().");
         }
         ServiceResponse<AuthorizationRoleMsg> rs;
         this.produceAuthorizationRoleServiceHandler.init();
@@ -126,10 +160,8 @@ public class ProduceAuthorizationImpl extends ServiceSupport implements ProduceA
     public ServiceResponse<AuthorizationPermissionMsg> produceAuthorizationPermission(
             ServiceRequest<EmptyServiceMessage> rq) throws ProduceException {
         if ((this.produceAuthorizationPermissionServiceHandler == null)) {
-            super.getLogger().error(
-                    "No service implementation configured for produceAuthorizationPermission().");
-            throw new InjectionException(
-                    "No service implementation configured for produceAuthorizationPermission().");
+            super.getLogger().error("No service implementation configured for produceAuthorizationPermission().");
+            throw new InjectionException("No service implementation configured for produceAuthorizationPermission().");
         }
         ServiceResponse<AuthorizationPermissionMsg> rs;
         this.produceAuthorizationPermissionServiceHandler.init();

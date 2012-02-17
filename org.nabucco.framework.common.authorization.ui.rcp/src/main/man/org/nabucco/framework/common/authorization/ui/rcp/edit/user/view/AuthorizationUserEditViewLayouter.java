@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,15 +27,18 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.Section;
 import org.nabucco.framework.common.authorization.facade.datatype.AuthorizationGroup;
+import org.nabucco.framework.common.authorization.ui.rcp.edit.AuthorizationPickerConstants;
 import org.nabucco.framework.common.authorization.ui.rcp.edit.user.model.AuthorizationUserEditViewModel;
 import org.nabucco.framework.common.authorization.ui.rcp.list.group.view.AuthorizationGroupListViewTableFilter;
 import org.nabucco.framework.common.authorization.ui.rcp.list.group.view.comparator.AuthorizationGroupListViewAuthorizationGroupNameComparator;
+import org.nabucco.framework.common.authorization.ui.rcp.list.group.view.label.AuthorizationGroupListViewAuthorizationGroupDescriptionLabelProvider;
 import org.nabucco.framework.common.authorization.ui.rcp.list.group.view.label.AuthorizationGroupListViewAuthorizationGroupNameLabelProvider;
 import org.nabucco.framework.common.authorization.ui.rcp.list.group.view.label.AuthorizationGroupListViewAuthorizationGroupTypeLabelProvider;
 import org.nabucco.framework.common.authorization.ui.rcp.util.AuthorizationLayouterUtility;
 import org.nabucco.framework.plugin.base.component.list.view.NabuccoDefaultTableSorter;
 import org.nabucco.framework.plugin.base.component.list.view.NabuccoTableColumnInfo;
 import org.nabucco.framework.plugin.base.component.list.view.NabuccoTableSorter;
+import org.nabucco.framework.plugin.base.component.picker.combo.CodeComboViewer;
 import org.nabucco.framework.plugin.base.component.picker.dialog.ElementPickerParameter;
 import org.nabucco.framework.plugin.base.layout.Layoutable;
 import org.nabucco.framework.plugin.base.layout.NabuccoLayouter;
@@ -47,16 +50,15 @@ import org.nabucco.framework.plugin.base.view.NabuccoMessageManager;
  * 
  * @author Michael Krausse, PRODYNA AG
  */
-public class AuthorizationUserEditViewLayouter implements
-        NabuccoLayouter<AuthorizationUserEditViewModel> {
+public class AuthorizationUserEditViewLayouter implements NabuccoLayouter<AuthorizationUserEditViewModel>,
+        AuthorizationPickerConstants {
 
     private NabuccoFormToolkit nabuccoFormToolkit;
 
     private AuthorizationUserEditViewWidgetFactory widgetFactory;
 
     @Override
-    public Composite layout(Composite parent, NabuccoMessageManager messageManager,
-            AuthorizationUserEditViewModel model) {
+    public Composite layout(Composite parent, NabuccoMessageManager messageManager, AuthorizationUserEditViewModel model) {
         return layout(parent, messageManager, model, null);
     }
 
@@ -88,8 +90,9 @@ public class AuthorizationUserEditViewLayouter implements
         editUserSection.setClient(sectionBody);
 
         layoutLabelAndInputFieldName(sectionBody);
-        layoutLabelAndInputFieldUserType(sectionBody);
         layoutLabelAndInputFieldDescription(sectionBody);
+        layoutLabelAndInputFieldPassword(sectionBody);
+        layoutLabelAndInputFieldUserType(sectionBody);
         layoutLabelAndInputFieldOwner(sectionBody);
         layoutPickerForAuthorizationGroup(sectionBody, model);
 
@@ -125,6 +128,20 @@ public class AuthorizationUserEditViewLayouter implements
     }
 
     /**
+     * Layout the user description.
+     * 
+     * @param parent
+     *            the parent section
+     */
+    private void layoutLabelAndInputFieldPassword(Composite parent) {
+        Label label = widgetFactory.createLabelPassword(parent);
+        AuthorizationLayouterUtility.layoutDefault(label);
+
+        Text text = widgetFactory.createInputFieldPassword(parent);
+        AuthorizationLayouterUtility.layoutDefault(text);
+    }
+
+    /**
      * Layout the user owner.
      * 
      * @param parent
@@ -136,6 +153,9 @@ public class AuthorizationUserEditViewLayouter implements
 
         Text text = widgetFactory.createInputFieldOwner(parent);
         AuthorizationLayouterUtility.layoutDefault(text);
+
+        text.setEditable(false);
+        text.setEnabled(false);
     }
 
     /**
@@ -148,8 +168,8 @@ public class AuthorizationUserEditViewLayouter implements
         Label label = widgetFactory.createLabelUserType(parent);
         AuthorizationLayouterUtility.layoutDefault(label);
 
-        Text text = widgetFactory.createInputFieldUserType(parent);
-        AuthorizationLayouterUtility.layoutDefault(text);
+        CodeComboViewer comboViewer = widgetFactory.createComboUserType(parent);
+        AuthorizationLayouterUtility.layoutDefault(comboViewer.getCombo());
     }
 
     /**
@@ -159,8 +179,7 @@ public class AuthorizationUserEditViewLayouter implements
      *            the parent to add the picker
      * @param model
      */
-    private void layoutPickerForAuthorizationGroup(final Composite parent,
-            AuthorizationUserEditViewModel model) {
+    private void layoutPickerForAuthorizationGroup(Composite parent, AuthorizationUserEditViewModel model) {
         ElementPickerParameter params = new ElementPickerParameter(layoutTableSorter(),
                 new AuthorizationGroupListViewTableFilter(), new AuthorizationGroupLabelProvider(),
                 new AuthorizationUserGroupPickerContentProvider(model), createTableColumnInfo());
@@ -188,22 +207,22 @@ public class AuthorizationUserEditViewLayouter implements
     private NabuccoTableColumnInfo[] createTableColumnInfo() {
 
         NabuccoTableColumnInfo info;
-        List<NabuccoTableColumnInfo> columnInfoList = new ArrayList<NabuccoTableColumnInfo>(2);
+        List<NabuccoTableColumnInfo> columnInfoList = new ArrayList<NabuccoTableColumnInfo>(3);
 
-        info = new NabuccoTableColumnInfo(
-                "org.nabucco.framework.common.authorization.ui.picker.group.column.code.name",
-                "org.nabucco.framework.common.authorization.ui.picker.group.column.code.tooltip",
-                50, SWT.LEFT, SWT.CENTER,
+        info = new NabuccoTableColumnInfo(COLUMN_GROUP_TYPE_LABEL, COLUMN_GROUP_TYPE_TOOLTIP, 75, SWT.LEFT, SWT.CENTER,
                 new AuthorizationGroupListViewAuthorizationGroupTypeLabelProvider());
         info.setResizable(false);
         info.setMoveable(false);
         columnInfoList.add(info);
 
-        info = new NabuccoTableColumnInfo(
-                "org.nabucco.framework.common.authorization.ui.picker.group.column.name.name",
-                "org.nabucco.framework.common.authorization.ui.picker.group.column.name.tooltip",
-                100, SWT.LEFT, SWT.CENTER,
-                new AuthorizationGroupListViewAuthorizationGroupNameLabelProvider());
+        info = new NabuccoTableColumnInfo(COLUMN_GROUP_NAME_LABEL, COLUMN_GROUP_NAME_TOOLTIP, 150, SWT.LEFT,
+                SWT.CENTER, new AuthorizationGroupListViewAuthorizationGroupNameLabelProvider());
+        info.setResizable(false);
+        info.setMoveable(false);
+        columnInfoList.add(info);
+
+        info = new NabuccoTableColumnInfo(COLUMN_GROUP_DESCRIPTION_LABEL, COLUMN_GROUP_DESCRIPTION_TOOLTIP, 200,
+                SWT.LEFT, SWT.CENTER, new AuthorizationGroupListViewAuthorizationGroupDescriptionLabelProvider());
         info.setResizable(false);
         info.setMoveable(false);
         columnInfoList.add(info);

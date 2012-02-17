@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.nabucco.framework.base.facade.component.connection.ConnectionSpecification;
-import org.nabucco.framework.base.facade.datatype.security.Subject;
+import org.nabucco.framework.base.facade.datatype.session.authorization.SecurityContext;
 import org.nabucco.framework.base.facade.datatype.utils.I18N;
 import org.nabucco.framework.common.authorization.ui.rcp.login.model.NabuccoLoginDialogBusinessModel;
 import org.nabucco.framework.common.authorization.ui.rcp.login.model.NabuccoLoginDialogModel;
@@ -77,25 +77,33 @@ public class NabuccoLoginDialog extends Dialog {
 
         newShell.setText(I18N.i18n(LOGIN_TITLE));
 
-        final ImageDescriptor imageDescriptor = Activator.getImageDescriptor("icons/shield.png");
+        ImageDescriptor imageDescriptor = Activator.getImageDescriptor("icons/shield.png");
         if (imageDescriptor != null) {
             newShell.setImage(imageDescriptor.createImage());
         }
-        layouter = new NabuccoLoginDialogLayouter();
-        model = new NabuccoLoginDialogModel();
-        model.setConnectionSpecifications(ConnectionSpecification.getAllConnectionSpecifications());
-        businessModel = new NabuccoLoginDialogBusinessModel();
+
+        this.layouter = new NabuccoLoginDialogLayouter();
+        this.model = new NabuccoLoginDialogModel();
+        this.model.setConnections(ConnectionSpecification.getAllConnectionSpecifications());
+        this.businessModel = new NabuccoLoginDialogBusinessModel();
     }
 
     @Override
     protected Control createDialogArea(Composite parent) {
-        layouter.layout(parent, null, model);
+        this.layouter.layout(parent, null, model);
         return parent;
     }
 
     @Override
     public void buttonPressed(int buttonId) {
-        if ((buttonId == IDialogConstants.OK_ID && login()) || buttonId != IDialogConstants.OK_ID) {
+        if (buttonId != IDialogConstants.OK_ID) {
+            super.buttonPressed(buttonId);
+            return;
+        }
+
+        boolean success = this.login();
+
+        if (success) {
             super.buttonPressed(buttonId);
         }
     }
@@ -106,10 +114,10 @@ public class NabuccoLoginDialog extends Dialog {
      * @return true: login sucessfully false: login failed
      */
     private boolean login() {
-        Subject subject = businessModel.login(model.getUserName(), model.getPassword());
-        model.setAuthenticatedSubject(subject);
+        SecurityContext securityContext = businessModel.login(model.getUserName(), model.getPassword());
+        model.setSecurityContext(securityContext);
 
-        if (subject == null) {
+        if (!securityContext.isAuthenticated()) {
             Map<String, Serializable> values = new HashMap<String, Serializable>();
             values.put("username", model.getUserName());
 
@@ -119,8 +127,7 @@ public class NabuccoLoginDialog extends Dialog {
 
         model.setPassword("");
 
-        boolean loginSuccessful = model.getAuthenticatedSubject() != null;
-        return loginSuccessful;
+        return securityContext.isAuthenticated();
     }
 
     /**
@@ -129,15 +136,15 @@ public class NabuccoLoginDialog extends Dialog {
      * @return the connection specification
      */
     public ConnectionSpecification getConnectionSpecification() {
-        return model.getSelectedConnectionSpecification();
+        return model.getSelectedConnection();
     }
 
     /**
-     * Getter for the user identifier.
+     * Getter for the security context.
      * 
-     * @return the userId
+     * @return the security context
      */
-    public Subject getSubject() {
-        return model.getAuthenticatedSubject();
+    public SecurityContext getSecurityContext() {
+        return model.getSecurityContext();
     }
 }

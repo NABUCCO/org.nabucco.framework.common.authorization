@@ -1,8 +1,23 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.ui.rcp.communication.search;
 
+import org.nabucco.framework.base.facade.datatype.NabuccoSystem;
+import org.nabucco.framework.base.facade.datatype.context.ServiceSubContext;
 import org.nabucco.framework.base.facade.exception.client.ClientException;
 import org.nabucco.framework.base.facade.message.ServiceRequest;
 import org.nabucco.framework.base.facade.message.ServiceResponse;
@@ -12,9 +27,7 @@ import org.nabucco.framework.common.authorization.facade.message.AuthorizationRo
 import org.nabucco.framework.common.authorization.facade.message.AuthorizationUserListMsg;
 import org.nabucco.framework.common.authorization.facade.message.search.AuthorizationSearchMsg;
 import org.nabucco.framework.common.authorization.facade.service.search.SearchAuthorization;
-import org.nabucco.framework.plugin.base.Activator;
 import org.nabucco.framework.plugin.base.component.communication.ServiceDelegateSupport;
-import org.nabucco.framework.plugin.base.logging.NabuccoLogMessage;
 
 /**
  * SearchAuthorizationDelegate<p/>Authorization search service<p/>
@@ -39,128 +52,140 @@ public class SearchAuthorizationDelegate extends ServiceDelegateSupport {
     /**
      * SearchAuthorizationGroup.
      *
-     * @param rq the AuthorizationSearchMsg.
+     * @param subContexts the ServiceSubContext....
+     * @param message the AuthorizationSearchMsg.
      * @return the AuthorizationGroupListMsg.
      * @throws ClientException
      */
-    public AuthorizationGroupListMsg searchAuthorizationGroup(AuthorizationSearchMsg rq)
-            throws ClientException {
+    public AuthorizationGroupListMsg searchAuthorizationGroup(AuthorizationSearchMsg message,
+            ServiceSubContext... subContexts) throws ClientException {
         ServiceRequest<AuthorizationSearchMsg> request = new ServiceRequest<AuthorizationSearchMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<AuthorizationGroupListMsg> rs;
+                super.createServiceContext(subContexts));
+        request.setRequestMessage(message);
+        ServiceResponse<AuthorizationGroupListMsg> response = null;
+        Exception exception = null;
         if ((service != null)) {
-            long start = System.currentTimeMillis();
+            super.handleRequest(request);
+            long start = NabuccoSystem.getCurrentTimeMillis();
             try {
-                rs = service.searchAuthorizationGroup(request);
-                return rs.getResponseMessage();
-            } catch (Exception exception) {
-                super.processException(exception);
+                response = service.searchAuthorizationGroup(request);
+            } catch (Exception e) {
+                exception = e;
             } finally {
-                long end = System.currentTimeMillis();
-                Activator.getDefault().logDebug(
-                        new NabuccoLogMessage(SearchAuthorizationDelegate.class, "Service: ",
-                                "SearchAuthorization.searchAuthorizationGroup", " Time: ", String
-                                        .valueOf((end - start)), "ms."));
+                long end = NabuccoSystem.getCurrentTimeMillis();
+                long duration = (end - start);
+                super.monitorResult(SearchAuthorization.class, "searchAuthorizationGroup", duration, exception);
+            }
+            if ((response != null)) {
+                super.handleResponse(response);
+                return response.getResponseMessage();
             }
         }
-        throw new ClientException(
-                "Cannot execute service operation: SearchAuthorization.searchAuthorizationGroup");
+        throw new ClientException("Cannot execute service operation: SearchAuthorization.searchAuthorizationGroup");
     }
 
     /**
      * SearchAuthorizationUser.
      *
-     * @param rq the AuthorizationSearchMsg.
+     * @param subContexts the ServiceSubContext....
+     * @param message the AuthorizationSearchMsg.
      * @return the AuthorizationUserListMsg.
      * @throws ClientException
      */
-    public AuthorizationUserListMsg searchAuthorizationUser(AuthorizationSearchMsg rq)
-            throws ClientException {
+    public AuthorizationUserListMsg searchAuthorizationUser(AuthorizationSearchMsg message,
+            ServiceSubContext... subContexts) throws ClientException {
         ServiceRequest<AuthorizationSearchMsg> request = new ServiceRequest<AuthorizationSearchMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<AuthorizationUserListMsg> rs;
+                super.createServiceContext(subContexts));
+        request.setRequestMessage(message);
+        ServiceResponse<AuthorizationUserListMsg> response = null;
+        Exception exception = null;
         if ((service != null)) {
-            long start = System.currentTimeMillis();
+            super.handleRequest(request);
+            long start = NabuccoSystem.getCurrentTimeMillis();
             try {
-                rs = service.searchAuthorizationUser(request);
-                return rs.getResponseMessage();
-            } catch (Exception exception) {
-                super.processException(exception);
+                response = service.searchAuthorizationUser(request);
+            } catch (Exception e) {
+                exception = e;
             } finally {
-                long end = System.currentTimeMillis();
-                Activator.getDefault().logDebug(
-                        new NabuccoLogMessage(SearchAuthorizationDelegate.class, "Service: ",
-                                "SearchAuthorization.searchAuthorizationUser", " Time: ", String
-                                        .valueOf((end - start)), "ms."));
+                long end = NabuccoSystem.getCurrentTimeMillis();
+                long duration = (end - start);
+                super.monitorResult(SearchAuthorization.class, "searchAuthorizationUser", duration, exception);
+            }
+            if ((response != null)) {
+                super.handleResponse(response);
+                return response.getResponseMessage();
             }
         }
-        throw new ClientException(
-                "Cannot execute service operation: SearchAuthorization.searchAuthorizationUser");
+        throw new ClientException("Cannot execute service operation: SearchAuthorization.searchAuthorizationUser");
     }
 
     /**
      * SearchAuthorizationRole.
      *
-     * @param rq the AuthorizationSearchMsg.
+     * @param subContexts the ServiceSubContext....
+     * @param message the AuthorizationSearchMsg.
      * @return the AuthorizationRoleListMsg.
      * @throws ClientException
      */
-    public AuthorizationRoleListMsg searchAuthorizationRole(AuthorizationSearchMsg rq)
-            throws ClientException {
+    public AuthorizationRoleListMsg searchAuthorizationRole(AuthorizationSearchMsg message,
+            ServiceSubContext... subContexts) throws ClientException {
         ServiceRequest<AuthorizationSearchMsg> request = new ServiceRequest<AuthorizationSearchMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<AuthorizationRoleListMsg> rs;
+                super.createServiceContext(subContexts));
+        request.setRequestMessage(message);
+        ServiceResponse<AuthorizationRoleListMsg> response = null;
+        Exception exception = null;
         if ((service != null)) {
-            long start = System.currentTimeMillis();
+            super.handleRequest(request);
+            long start = NabuccoSystem.getCurrentTimeMillis();
             try {
-                rs = service.searchAuthorizationRole(request);
-                return rs.getResponseMessage();
-            } catch (Exception exception) {
-                super.processException(exception);
+                response = service.searchAuthorizationRole(request);
+            } catch (Exception e) {
+                exception = e;
             } finally {
-                long end = System.currentTimeMillis();
-                Activator.getDefault().logDebug(
-                        new NabuccoLogMessage(SearchAuthorizationDelegate.class, "Service: ",
-                                "SearchAuthorization.searchAuthorizationRole", " Time: ", String
-                                        .valueOf((end - start)), "ms."));
+                long end = NabuccoSystem.getCurrentTimeMillis();
+                long duration = (end - start);
+                super.monitorResult(SearchAuthorization.class, "searchAuthorizationRole", duration, exception);
+            }
+            if ((response != null)) {
+                super.handleResponse(response);
+                return response.getResponseMessage();
             }
         }
-        throw new ClientException(
-                "Cannot execute service operation: SearchAuthorization.searchAuthorizationRole");
+        throw new ClientException("Cannot execute service operation: SearchAuthorization.searchAuthorizationRole");
     }
 
     /**
      * SearchAuthorizationPermission.
      *
-     * @param rq the AuthorizationSearchMsg.
+     * @param subContexts the ServiceSubContext....
+     * @param message the AuthorizationSearchMsg.
      * @return the AuthorizationPermissionListMsg.
      * @throws ClientException
      */
-    public AuthorizationPermissionListMsg searchAuthorizationPermission(AuthorizationSearchMsg rq)
-            throws ClientException {
+    public AuthorizationPermissionListMsg searchAuthorizationPermission(AuthorizationSearchMsg message,
+            ServiceSubContext... subContexts) throws ClientException {
         ServiceRequest<AuthorizationSearchMsg> request = new ServiceRequest<AuthorizationSearchMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<AuthorizationPermissionListMsg> rs;
+                super.createServiceContext(subContexts));
+        request.setRequestMessage(message);
+        ServiceResponse<AuthorizationPermissionListMsg> response = null;
+        Exception exception = null;
         if ((service != null)) {
-            long start = System.currentTimeMillis();
+            super.handleRequest(request);
+            long start = NabuccoSystem.getCurrentTimeMillis();
             try {
-                rs = service.searchAuthorizationPermission(request);
-                return rs.getResponseMessage();
-            } catch (Exception exception) {
-                super.processException(exception);
+                response = service.searchAuthorizationPermission(request);
+            } catch (Exception e) {
+                exception = e;
             } finally {
-                long end = System.currentTimeMillis();
-                Activator.getDefault().logDebug(
-                        new NabuccoLogMessage(SearchAuthorizationDelegate.class, "Service: ",
-                                "SearchAuthorization.searchAuthorizationPermission", " Time: ",
-                                String.valueOf((end - start)), "ms."));
+                long end = NabuccoSystem.getCurrentTimeMillis();
+                long duration = (end - start);
+                super.monitorResult(SearchAuthorization.class, "searchAuthorizationPermission", duration, exception);
+            }
+            if ((response != null)) {
+                super.handleResponse(response);
+                return response.getResponseMessage();
             }
         }
-        throw new ClientException(
-                "Cannot execute service operation: SearchAuthorization.searchAuthorizationPermission");
+        throw new ClientException("Cannot execute service operation: SearchAuthorization.searchAuthorizationPermission");
     }
 }

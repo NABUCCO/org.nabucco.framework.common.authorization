@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,8 +35,7 @@ import org.nabucco.framework.plugin.base.command.AbstractNabuccoOpenEditViewHand
  * 
  * @author Nicolas Moser, PRODYNA AG
  */
-public class OpenCorrespondingRoleEditViewFromBrowserElementCommandHandlerImpl
-        extends
+public class OpenCorrespondingRoleEditViewFromBrowserElementCommandHandlerImpl extends
         AbstractNabuccoOpenEditViewHandlerImpl<AuthorizationRoleEditViewBrowserElement, AuthorizationRoleEditViewModel>
         implements OpenCorrespondingRoleEditViewFromBrowserElementCommandHandler {
 
@@ -51,8 +50,7 @@ public class OpenCorrespondingRoleEditViewFromBrowserElementCommandHandlerImpl
     }
 
     @Override
-    protected void updateModel(AuthorizationRoleEditViewBrowserElement element,
-            AuthorizationRoleEditViewModel model) {
+    protected void updateModel(AuthorizationRoleEditViewBrowserElement element, AuthorizationRoleEditViewModel model) {
         loadFull(element.getViewModel());
         model.setRole(element.getViewModel().getRole());
         model.setUserSet(element.getViewModel().getUserSet());
@@ -69,22 +67,18 @@ public class OpenCorrespondingRoleEditViewFromBrowserElementCommandHandlerImpl
 
             AuthorizationRoleMsg msg = this.createAuthorizationGroupResolutionMsg(viewModel);
 
-            AuthorizationRoleMaintainMsg response = resolveAuthorization
-                    .resolveAuthorizationRole(msg);
+            AuthorizationRoleMaintainMsg response = resolveAuthorization.resolveAuthorizationRole(msg);
 
             viewModel.setRole(response.getAuthorizationRole());
-            viewModel.setGroupSet(new HashSet<AuthorizationGroup>(response
-                    .getAuthorizationGroupList()));
-            viewModel
-                    .setUserSet(new HashSet<AuthorizationUser>(response.getAuthorizationUserList()));
+            viewModel.setGroupSet(new HashSet<AuthorizationGroup>(response.getAuthorizationGroupList()));
+            viewModel.setUserSet(new HashSet<AuthorizationUser>(response.getAuthorizationUserList()));
 
         } catch (Exception e) {
             Activator.getDefault().logError(e);
         }
     }
 
-    private AuthorizationRoleMsg createAuthorizationGroupResolutionMsg(
-            AuthorizationRoleEditViewModel viewModel) {
+    private AuthorizationRoleMsg createAuthorizationGroupResolutionMsg(AuthorizationRoleEditViewModel viewModel) {
         AuthorizationRoleMsg result = new AuthorizationRoleMsg();
         result.setAuthorizationRole(viewModel.getRole());
         return result;

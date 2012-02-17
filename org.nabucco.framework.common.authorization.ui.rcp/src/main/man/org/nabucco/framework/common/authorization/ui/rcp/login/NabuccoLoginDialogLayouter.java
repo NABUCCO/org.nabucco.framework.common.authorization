@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -38,11 +38,10 @@ public class NabuccoLoginDialogLayouter implements NabuccoLayouter<NabuccoLoginD
     private NabuccoLoginDialogWidgetFactory widgetFactory;
 
     @Override
-    public Composite layout(Composite parent, NabuccoMessageManager messageManager,
-            NabuccoLoginDialogModel model) {
+    public Composite layout(Composite parent, NabuccoMessageManager messageManager, NabuccoLoginDialogModel model) {
 
         NabuccoFormToolkit nft = new NabuccoFormToolkit(parent);
-        widgetFactory = new NabuccoLoginDialogWidgetFactory(nft, model);
+        this.widgetFactory = new NabuccoLoginDialogWidgetFactory(nft, model);
 
         GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = 2;
@@ -67,10 +66,10 @@ public class NabuccoLoginDialogLayouter implements NabuccoLayouter<NabuccoLoginD
      *            the parent dialog
      */
     private void createUsername(Composite parent) {
-        Label label = widgetFactory.createLabelUsername(parent);
+        Label label = this.widgetFactory.createLabelUsername(parent);
         AuthorizationLayouterUtility.layoutDefault(label);
 
-        Text text = widgetFactory.createTextInputUsername(parent);
+        Text text = this.widgetFactory.createTextInputUsername(parent);
         AuthorizationLayouterUtility.layoutDefault(text);
 
         text.setFocus();
@@ -83,10 +82,10 @@ public class NabuccoLoginDialogLayouter implements NabuccoLayouter<NabuccoLoginD
      *            the parent dialog
      */
     private void createPassword(Composite parent) {
-        Label label = widgetFactory.createLabelPassword(parent);
+        Label label = this.widgetFactory.createLabelPassword(parent);
         AuthorizationLayouterUtility.layoutDefault(label);
 
-        Text text = widgetFactory.createTextInputPassword(parent);
+        Text text = this.widgetFactory.createTextInputPassword(parent);
         AuthorizationLayouterUtility.layoutDefault(text);
     }
 
@@ -97,16 +96,16 @@ public class NabuccoLoginDialogLayouter implements NabuccoLayouter<NabuccoLoginD
      *            the parent dialog
      */
     private void createConnection(Composite parent) {
-        Label label = widgetFactory.createLabelConnection(parent);
+        Label label = this.widgetFactory.createLabelConnection(parent);
         AuthorizationLayouterUtility.layoutDefault(label);
 
-        Combo combo = widgetFactory.createDropdownBoxConnections(parent);
+        Combo combo = this.widgetFactory.createDropdownBoxConnections(parent);
         AuthorizationLayouterUtility.layoutDefault(combo);
     }
 
     @Override
-    public Composite layout(Composite parent, NabuccoMessageManager messageManager,
-            NabuccoLoginDialogModel model, Layoutable<NabuccoLoginDialogModel> view) {
+    public Composite layout(Composite parent, NabuccoMessageManager messageManager, NabuccoLoginDialogModel model,
+            Layoutable<NabuccoLoginDialogModel> view) {
         return null;
     }
 

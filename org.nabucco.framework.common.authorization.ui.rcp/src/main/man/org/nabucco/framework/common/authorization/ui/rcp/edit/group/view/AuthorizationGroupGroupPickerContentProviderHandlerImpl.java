@@ -1,12 +1,12 @@
 /*
- * Copyright 2010 PRODYNA AG
+ * Copyright 2012 PRODYNA AG
  *
  * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.opensource.org/licenses/eclipse-1.0.php or
- * http://www.nabucco-source.org/nabucco-license.html
+ * http://www.nabucco.org/License.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,7 +33,7 @@ import org.nabucco.framework.plugin.base.Activator;
 /**
  * AuthorizationGroupGroupPickerContentProviderHandlerImpl
  * 
- * @author Michael Krauße, PRODYNA AG
+ * @author Michael Krauï¿½e, PRODYNA AG
  */
 public class AuthorizationGroupGroupPickerContentProviderHandlerImpl implements
         AuthorizationGroupGroupPickerContentProviderHandler {
@@ -43,8 +43,7 @@ public class AuthorizationGroupGroupPickerContentProviderHandlerImpl implements
     private AuthorizationGroup currentAuthorizationGroup = null;
 
     @Override
-    public Map<String, AuthorizationGroup[]> loadAllAuthorizationGroup(
-            AuthorizationGroupEditViewModel viewModel) {
+    public Map<String, AuthorizationGroup[]> loadAllAuthorizationGroup(AuthorizationGroupEditViewModel viewModel) {
         if (needsRefresh(viewModel)) {
             authorizationGroups = loadAvailableAuthorizationGroups(viewModel);
         }
@@ -68,8 +67,7 @@ public class AuthorizationGroupGroupPickerContentProviderHandlerImpl implements
      * @param viewModel
      * @return
      */
-    private Map<String, AuthorizationGroup[]> loadAvailableAuthorizationGroups(
-            AuthorizationGroupEditViewModel viewModel) {
+    private Map<String, AuthorizationGroup[]> loadAvailableAuthorizationGroups(AuthorizationGroupEditViewModel viewModel) {
         final Map<String, AuthorizationGroup[]> result = new HashMap<String, AuthorizationGroup[]>();
         try {
             final SearchAuthorizationDelegate searchComponent = AuthorizationComponentServiceDelegateFactory

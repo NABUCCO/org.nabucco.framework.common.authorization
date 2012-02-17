@@ -1,17 +1,30 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.nabucco.framework.common.authorization.ui.web.communication;
 
-import org.nabucco.framework.base.facade.component.connection.Connection;
 import org.nabucco.framework.base.facade.component.connection.ConnectionException;
-import org.nabucco.framework.base.facade.component.connection.ConnectionFactory;
-import org.nabucco.framework.base.facade.component.connection.ConnectionSpecification;
 import org.nabucco.framework.base.facade.exception.client.ClientException;
 import org.nabucco.framework.base.facade.exception.service.ServiceException;
+import org.nabucco.framework.base.ui.web.communication.ServiceDelegateFactorySupport;
 import org.nabucco.framework.common.authorization.facade.component.AuthorizationComponent;
 import org.nabucco.framework.common.authorization.facade.component.AuthorizationComponentLocator;
 import org.nabucco.framework.common.authorization.ui.web.communication.AuthorizationServiceDelegate;
+import org.nabucco.framework.common.authorization.ui.web.communication.export.ExportAuthorizationDelegate;
+import org.nabucco.framework.common.authorization.ui.web.communication.importing.ImportAuthorizationDelegate;
 import org.nabucco.framework.common.authorization.ui.web.communication.login.LoginDelegate;
 import org.nabucco.framework.common.authorization.ui.web.communication.maintain.MaintainAuthorizationDelegate;
 import org.nabucco.framework.common.authorization.ui.web.communication.produce.ProduceAuthorizationDelegate;
@@ -24,11 +37,9 @@ import org.nabucco.framework.common.authorization.ui.web.communication.search.Se
  * @version 1.0
  * @author Frank Ratschinski, PRODYNA AG, 2010-01-18
  */
-public class AuthorizationComponentServiceDelegateFactory {
+public class AuthorizationComponentServiceDelegateFactory extends ServiceDelegateFactorySupport<AuthorizationComponent> {
 
     private static AuthorizationComponentServiceDelegateFactory instance = new AuthorizationComponentServiceDelegateFactory();
-
-    private AuthorizationComponent component;
 
     private LoginDelegate loginDelegate;
 
@@ -42,33 +53,13 @@ public class AuthorizationComponentServiceDelegateFactory {
 
     private ResolveAuthorizationDelegate resolveAuthorizationDelegate;
 
+    private ExportAuthorizationDelegate exportAuthorizationDelegate;
+
+    private ImportAuthorizationDelegate importAuthorizationDelegate;
+
     /** Constructs a new AuthorizationComponentServiceDelegateFactory instance. */
     private AuthorizationComponentServiceDelegateFactory() {
-        super();
-    }
-
-    /**
-     * Getter for the Component.
-     *
-     * @return the AuthorizationComponent.
-     * @throws ConnectionException
-     */
-    private AuthorizationComponent getComponent() throws ConnectionException {
-        if ((this.component == null)) {
-            this.initComponent();
-        }
-        return this.component;
-    }
-
-    /**
-     * InitComponent.
-     *
-     * @throws ConnectionException
-     */
-    private void initComponent() throws ConnectionException {
-        ConnectionSpecification specification = ConnectionSpecification.getCurrentSpecification();
-        Connection connection = ConnectionFactory.getInstance().createConnection(specification);
-        this.component = AuthorizationComponentLocator.getInstance().getComponent(connection);
+        super(AuthorizationComponentLocator.getInstance());
     }
 
     /**
@@ -99,8 +90,8 @@ public class AuthorizationComponentServiceDelegateFactory {
     public AuthorizationServiceDelegate getAuthorizationService() throws ClientException {
         try {
             if ((this.authorizationServiceDelegate == null)) {
-                this.authorizationServiceDelegate = new AuthorizationServiceDelegate(this
-                        .getComponent().getAuthorizationService());
+                this.authorizationServiceDelegate = new AuthorizationServiceDelegate(this.getComponent()
+                        .getAuthorizationService());
             }
             return this.authorizationServiceDelegate;
         } catch (ConnectionException e) {
@@ -119,8 +110,8 @@ public class AuthorizationComponentServiceDelegateFactory {
     public MaintainAuthorizationDelegate getMaintainAuthorization() throws ClientException {
         try {
             if ((this.maintainAuthorizationDelegate == null)) {
-                this.maintainAuthorizationDelegate = new MaintainAuthorizationDelegate(this
-                        .getComponent().getMaintainAuthorization());
+                this.maintainAuthorizationDelegate = new MaintainAuthorizationDelegate(this.getComponent()
+                        .getMaintainAuthorization());
             }
             return this.maintainAuthorizationDelegate;
         } catch (ConnectionException e) {
@@ -139,8 +130,8 @@ public class AuthorizationComponentServiceDelegateFactory {
     public SearchAuthorizationDelegate getSearchAuthorization() throws ClientException {
         try {
             if ((this.searchAuthorizationDelegate == null)) {
-                this.searchAuthorizationDelegate = new SearchAuthorizationDelegate(this
-                        .getComponent().getSearchAuthorization());
+                this.searchAuthorizationDelegate = new SearchAuthorizationDelegate(this.getComponent()
+                        .getSearchAuthorization());
             }
             return this.searchAuthorizationDelegate;
         } catch (ConnectionException e) {
@@ -159,8 +150,8 @@ public class AuthorizationComponentServiceDelegateFactory {
     public ProduceAuthorizationDelegate getProduceAuthorization() throws ClientException {
         try {
             if ((this.produceAuthorizationDelegate == null)) {
-                this.produceAuthorizationDelegate = new ProduceAuthorizationDelegate(this
-                        .getComponent().getProduceAuthorization());
+                this.produceAuthorizationDelegate = new ProduceAuthorizationDelegate(this.getComponent()
+                        .getProduceAuthorization());
             }
             return this.produceAuthorizationDelegate;
         } catch (ConnectionException e) {
@@ -179,12 +170,52 @@ public class AuthorizationComponentServiceDelegateFactory {
     public ResolveAuthorizationDelegate getResolveAuthorization() throws ClientException {
         try {
             if ((this.resolveAuthorizationDelegate == null)) {
-                this.resolveAuthorizationDelegate = new ResolveAuthorizationDelegate(this
-                        .getComponent().getResolveAuthorization());
+                this.resolveAuthorizationDelegate = new ResolveAuthorizationDelegate(this.getComponent()
+                        .getResolveAuthorization());
             }
             return this.resolveAuthorizationDelegate;
         } catch (ConnectionException e) {
             throw new ClientException("Cannot locate service: ResolveAuthorization", e);
+        } catch (ServiceException e) {
+            throw new ClientException("Cannot locate service: ServiceDelegateTemplate", e);
+        }
+    }
+
+    /**
+     * Getter for the ExportAuthorization.
+     *
+     * @return the ExportAuthorizationDelegate.
+     * @throws ClientException
+     */
+    public ExportAuthorizationDelegate getExportAuthorization() throws ClientException {
+        try {
+            if ((this.exportAuthorizationDelegate == null)) {
+                this.exportAuthorizationDelegate = new ExportAuthorizationDelegate(this.getComponent()
+                        .getExportAuthorization());
+            }
+            return this.exportAuthorizationDelegate;
+        } catch (ConnectionException e) {
+            throw new ClientException("Cannot locate service: ExportAuthorization", e);
+        } catch (ServiceException e) {
+            throw new ClientException("Cannot locate service: ServiceDelegateTemplate", e);
+        }
+    }
+
+    /**
+     * Getter for the ImportAuthorization.
+     *
+     * @return the ImportAuthorizationDelegate.
+     * @throws ClientException
+     */
+    public ImportAuthorizationDelegate getImportAuthorization() throws ClientException {
+        try {
+            if ((this.importAuthorizationDelegate == null)) {
+                this.importAuthorizationDelegate = new ImportAuthorizationDelegate(this.getComponent()
+                        .getImportAuthorization());
+            }
+            return this.importAuthorizationDelegate;
+        } catch (ConnectionException e) {
+            throw new ClientException("Cannot locate service: ImportAuthorization", e);
         } catch (ServiceException e) {
             throw new ClientException("Cannot locate service: ServiceDelegateTemplate", e);
         }

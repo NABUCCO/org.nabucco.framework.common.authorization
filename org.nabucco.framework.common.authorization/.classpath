@@ -11,7 +11,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JBOSS"/>
 	<classpathentry kind="lib" path="lib/test/org.nabucco.framework.base.facade.jar"/>
-	<classpathentry kind="lib" path="lib/test/org.nabucco.framework.base.impl.jar"/>
 	<classpathentry kind="lib" path="lib/test/org.nabucco.framework.base.test.jar"/>
 	<classpathentry kind="output" path="out/ide"/>
 </classpath>
