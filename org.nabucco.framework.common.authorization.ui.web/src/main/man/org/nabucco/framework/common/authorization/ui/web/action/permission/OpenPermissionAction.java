@@ -37,7 +37,7 @@ public class OpenPermissionAction extends OpenEditorActionHandler<AuthorizationP
     private static final String EDITOR_ID = "AuthorizationPermissionEditor";
 
     @Override
-    protected String getEditorId(WebActionParameter arg0) throws ClientException {
+    protected String getEditorId(WebActionParameter parameter, AuthorizationPermission datatype) throws ClientException {
         return EDITOR_ID;
     }
 
@@ -57,7 +57,8 @@ public class OpenPermissionAction extends OpenEditorActionHandler<AuthorizationP
         rq.setAuthorizationPermission(permission);
 
         try {
-            AuthorizationPermissionMaintainMsg rs = resolveService.resolveAuthorizationPermission(rq, parameter.getSession());
+            AuthorizationPermissionMaintainMsg rs = resolveService.resolveAuthorizationPermission(rq,
+                    parameter.getSession());
             return rs.getAuthorizationPermission();
         } catch (ResolveException e) {
             throw new ActionException("Error resolving Authorization Permission.", e);

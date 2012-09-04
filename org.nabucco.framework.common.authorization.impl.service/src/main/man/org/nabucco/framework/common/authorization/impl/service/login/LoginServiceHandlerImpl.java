@@ -19,6 +19,8 @@ package org.nabucco.framework.common.authorization.impl.service.login;
 import org.nabucco.framework.base.facade.component.NabuccoInstance;
 import org.nabucco.framework.base.facade.datatype.NabuccoSystem;
 import org.nabucco.framework.base.facade.datatype.Tenant;
+import org.nabucco.framework.base.facade.datatype.logger.NabuccoLogger;
+import org.nabucco.framework.base.facade.datatype.logger.NabuccoLoggingFactory;
 import org.nabucco.framework.base.facade.datatype.security.Subject;
 import org.nabucco.framework.base.facade.datatype.security.UserId;
 import org.nabucco.framework.base.facade.datatype.security.credential.Password;
@@ -40,6 +42,9 @@ public class LoginServiceHandlerImpl extends LoginServiceHandler {
 
     private LoginMsg request;
 
+    /** Logger */
+    private static NabuccoLogger logger = NabuccoLoggingFactory.getInstance().getLogger(LoginServiceHandlerImpl.class);
+    
     @Override
     public LoginRs login(LoginMsg msg) throws LoginException {
 
@@ -123,6 +128,12 @@ public class LoginServiceHandlerImpl extends LoginServiceHandler {
     private AuthorizationUser loadUser() throws LoginException {
 
         UserId userId = this.request.getUsername();
+
+        if (this.request.getTenant() == null) {
+            this.request.setTenant(new Tenant());
+            logger.warning("No Tenant defined, reset to default Tenant '", this.request.getTenant(), "'.");
+        }
+
         String tenant = this.request.getTenant().getValue();
 
         try {
@@ -134,7 +145,7 @@ public class LoginServiceHandlerImpl extends LoginServiceHandler {
             NabuccoQuery<AuthorizationUser> query = super.getPersistenceManager().createQuery(queryString.toString());
             query.setParameter(AuthorizationUser.USERNAME, userId);
             query.setParameter(AuthorizationUser.TENANT, tenant);
-            
+
             AuthorizationUser user = query.getSingleResult();
             return user;
         } catch (Exception e) {

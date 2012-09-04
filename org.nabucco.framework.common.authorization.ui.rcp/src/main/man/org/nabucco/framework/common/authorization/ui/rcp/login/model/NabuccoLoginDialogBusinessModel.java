@@ -16,6 +16,7 @@
  */
 package org.nabucco.framework.common.authorization.ui.rcp.login.model;
 
+import org.nabucco.framework.base.facade.datatype.Tenant;
 import org.nabucco.framework.base.facade.datatype.security.Subject;
 import org.nabucco.framework.base.facade.datatype.security.UserId;
 import org.nabucco.framework.base.facade.datatype.security.credential.Password;
@@ -48,12 +49,12 @@ public class NabuccoLoginDialogBusinessModel implements BusinessModel {
      * 
      * @return the authorization information
      */
-    public SecurityContext login(String username, String password) {
+    public SecurityContext login(String username, String password, String tenant) {
 
         SecurityContext context = new SecurityContext();
 
         try {
-            Subject subject = this.authenticate(username, password);
+            Subject subject = this.authenticate(username, password, tenant);
 
             AuthorizationServiceDelegate authorizationService = AuthorizationComponentServiceDelegateFactory
                     .getInstance().getAuthorizationService();
@@ -86,12 +87,13 @@ public class NabuccoLoginDialogBusinessModel implements BusinessModel {
      * @throws ClientException
      *             when the authentication fails
      */
-    private Subject authenticate(String username, String password) throws ClientException {
+    private Subject authenticate(String username, String password, String tenant) throws ClientException {
         LoginDelegate loginService = AuthorizationComponentServiceDelegateFactory.getInstance().getLogin();
-
+        
         LoginMsg rq = new LoginMsg();
         rq.setUsername(new UserId(username));
         rq.setPassword(new Password(password));
+        rq.setTenant(new Tenant(tenant));
         LoginRs rs = loginService.login(rq);
 
         return rs.getSubject();

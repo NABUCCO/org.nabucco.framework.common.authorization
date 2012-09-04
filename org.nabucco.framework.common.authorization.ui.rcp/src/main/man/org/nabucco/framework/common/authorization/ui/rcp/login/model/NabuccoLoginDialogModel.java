@@ -34,6 +34,8 @@ public class NabuccoLoginDialogModel extends ViewModel {
 
     private String password = "";
 
+    private String tenant = "";
+
     private SecurityContext securityContext;
 
     private List<ConnectionSpecification> connections;
@@ -43,6 +45,8 @@ public class NabuccoLoginDialogModel extends ViewModel {
     public static final String PROPERTY_USER_NAME = "userName";
 
     public static final String PROPERTY_PASSWORD = "password";
+
+    public static final String PROPERTY_TENANT = "tenant";
 
     public static final String PROPERTY_USER_ID = "userId";
 
@@ -56,7 +60,7 @@ public class NabuccoLoginDialogModel extends ViewModel {
      * @return the username
      */
     public String getUserName() {
-        return userName;
+        return this.userName;
     }
 
     /**
@@ -75,7 +79,7 @@ public class NabuccoLoginDialogModel extends ViewModel {
      * @return the password
      */
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     /**
@@ -88,18 +92,58 @@ public class NabuccoLoginDialogModel extends ViewModel {
         updateProperty(PROPERTY_PASSWORD, this.password, this.password = password);
     }
 
-    public List<ConnectionSpecification> getConnections() {
-        return connections;
+    /**
+     * Getter for the tenant.
+     * 
+     * @return Returns the tenant.
+     */
+    public String getTenant() {
+        return this.tenant;
     }
 
+    /**
+     * Setter for the tenant.
+     * 
+     * @param tenant
+     *            The tenant to set.
+     */
+    public void setTenant(String tenant) {
+        updateProperty(PROPERTY_TENANT, this.tenant, this.tenant = tenant);
+    }
+
+    /**
+     * Getter for the list of connections.
+     * 
+     * @return the list of connections
+     */
+    public List<ConnectionSpecification> getConnections() {
+        return this.connections;
+    }
+
+    /**
+     * Setter for the list of connections.
+     * 
+     * @return the list of connections
+     */
     public void setConnections(List<ConnectionSpecification> connectionSpecifications) {
         this.connections = connectionSpecifications;
     }
 
+    /**
+     * Getter for the selected connection.
+     * 
+     * @return the selected connection specification
+     */
     public ConnectionSpecification getSelectedConnection() {
-        return selectedConnection;
+        return this.selectedConnection;
     }
 
+    /**
+     * Setter for the selected connection.
+     * 
+     * @param newValue
+     *            the selected connection specification
+     */
     public void setSelectedConnection(final ConnectionSpecification newValue) {
         ConnectionSpecification oldValue = this.selectedConnection;
         super.updateProperty(PROPERTY_SELECTED_CONNECTION, oldValue, newValue);

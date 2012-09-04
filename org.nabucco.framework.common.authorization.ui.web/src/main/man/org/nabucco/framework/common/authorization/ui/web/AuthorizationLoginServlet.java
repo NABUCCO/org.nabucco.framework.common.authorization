@@ -47,7 +47,7 @@ public class AuthorizationLoginServlet extends LoginServlet {
     private static final long serialVersionUID = 1L;
 
     /** Logger */
-    private NabuccoLogger logger = NabuccoLoggingFactory.getInstance().getLogger(AuthorizationLoginServlet.class);
+    private static NabuccoLogger logger = NabuccoLoggingFactory.getInstance().getLogger(AuthorizationLoginServlet.class);
 
     @Override
     protected void login(LoginRequest request, NabuccoWebSession session) throws InvalidLoginException, ClientException {

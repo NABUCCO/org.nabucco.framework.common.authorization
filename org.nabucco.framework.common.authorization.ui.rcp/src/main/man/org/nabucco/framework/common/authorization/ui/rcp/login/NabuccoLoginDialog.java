@@ -54,11 +54,13 @@ public class NabuccoLoginDialog extends Dialog {
 
     private NabuccoLoginDialogBusinessModel businessModel;
 
+    private String defaultTenant;
+
     /**
      * Creates a new {@link NabuccoLoginDialog} instance.
      */
-    public NabuccoLoginDialog() {
-        this(null);
+    public NabuccoLoginDialog(String defaultTenant) {
+        this(null, defaultTenant);
     }
 
     /**
@@ -66,9 +68,12 @@ public class NabuccoLoginDialog extends Dialog {
      * 
      * @param parentShell
      *            the shell to add the dialog
+     * @param defaultTenant
+     *            the default login tenant
      */
-    public NabuccoLoginDialog(Shell parentShell) {
+    public NabuccoLoginDialog(Shell parentShell, String defaultTenant) {
         super(parentShell);
+        this.defaultTenant = defaultTenant;
     }
 
     @Override
@@ -84,13 +89,14 @@ public class NabuccoLoginDialog extends Dialog {
 
         this.layouter = new NabuccoLoginDialogLayouter();
         this.model = new NabuccoLoginDialogModel();
+        this.model.setTenant(this.defaultTenant);
         this.model.setConnections(ConnectionSpecification.getAllConnectionSpecifications());
         this.businessModel = new NabuccoLoginDialogBusinessModel();
     }
 
     @Override
     protected Control createDialogArea(Composite parent) {
-        this.layouter.layout(parent, null, model);
+        this.layouter.layout(parent, null, this.model);
         return parent;
     }
 
@@ -114,18 +120,19 @@ public class NabuccoLoginDialog extends Dialog {
      * @return true: login sucessfully false: login failed
      */
     private boolean login() {
-        SecurityContext securityContext = businessModel.login(model.getUserName(), model.getPassword());
-        model.setSecurityContext(securityContext);
+        SecurityContext securityContext = this.businessModel.login(this.model.getUserName(), this.model.getPassword(),
+                this.model.getTenant());
+        this.model.setSecurityContext(securityContext);
 
         if (!securityContext.isAuthenticated()) {
             Map<String, Serializable> values = new HashMap<String, Serializable>();
-            values.put("username", model.getUserName());
+            values.put("username", this.model.getUserName());
 
             MessageDialog.open(CANCEL, getParentShell(), I18N.i18n(LOGIN_FAILED_MSG),
                     I18N.i18n(LOGIN_FAILED_TITLE, values), SWT.NONE);
         }
 
-        model.setPassword("");
+        this.model.setPassword("");
 
         return securityContext.isAuthenticated();
     }
@@ -136,7 +143,7 @@ public class NabuccoLoginDialog extends Dialog {
      * @return the connection specification
      */
     public ConnectionSpecification getConnectionSpecification() {
-        return model.getSelectedConnection();
+        return this.model.getSelectedConnection();
     }
 
     /**
@@ -145,6 +152,6 @@ public class NabuccoLoginDialog extends Dialog {
      * @return the security context
      */
     public SecurityContext getSecurityContext() {
-        return model.getSecurityContext();
+        return this.model.getSecurityContext();
     }
 }

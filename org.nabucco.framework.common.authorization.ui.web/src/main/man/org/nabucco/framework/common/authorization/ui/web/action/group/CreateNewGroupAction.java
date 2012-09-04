@@ -37,7 +37,7 @@ public class CreateNewGroupAction extends OpenEditorActionHandler<AuthorizationG
     private static final String EDITOR_ID = "AuthorizationGroupEditor";
 
     @Override
-    protected String getEditorId(WebActionParameter parameter) throws ClientException {
+    protected String getEditorId(WebActionParameter parameter, AuthorizationGroup datatype) throws ClientException {
         return EDITOR_ID;
     }
 

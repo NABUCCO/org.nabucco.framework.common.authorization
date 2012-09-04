@@ -37,7 +37,7 @@ public class OpenRoleAction extends OpenEditorActionHandler<AuthorizationRole> {
     private static final String EDITOR_ID = "AuthorizationRoleEditor";
 
     @Override
-    protected String getEditorId(WebActionParameter parameter) throws ClientException {
+    protected String getEditorId(WebActionParameter parameter, AuthorizationRole datatype) throws ClientException {
         return EDITOR_ID;
     }
 

@@ -37,7 +37,7 @@ public class CreateNewUserAction extends OpenEditorActionHandler<AuthorizationUs
     private static final String EDITOR_ID = "AuthorizationUserEditor";
 
     @Override
-    protected String getEditorId(WebActionParameter parameter) throws ClientException {
+    protected String getEditorId(WebActionParameter parameter, AuthorizationUser datatype) throws ClientException {
         return EDITOR_ID;
     }
 
